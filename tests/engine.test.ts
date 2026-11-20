@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { ExamSession } from '../src/exam/engine';
 import { buildExam } from '../src/exam/sampler';
-import { makeBank } from './helpers';
+import { makeBank, SAA } from './helpers';
 
 const bank = makeBank(10);
 const map = new Map(bank.map((q) => [q.id, q]));
 
 function session() {
-  const items = buildExam({ bank, size: 22, seed: 5 });
-  return ExamSession.create('block', items, map, 1_000_000);
+  const items = buildExam({ bank, exam: SAA, size: 22, seed: 5 });
+  return ExamSession.create(SAA, 'block', items, map, 1_000_000);
 }
 
 describe('ExamSession', () => {
@@ -52,8 +52,8 @@ describe('ExamSession', () => {
   });
 
   it('full mode keeps 130 minutes', () => {
-    const items = buildExam({ bank: makeBank(30), size: 65, seed: 2, unscored: 15 });
-    const s = ExamSession.create('full', items, new Map(makeBank(30).map((q) => [q.id, q])), 0);
+    const items = buildExam({ bank: makeBank(30), exam: SAA, size: 65, seed: 2, unscored: 15 });
+    const s = ExamSession.create(SAA, 'full', items, new Map(makeBank(30).map((q) => [q.id, q])), 0);
     expect(s.state.limitSec).toBe(130 * 60);
   });
 });

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { isCorrect, scaledScore, scoreAttempt } from '../src/exam/scoring';
-import { makeBank } from './helpers';
+import { makeBank, SAA } from './helpers';
 
 describe('scoring', () => {
   const bank = makeBank(8);
@@ -35,7 +35,7 @@ describe('scoring', () => {
       { id: single.id, scored: true },
       { id: multi.id, scored: false },
     ];
-    const r = scoreAttempt(items, map, { [single.id]: ['B'], [multi.id]: ['A'] });
+    const r = scoreAttempt(items, map, { [single.id]: ['B'], [multi.id]: ['A'] }, SAA);
     expect(r.total).toBe(1);
     expect(r.correct).toBe(1);
     expect(r.scaled).toBe(1000);
@@ -45,7 +45,7 @@ describe('scoring', () => {
 
   it('counts unanswered and fails below 720', () => {
     const items = bank.slice(0, 10).map((q) => ({ id: q.id, scored: true }));
-    const r = scoreAttempt(items, map, {});
+    const r = scoreAttempt(items, map, {}, SAA);
     expect(r.unanswered).toBe(10);
     expect(r.passed).toBe(false);
     expect(r.scaled).toBe(100);

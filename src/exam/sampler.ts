@@ -1,4 +1,5 @@
-import { DOMAINS, DOMAIN_WEIGHT, type Domain, type ExamItem, type Question } from '../types';
+import type { DomainDef, ExamDef } from '../exams';
+import type { ExamItem, Question } from '../types';
 
 export function mulberry32(seed: number): () => number {
   let a = seed >>> 0;
@@ -21,17 +22,15 @@ export function shuffle<T>(arr: T[], rnd: () => number): T[] {
 }
 
 /** Largest-remainder allocation of `size` across domains following the exam weights. */
-export function allocate(size: number, weights: Record<Domain, number> = DOMAIN_WEIGHT): Record<Domain, number> {
-  const raw = DOMAINS.map((d) => ({ d, v: weights[d] * size }));
-  const out = {} as Record<Domain, number>;
+export function allocate(size: number, domains: DomainDef[]): Record<string, number> {
+  const raw = domains.map((d) => ({ d: d.id, v: d.weight * size }));
+  const out: Record<string, number> = {};
   let used = 0;
   for (const r of raw) {
     out[r.d] = Math.floor(r.v);
     used += out[r.d];
   }
-  const order = raw
-    .map((r) => ({ d: r.d, frac: r.v - Math.floor(r.v) }))
-    .sort((x, y) => y.frac - x.frac);
+  const order = raw.map((r) => ({ d: r.d, frac: r.v - Math.floor(r.v) })).sort((x, y) => y.frac - x.frac);
   for (let i = 0; used < size; i = (i + 1) % order.length) {
     out[order[i].d]++;
     used++;
@@ -41,13 +40,16 @@ export function allocate(size: number, weights: Record<Domain, number> = DOMAIN_
 
 export interface BuildOptions {
   bank: Question[];
+  exam: ExamDef;
   size: number;
   seed: number;
   seen?: Set<string>;
   failed?: Set<string>;
-  domain?: Domain;
+  domain?: string;
   onlyIds?: Set<string>;
   unscored?: number;
+  /** Pick `exam.full.scenarioCount` scenarios at random and group their questions together. */
+  byScenario?: boolean;
 }
 
 /** Priority: failed first, then never seen, then already answered correctly. */
@@ -69,21 +71,26 @@ export function buildExam(opts: BuildOptions): ExamItem[] {
   const size = Math.min(opts.size, bank.length);
   const picked: Question[] = [];
 
+  if (opts.byScenario && opts.exam.full.scenarioCount) {
+    return buildByScenario(bank, opts.exam.full.scenarioCount, size, rnd, seen, failed);
+  }
+
   if (opts.domain || opts.onlyIds) {
     picked.push(...prioritise(bank, rnd, seen, failed).slice(0, size));
   } else {
-    const target = allocate(size);
-    const pools = {} as Record<Domain, Question[]>;
-    for (const d of DOMAINS) pools[d] = prioritise(bank.filter((q) => q.domain === d), rnd, seen, failed);
+    const ids = opts.exam.domains.map((d) => d.id);
+    const target = allocate(size, opts.exam.domains);
+    const pools: Record<string, Question[]> = {};
+    for (const d of ids) pools[d] = prioritise(bank.filter((q) => q.domain === d), rnd, seen, failed);
     let missing = 0;
-    for (const d of DOMAINS) {
+    for (const d of ids) {
       const take = Math.min(target[d], pools[d].length);
       picked.push(...pools[d].splice(0, take));
       missing += target[d] - take;
     }
     // A domain ran out of questions: fill from whatever is left.
     if (missing > 0) {
-      const rest = prioritise(DOMAINS.flatMap((d) => pools[d]), rnd, seen, failed);
+      const rest = prioritise(ids.flatMap((d) => pools[d]), rnd, seen, failed);
       picked.push(...rest.slice(0, missing));
     }
   }
@@ -94,4 +101,26 @@ export function buildExam(opts: BuildOptions): ExamItem[] {
   const idxs = shuffle(ordered.map((_, i) => i), rnd);
   for (let i = 0; i < n; i++) unscoredIdx.add(idxs[i]);
   return ordered.map((q, i) => ({ id: q.id, scored: !unscoredIdx.has(i) }));
+}
+
+/** Scenario exams: N random scenarios, questions grouped per scenario, split evenly (remainder to the first ones). */
+function buildByScenario(
+  bank: Question[],
+  count: number,
+  size: number,
+  rnd: () => number,
+  seen: Set<string>,
+  failed: Set<string>,
+): ExamItem[] {
+  const ids = [...new Set(bank.map((q) => q.scenario).filter((x): x is string => !!x))];
+  const chosen = shuffle(ids, rnd).slice(0, count);
+  const base = Math.floor(size / chosen.length);
+  let extra = size - base * chosen.length;
+  const out: ExamItem[] = [];
+  for (const sc of chosen) {
+    const want = base + (extra-- > 0 ? 1 : 0);
+    const pool = prioritise(bank.filter((q) => q.scenario === sc), rnd, seen, failed).slice(0, want);
+    out.push(...shuffle(pool, rnd).map((q) => ({ id: q.id, scored: true })));
+  }
+  return out;
 }

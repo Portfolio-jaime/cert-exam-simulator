@@ -1,21 +1,24 @@
 // Validates data/questions/*.json. Run: npm run validate:bank
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { EXAMS } from '../src/exams.ts';
 
-const DIR = join(import.meta.dirname, '..', 'data', 'questions');
-const DOMAINS = new Set(['secure', 'resilient', 'performance', 'cost']);
+const ROOT = join(import.meta.dirname, '..', 'data', 'questions');
 const errors: string[] = [];
 const ids = new Set<string>();
 const stems = new Set<string>();
 const perDomain: Record<string, number> = {};
 let multi = 0;
+let missingEn = 0;
 let total = 0;
 const answerPos: Record<string, number> = {};
 
 const err = (id: string, msg: string) => errors.push(`${id}: ${msg}`);
 
-for (const file of readdirSync(DIR).filter((f) => f.endsWith('.json'))) {
-  const list = JSON.parse(readFileSync(join(DIR, file), 'utf8'));
+for (const { exam, file } of EXAMS.flatMap((e) => readdirSync(join(ROOT, e.id)).filter((f) => f.endsWith('.json')).map((f) => ({ exam: e, file: `${e.id}/${f}` })))) {
+  const DOMAINS = new Set(exam.domains.map((d) => d.id));
+  const scenarios = new Set((exam.scenarios ?? []).map((x) => x.id));
+  const list = JSON.parse(readFileSync(join(ROOT, file), 'utf8'));
   if (!Array.isArray(list)) { errors.push(`${file}: not an array`); continue; }
   for (const q of list) {
     total++;
@@ -26,6 +29,14 @@ for (const file of readdirSync(DIR).filter((f) => f.endsWith('.json'))) {
     perDomain[q.domain] = (perDomain[q.domain] ?? 0) + 1;
     if (typeof q.stem !== 'string' || q.stem.length < 40) err(id, 'stem too short');
     if (!q.topic) err(id, 'missing topic');
+    if (scenarios.size && !scenarios.has(q.scenario)) err(id, `bad scenario ${q.scenario}`);
+    if (exam.bilingual && !q.en) missingEn++;
+    if (q.en) {
+      const keys = (o: object) => Object.keys(o).sort().join(',');
+      if (!q.en.stem || !q.en.explanation) err(id, 'en: missing stem/explanation');
+      if (keys(q.en.options ?? {}) !== [...(q.options ?? [])].map((o: { id: string }) => o.id).sort().join(',')) err(id, 'en: option ids differ');
+      if (keys(q.en.distractors ?? {}) !== keys(q.distractors ?? {})) err(id, 'en: distractor keys differ');
+    }
     if (!q.explanation || q.explanation.length < 30) err(id, 'explanation too short');
     if (![1, 2, 3].includes(q.difficulty)) err(id, 'bad difficulty');
     const optIds: string[] = (q.options ?? []).map((o: { id: string }) => o.id);
@@ -52,6 +63,7 @@ for (const file of readdirSync(DIR).filter((f) => f.endsWith('.json'))) {
 console.log(`questions: ${total} | multi: ${multi} (${total ? Math.round((multi / total) * 100) : 0}%)`);
 console.log('per domain:', perDomain);
 console.log('single-answer position spread:', answerPos);
+if (missingEn) console.warn(`warning: ${missingEn} question(s) of bilingual exams have no English text yet`);
 if (errors.length) {
   console.error(`\n${errors.length} problem(s):\n- ${errors.join('\n- ')}`);
   process.exit(1);
