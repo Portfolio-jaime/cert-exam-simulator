@@ -42,3 +42,6 @@ table { width: 100%; border-collapse: collapse; } th, td { text-align: left; pad
 .why { margin: 4px 0 0 28px; font-size: .88rem; color: var(--muted); }
 .banner { border-color: var(--warn); }
 @media (max-width: 560px) { #app { padding: 10px; } .score { font-size: 2rem; } }
+.scenario { background: color-mix(in srgb, var(--accent) 8%, var(--card)); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 10px; padding: 12px 16px; margin: 12px 0; }
+.scenario p { margin: 6px 0 0; }
+button.primary:hover { filter: brightness(1.08); }

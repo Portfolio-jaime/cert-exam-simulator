@@ -4,6 +4,9 @@ import type { SessionState } from './exam/engine';
 const K_HISTORY = 'saa.history.v1';
 const K_NAME = 'saa.name.v1';
 const K_SESSION = 'saa.session.v1';
+const K_PLAN = 'saa.plan.v1';
+const K_LANG = 'saa.lang.v1';
+const K_EXAM = 'saa.exam.v1';
 
 export type KV = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 
@@ -50,7 +53,7 @@ export class Store {
     try {
       const raw = this.read(K_HISTORY);
       const parsed = raw ? JSON.parse(raw) : [];
-      return Array.isArray(parsed) ? (parsed as Attempt[]) : [];
+      return Array.isArray(parsed) ? (parsed as Attempt[]).map((a) => ({ ...a, exam: a.exam ?? 'saa' })) : [];
     } catch {
       return [];
     }
@@ -79,6 +82,37 @@ export class Store {
       }
     }
     return { seen, failed };
+  }
+
+  planDone(): Set<string> {
+    try {
+      const raw = this.read(K_PLAN);
+      return new Set(raw ? (JSON.parse(raw) as string[]) : []);
+    } catch {
+      return new Set();
+    }
+  }
+
+  togglePlan(id: string): void {
+    const s = this.planDone();
+    if (!s.delete(id)) s.add(id);
+    this.write(K_PLAN, JSON.stringify([...s]));
+  }
+
+  lang(): 'es' | 'en' {
+    return this.read(K_LANG) === 'en' ? 'en' : 'es';
+  }
+
+  setLang(l: 'es' | 'en'): void {
+    this.write(K_LANG, l);
+  }
+
+  exam(): string {
+    return this.read(K_EXAM) ?? 'saa';
+  }
+
+  setExam(id: string): void {
+    this.write(K_EXAM, id);
   }
 
   name(): string {

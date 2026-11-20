@@ -1,20 +1,7 @@
-export type Domain = 'secure' | 'resilient' | 'performance' | 'cost';
+export type ExamId = 'saa' | 'ccaf';
 
-export const DOMAINS: Domain[] = ['secure', 'resilient', 'performance', 'cost'];
-
-export const DOMAIN_LABEL: Record<Domain, string> = {
-  secure: 'Design Secure Architectures',
-  resilient: 'Design Resilient Architectures',
-  performance: 'Design High-Performing Architectures',
-  cost: 'Design Cost-Optimized Architectures',
-};
-
-export const DOMAIN_WEIGHT: Record<Domain, number> = {
-  secure: 0.3,
-  resilient: 0.26,
-  performance: 0.24,
-  cost: 0.2,
-};
+/** Domain ids are defined per exam in exams.ts. */
+export type Domain = string;
 
 export interface Option {
   id: string;
@@ -25,6 +12,8 @@ export interface Question {
   id: string;
   domain: Domain;
   topic: string;
+  /** Scenario id (exams with scenario-based questions). */
+  scenario?: string;
   type: 'single' | 'multi';
   choose: number;
   stem: string;
@@ -33,6 +22,16 @@ export interface Question {
   explanation: string;
   distractors: Record<string, string>;
   difficulty: 1 | 2 | 3;
+  /** Optional English version of the text (exams offered in both languages). */
+  en?: QuestionText;
+}
+
+export interface QuestionText {
+  stem: string;
+  options: Record<string, string>;
+  explanation: string;
+  distractors: Record<string, string>;
+  topic?: string;
 }
 
 export interface ExamItem {
@@ -43,7 +42,7 @@ export interface ExamItem {
 export type Mode = 'block' | 'full' | 'domain' | 'review';
 
 export const MODE_LABEL: Record<Mode, string> = {
-  block: 'Bloque de 22',
+  block: 'Bloque',
   full: 'Simulacro completo',
   domain: 'Práctica por dominio',
   review: 'Repaso de falladas',
@@ -67,6 +66,7 @@ export interface Result {
 
 export interface Attempt {
   id: string;
+  exam?: ExamId;
   mode: Mode;
   startedAt: number;
   finishedAt: number;
@@ -78,5 +78,3 @@ export interface Attempt {
   flags: string[];
   result: Result;
 }
-
-export const PASS_SCALED = 720;

@@ -1,8 +1,10 @@
+import { examById, type ExamDef } from '../exams';
 import { scoreAttempt } from './scoring';
-import type { Attempt, ExamItem, Mode, Question } from '../types';
+import type { Attempt, ExamId, ExamItem, Mode, Question } from '../types';
 
 export interface SessionState {
   id: string;
+  exam?: ExamId;
   mode: Mode;
   startedAt: number;
   limitSec: number;
@@ -12,12 +14,11 @@ export interface SessionState {
   index: number;
 }
 
-export const MODE_CONFIG: Record<Mode, { size: number; limitSec: number; unscored: number }> = {
-  block: { size: 22, limitSec: 44 * 60, unscored: 0 },
-  full: { size: 65, limitSec: 130 * 60, unscored: 15 },
-  domain: { size: 22, limitSec: 44 * 60, unscored: 0 },
-  review: { size: 22, limitSec: 44 * 60, unscored: 0 },
-};
+/** Mode settings come from the exam definition; review/domain practice reuse the block size. */
+export function modeConfig(exam: ExamDef, mode: Mode): { size: number; limitSec: number; unscored: number } {
+  if (mode === 'full') return { size: exam.full.size, limitSec: exam.full.limitSec, unscored: exam.full.unscored };
+  return { ...exam.block, unscored: 0 };
+}
 
 export class ExamSession {
   constructor(
@@ -25,12 +26,12 @@ export class ExamSession {
     private bank: Map<string, Question>,
   ) {}
 
-  static create(mode: Mode, items: ExamItem[], bank: Map<string, Question>, now: number): ExamSession {
-    const limit = MODE_CONFIG[mode].limitSec;
+  static create(exam: ExamDef, mode: Mode, items: ExamItem[], bank: Map<string, Question>, now: number): ExamSession {
+    const limit = modeConfig(exam, mode).limitSec;
     // Shorter custom sets (e.g. few failed questions) scale the clock to 2 min per question.
     const limitSec = Math.min(limit, Math.max(items.length * 120, 120));
     return new ExamSession(
-      { id: `${now.toString(36)}-${Math.random().toString(36).slice(2, 8)}`, mode, startedAt: now, limitSec, items, answers: {}, flags: [], index: 0 },
+      { id: `${now.toString(36)}-${Math.random().toString(36).slice(2, 8)}`, exam: exam.id, mode, startedAt: now, limitSec, items, answers: {}, flags: [], index: 0 },
       bank,
     );
   }
@@ -93,6 +94,7 @@ export class ExamSession {
     const finishedAt = Math.min(now, s.startedAt + s.limitSec * 1000);
     return {
       id: s.id,
+      exam: s.exam ?? 'saa',
       mode: s.mode,
       startedAt: s.startedAt,
       finishedAt,
@@ -102,7 +104,7 @@ export class ExamSession {
       items: s.items,
       answers: s.answers,
       flags: s.flags,
-      result: scoreAttempt(s.items, this.bank, s.answers),
+      result: scoreAttempt(s.items, this.bank, s.answers, examById(s.exam)),
     };
   }
 }

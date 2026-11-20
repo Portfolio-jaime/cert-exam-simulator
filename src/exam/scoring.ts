@@ -1,4 +1,5 @@
-import { DOMAINS, PASS_SCALED, type Attempt, type DomainResult, type ExamItem, type Question, type Result, type Domain } from '../types';
+import type { ExamDef } from '../exams';
+import type { Attempt, DomainResult, ExamItem, Question, Result } from '../types';
 
 /** Multi-select is all-or-nothing, like the real exam: the selected set must equal the answer set. */
 export function isCorrect(q: Question, selected: string[] | undefined): boolean {
@@ -7,7 +8,7 @@ export function isCorrect(q: Question, selected: string[] | undefined): boolean 
   return selected.every((s) => a.has(s)) && new Set(selected).size === a.size;
 }
 
-/** Estimated scaled score (100-1000). AWS does not publish its formula, so this is only an estimate. */
+/** Estimated scaled score (100-1000). Neither exam publishes its formula, so this is only an estimate. */
 export function scaledScore(correct: number, total: number): number {
   if (total === 0) return 100;
   return Math.round(100 + (900 * correct) / total);
@@ -17,13 +18,10 @@ export function scoreAttempt(
   items: ExamItem[],
   bank: Map<string, Question>,
   answers: Record<string, string[]>,
+  exam: ExamDef,
 ): Result {
-  const by: Record<Domain, { correct: number; total: number }> = {
-    secure: { correct: 0, total: 0 },
-    resilient: { correct: 0, total: 0 },
-    performance: { correct: 0, total: 0 },
-    cost: { correct: 0, total: 0 },
-  };
+  const by: Record<string, { correct: number; total: number }> = {};
+  for (const d of exam.domains) by[d.id] = { correct: 0, total: 0 };
   let correct = 0;
   let total = 0;
   let unanswered = 0;
@@ -34,17 +32,17 @@ export function scoreAttempt(
     if (!answers[item.id] || answers[item.id].length === 0) unanswered++;
     if (!item.scored) continue;
     total++;
-    by[q.domain].total++;
+    const slot = (by[q.domain] ??= { correct: 0, total: 0 });
+    slot.total++;
     if (isCorrect(q, answers[item.id])) {
       correct++;
-      by[q.domain].correct++;
+      slot.correct++;
     }
   }
 
-  const byDomain = {} as Record<Domain, DomainResult>;
-  for (const d of DOMAINS) {
-    const { correct: c, total: t } = by[d];
-    byDomain[d] = { correct: c, total: t, pct: t === 0 ? 0 : Math.round((c / t) * 100) };
+  const byDomain: Record<string, DomainResult> = {};
+  for (const [id, { correct: c, total: t }] of Object.entries(by)) {
+    byDomain[id] = { correct: c, total: t, pct: t === 0 ? 0 : Math.round((c / t) * 100) };
   }
   const scaled = scaledScore(correct, total);
   return {
@@ -52,7 +50,7 @@ export function scoreAttempt(
     total,
     pct: total === 0 ? 0 : Math.round((correct / total) * 100),
     scaled,
-    passed: scaled >= PASS_SCALED,
+    passed: scaled >= exam.passScaled,
     byDomain,
     unanswered,
   };

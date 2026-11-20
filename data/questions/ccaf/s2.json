@@ -1,0 +1,650 @@
+[
+ {
+  "id": "cca-s2-01",
+  "domain": "claudecode",
+  "scenario": "s2",
+  "topic": "TS 3.1 CLAUDE.md hierarchy",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un desarrollador senior documentó en su ~/.claude/CLAUDE.md las convenciones de commits y de manejo de errores del equipo. Una persona nueva clona el repositorio y Claude Code genera código que ignora esas convenciones, mientras que el senior obtiene resultados consistentes. ¿Cuál es la causa más probable y la corrección adecuada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "El archivo CLAUDE.md de la persona nueva está corrupto; debe ejecutar /compact para recargar las instrucciones."
+   },
+   {
+    "id": "B",
+    "text": "Las convenciones están en configuración de nivel usuario, que no se comparte por control de versiones; deben moverse al CLAUDE.md del proyecto (raíz o .claude/CLAUDE.md)."
+   },
+   {
+    "id": "C",
+    "text": "Claude Code solo lee CLAUDE.md de subdirectorios; hay que crear uno en cada carpeta de código fuente."
+   },
+   {
+    "id": "D",
+    "text": "La persona nueva debe copiar manualmente el archivo ~/.claude/CLAUDE.md del senior a su máquina y no hace falta cambiar nada más."
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "TS 3.1: las instrucciones en ~/.claude/CLAUDE.md aplican solo a ese usuario y no viajan con el repositorio. Las convenciones del equipo deben vivir en el CLAUDE.md de nivel proyecto, versionado, para que todos las reciban.",
+  "distractors": {
+   "A": "/compact resume la conversación, no recarga ni repara archivos de memoria, y el problema no es corrupción sino ámbito.",
+   "C": "Claude Code también carga CLAUDE.md de nivel proyecto; los de directorio son opcionales para convenciones locales.",
+   "D": "Copiar archivos personales a mano deja el conocimiento fuera del control de versiones y no escala a futuros miembros."
+  },
+  "difficulty": 1,
+  "en": {
+   "stem": "A senior developer documented the team's commit and error-handling conventions in their ~/.claude/CLAUDE.md. A new team member clones the repository and Claude Code generates code that ignores those conventions, while the senior developer gets consistent results. What is the most likely cause and the appropriate fix?",
+   "options": {
+    "A": "The new team member's CLAUDE.md file is corrupted; they should run /compact to reload the instructions.",
+    "B": "The conventions live in user-level configuration, which is not shared through version control; they should be moved to the project CLAUDE.md (root or .claude/CLAUDE.md).",
+    "C": "Claude Code only reads CLAUDE.md files in subdirectories; one must be created in every source folder.",
+    "D": "The new team member should manually copy the senior developer's ~/.claude/CLAUDE.md file to their machine, and nothing else needs to change."
+   },
+   "explanation": "TS 3.1: Instructions in ~/.claude/CLAUDE.md apply only to that user and do not travel with the repository. Team conventions must live in the version-controlled project-level CLAUDE.md so that everyone receives them.",
+   "distractors": {
+    "A": "/compact summarizes the conversation; it does not reload or repair memory files, and the problem is not corruption but scope.",
+    "C": "Claude Code also loads the project-level CLAUDE.md; directory-level files are optional for local conventions.",
+    "D": "Manually copying personal files leaves the knowledge outside version control and does not scale to future team members."
+   },
+   "topic": "TS 3.1 CLAUDE.md hierarchy"
+  }
+ },
+ {
+  "id": "cca-s2-02",
+  "domain": "claudecode",
+  "scenario": "s2",
+  "topic": "TS 3.2 Skill context: fork",
+  "type": "single",
+  "choose": 1,
+  "stem": "El equipo crea un skill /analyze-codebase que recorre cientos de archivos y produce un informe de dependencias muy extenso. Tras usarlo, los desarrolladores notan que la sesión principal queda saturada y Claude pierde el hilo de la tarea de refactorización en curso. ¿Qué cambio resuelve mejor el problema?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Agregar al CLAUDE.md una instrucción para que Claude resuma menos la salida del skill."
+   },
+   {
+    "id": "B",
+    "text": "Mover el skill a ~/.claude/skills/ para que cada usuario lo ejecute por separado."
+   },
+   {
+    "id": "C",
+    "text": "Restringir allowed-tools del skill a solo lectura para que genere menos salida."
+   },
+   {
+    "id": "D",
+    "text": "Configurar context: fork en el frontmatter de SKILL.md para ejecutarlo en un contexto de sub-agente aislado."
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "TS 3.2: context: fork ejecuta el skill en un contexto de sub-agente aislado, de modo que su salida verbosa (análisis de código, exploración) no contamina la conversación principal.",
+  "distractors": {
+   "A": "Una instrucción en CLAUDE.md es probabilística y no evita que la salida completa se acumule en el contexto principal.",
+   "B": "Cambiar el alcance a nivel usuario no altera dónde se ejecuta ni dónde se acumula la salida.",
+   "C": "allowed-tools limita qué herramientas puede usar el skill, no aísla el contexto; la lectura masiva seguiría llenando la sesión."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "The team creates an /analyze-codebase skill that walks through hundreds of files and produces a very long dependency report. After using it, developers notice that the main session becomes saturated and Claude loses track of the refactoring task in progress. Which change best solves the problem?",
+   "options": {
+    "A": "Add an instruction to CLAUDE.md telling Claude to summarize the skill's output more tightly.",
+    "B": "Move the skill to ~/.claude/skills/ so each user runs it separately.",
+    "C": "Restrict the skill's allowed-tools to read-only so that it produces less output.",
+    "D": "Set context: fork in the SKILL.md frontmatter to run it in an isolated subagent context."
+   },
+   "explanation": "TS 3.2: context: fork runs the skill in an isolated subagent context, so its verbose output (code analysis, exploration) does not pollute the main conversation.",
+   "distractors": {
+    "A": "An instruction in CLAUDE.md is probabilistic and does not prevent the full output from accumulating in the main context.",
+    "B": "Changing the scope to user level does not change where the skill runs or where its output accumulates.",
+    "C": "allowed-tools limits which tools the skill can use; it does not isolate context, and bulk reading would still fill the session."
+   },
+   "topic": "TS 3.2 Skill context: fork"
+  }
+ },
+ {
+  "id": "cca-s2-03",
+  "domain": "claudecode",
+  "scenario": "s2",
+  "topic": "TS 3.3 Path-specific rules",
+  "type": "single",
+  "choose": 1,
+  "stem": "En un monorepo, los archivos de prueba (*.test.tsx) están repartidos junto al código de decenas de carpetas distintas. El equipo quiere que las convenciones de testing se apliquen solo al editar esos archivos, sin cargar esas reglas en el resto de tareas. ¿Qué enfoque es el más adecuado?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un archivo en .claude/rules/ con frontmatter paths que use el glob **/*.test.tsx."
+   },
+   {
+    "id": "B",
+    "text": "Un CLAUDE.md en cada directorio que contenga archivos de prueba, repitiendo las mismas convenciones."
+   },
+   {
+    "id": "C",
+    "text": "Incluir todas las convenciones de testing en el CLAUDE.md raíz y confiar en que Claude las aplique cuando corresponda."
+   },
+   {
+    "id": "D",
+    "text": "Crear un skill de testing que los desarrolladores deban invocar manualmente antes de editar pruebas."
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "TS 3.3: las reglas en .claude/rules/ con paths y glob se cargan solo al editar archivos coincidentes, sin importar el directorio, reduciendo contexto irrelevante y tokens.",
+  "distractors": {
+   "B": "Los CLAUDE.md de directorio no cubren convenciones repartidas por muchas carpetas sin duplicar archivos y mantenerlos sincronizados.",
+   "C": "Cargar todo en el CLAUDE.md raíz consume contexto en cada tarea y depende de que Claude decida cuándo aplicarlo.",
+   "D": "La invocación manual no es carga condicional automática y depende de que cada desarrollador recuerde usarla."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "In a monorepo, test files (*.test.tsx) are scattered alongside the code across dozens of different folders. The team wants the testing conventions to apply only when editing those files, without loading those rules for all other tasks. Which approach is most appropriate?",
+   "options": {
+    "A": "A file in .claude/rules/ with a paths frontmatter that uses the glob **/*.test.tsx.",
+    "B": "A CLAUDE.md in every directory that contains test files, repeating the same conventions.",
+    "C": "Put all testing conventions in the root CLAUDE.md and trust Claude to apply them when relevant.",
+    "D": "Create a testing skill that developers must manually invoke before editing tests."
+   },
+   "explanation": "TS 3.3: Rules in .claude/rules/ with paths and a glob are loaded only when editing matching files, regardless of directory, reducing irrelevant context and tokens.",
+   "distractors": {
+    "B": "Directory-level CLAUDE.md files cannot cover conventions spread across many folders without duplicating files and keeping them in sync.",
+    "C": "Loading everything into the root CLAUDE.md consumes context on every task and depends on Claude deciding when to apply it.",
+    "D": "Manual invocation is not automatic conditional loading and relies on each developer remembering to use it."
+   },
+   "topic": "TS 3.3 Path-specific rules"
+  }
+ },
+ {
+  "id": "cca-s2-04",
+  "domain": "claudecode",
+  "scenario": "s2",
+  "topic": "TS 3.4 Plan mode vs direct execution",
+  "type": "single",
+  "choose": 1,
+  "stem": "El equipo debe migrar una librería de acceso a datos usada en más de 45 archivos; existen dos enfoques posibles con distintos requisitos de infraestructura y el impacto en módulos dependientes es incierto. ¿Cuál es la estrategia más adecuada con Claude Code?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Ejecución directa archivo por archivo, corrigiendo problemas conforme aparezcan, para obtener resultados rápidos."
+   },
+   {
+    "id": "B",
+    "text": "Ejecución directa con un CLAUDE.md muy detallado y sin explorar el código, para evitar gastar contexto."
+   },
+   {
+    "id": "C",
+    "text": "Plan mode para explorar el código y comparar enfoques, y luego ejecución directa para implementar el plan elegido."
+   },
+   {
+    "id": "D",
+    "text": "Plan mode durante toda la migración, sin salir de él, para que ningún archivo se modifique sin revisión."
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "TS 3.4: cambios a gran escala con varios enfoques válidos y decisiones arquitectónicas se benefician de plan mode para investigar y diseñar; luego la ejecución directa implementa el enfoque acordado, evitando retrabajo costoso.",
+  "distractors": {
+   "A": "Migrar sin diseñar previamente arriesga retrabajo costoso cuando el enfoque elegido resulta incompatible con otros módulos.",
+   "B": "Omitir la exploración deja sin resolver la incertidumbre sobre dependencias y enfoques; CLAUDE.md no sustituye el análisis.",
+   "D": "Plan mode sirve para investigar y diseñar; implementar requiere salir de él, por lo que no puede cubrir toda la migración."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "The team must migrate a data-access library used in more than 45 files; there are two possible approaches with different infrastructure requirements, and the impact on dependent modules is uncertain. What is the most appropriate strategy with Claude Code?",
+   "options": {
+    "A": "Direct execution file by file, fixing problems as they appear, to get fast results.",
+    "B": "Direct execution with a very detailed CLAUDE.md and no exploration of the code, to avoid spending context.",
+    "C": "Plan mode to explore the code and compare approaches, then direct execution to implement the chosen plan.",
+    "D": "Plan mode for the entire migration, never leaving it, so that no file is modified without review."
+   },
+   "explanation": "TS 3.4: Large-scale changes with multiple valid approaches and architectural decisions benefit from plan mode to investigate and design; direct execution then implements the agreed approach, avoiding costly rework.",
+   "distractors": {
+    "A": "Migrating without designing first risks costly rework when the chosen approach turns out to be incompatible with other modules.",
+    "B": "Skipping exploration leaves the uncertainty about dependencies and approaches unresolved; CLAUDE.md is not a substitute for analysis.",
+    "D": "Plan mode is for investigating and designing; implementing requires leaving it, so it cannot cover the entire migration."
+   },
+   "topic": "TS 3.4 Plan mode vs direct execution"
+  }
+ },
+ {
+  "id": "cca-s2-05",
+  "domain": "claudecode",
+  "scenario": "s2",
+  "topic": "TS 3.5 Input/output examples",
+  "type": "single",
+  "choose": 1,
+  "stem": "Se pidió a Claude Code, con una descripción en prosa, que normalice fechas de logs heterogéneos a ISO 8601. Los resultados varían entre ejecuciones y fallan con formatos ambiguos y valores nulos. ¿Qué técnica mejora más la consistencia?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Reescribir la descripción en prosa con más adjetivos y énfasis en palabras clave como OBLIGATORIO."
+   },
+   {
+    "id": "B",
+    "text": "Proporcionar 2-3 ejemplos concretos de entrada y salida esperada, incluyendo un caso con valor nulo."
+   },
+   {
+    "id": "C",
+    "text": "Pedir a Claude que declare su nivel de confianza antes de cada transformación y descartar las de baja confianza."
+   },
+   {
+    "id": "D",
+    "text": "Dividir el trabajo en una sesión por formato de fecha para que no se mezclen en el contexto."
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "TS 3.5: cuando la prosa se interpreta de forma inconsistente, ejemplos concretos de entrada/salida (incluidos casos límite como nulos) comunican la transformación esperada con más eficacia.",
+  "distractors": {
+   "A": "El énfasis no elimina la ambigüedad de la descripción; la interpretación sigue variando.",
+   "C": "La confianza autoinformada no es un proxy fiable de corrección y no define la transformación esperada.",
+   "D": "Separar sesiones no aclara las reglas de transformación ni cubre los casos límite; solo fragmenta el trabajo."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "Claude Code was asked, with a prose description, to normalize heterogeneous log dates to ISO 8601. Results vary between runs and fail on ambiguous formats and null values. Which technique most improves consistency?",
+   "options": {
+    "A": "Rewrite the prose description with more adjectives and emphasis on keywords such as MANDATORY.",
+    "B": "Provide 2-3 concrete examples of input and expected output, including a case with a null value.",
+    "C": "Ask Claude to state its confidence level before each transformation and discard low-confidence ones.",
+    "D": "Split the work into one session per date format so they do not mix in the context."
+   },
+   "explanation": "TS 3.5: When prose is interpreted inconsistently, concrete input/output examples (including edge cases such as nulls) communicate the expected transformation more effectively.",
+   "distractors": {
+    "A": "Emphasis does not remove the ambiguity in the description; the interpretation keeps varying.",
+    "C": "Self-reported confidence is not a reliable proxy for correctness and does not define the expected transformation.",
+    "D": "Separating sessions does not clarify the transformation rules or cover edge cases; it only fragments the work."
+   },
+   "topic": "TS 3.5 Input/output examples"
+  }
+ },
+ {
+  "id": "cca-s2-06",
+  "domain": "claudecode",
+  "scenario": "s2",
+  "topic": "TS 3.6 CI with -p and JSON output",
+  "type": "single",
+  "choose": 1,
+  "stem": "Se integra Claude Code en el pipeline de CI para revisar pull requests y publicar hallazgos como comentarios en línea mediante un script. El job se queda colgado esperando entrada y el script no logra parsear la salida. ¿Qué configuración corrige ambos problemas?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Ejecutar claude en modo interactivo dentro de un pseudo-terminal y extraer los hallazgos con expresiones regulares."
+   },
+   {
+    "id": "B",
+    "text": "Redirigir /dev/null a la entrada estándar y pedir a Claude en el prompt que responda siempre en JSON."
+   },
+   {
+    "id": "C",
+    "text": "Usar --output-format json en modo interactivo y confirmar manualmente la primera ejecución del pipeline."
+   },
+   {
+    "id": "D",
+    "text": "Ejecutar con el flag -p (--print) junto con --output-format json y --json-schema para obtener hallazgos estructurados."
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "TS 3.6: -p ejecuta Claude Code de forma no interactiva evitando bloqueos, y --output-format json con --json-schema produce salida estructurada y parseable para publicar comentarios automáticamente.",
+  "distractors": {
+   "A": "El modo interactivo no está pensado para CI y parsear texto libre con regex es frágil.",
+   "B": "Pedir JSON en el prompt no garantiza el esquema, y redirigir stdin no es el mecanismo previsto para modo no interactivo.",
+   "C": "El modo interactivo sigue esperando entrada y exigir confirmación manual contradice la automatización del pipeline."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "Claude Code is integrated into the CI pipeline to review pull requests and post findings as inline comments through a script. The job hangs waiting for input and the script cannot parse the output. Which configuration fixes both problems?",
+   "options": {
+    "A": "Run claude in interactive mode inside a pseudo-terminal and extract the findings with regular expressions.",
+    "B": "Redirect /dev/null to standard input and ask Claude in the prompt to always respond in JSON.",
+    "C": "Use --output-format json in interactive mode and manually confirm the pipeline's first run.",
+    "D": "Run with the -p (--print) flag together with --output-format json and --json-schema to obtain structured findings."
+   },
+   "explanation": "TS 3.6: -p runs Claude Code non-interactively, avoiding hangs, and --output-format json with --json-schema produces structured, parseable output so comments can be posted automatically.",
+   "distractors": {
+    "A": "Interactive mode is not designed for CI, and parsing free text with regex is brittle.",
+    "B": "Asking for JSON in the prompt does not guarantee the schema, and redirecting stdin is not the intended mechanism for non-interactive mode.",
+    "C": "Interactive mode still waits for input, and requiring manual confirmation defeats the purpose of pipeline automation."
+   },
+   "topic": "TS 3.6 CI with -p and JSON output"
+  }
+ },
+ {
+  "id": "cca-s2-07",
+  "domain": "claudecode",
+  "scenario": "s2",
+  "topic": "TS 3.2 Skills vs CLAUDE.md",
+  "type": "single",
+  "choose": 1,
+  "stem": "El equipo tiene dos necesidades: (1) un estándar de nombres y manejo de errores que debe respetarse en toda interacción, y (2) un flujo de varios pasos para generar documentación de API que solo se usa de vez en cuando. ¿Cómo conviene organizarlos?",
+  "options": [
+   {
+    "id": "A",
+    "text": "El estándar en CLAUDE.md (siempre cargado) y el flujo de documentación como skill invocado bajo demanda."
+   },
+   {
+    "id": "B",
+    "text": "Ambos en CLAUDE.md, para garantizar que Claude siempre disponga de las instrucciones."
+   },
+   {
+    "id": "C",
+    "text": "Ambos como skills, ya que los skills se cargan solo cuando son relevantes y ahorran contexto."
+   },
+   {
+    "id": "D",
+    "text": "El estándar como skill con context: fork y el flujo de documentación en CLAUDE.md."
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "TS 3.2: CLAUDE.md contiene estándares universales siempre cargados; los skills sirven para flujos específicos de una tarea que se invocan bajo demanda.",
+  "distractors": {
+   "B": "Cargar flujos ocasionales siempre en CLAUDE.md consume contexto innecesario en cada sesión.",
+   "C": "Un estándar universal en un skill depende de invocarlo y puede omitirse; debe estar siempre cargado.",
+   "D": "Invierte los roles: el estándar universal no debe depender de invocación y el flujo puntual no debe ocupar contexto permanente."
+  },
+  "difficulty": 1,
+  "en": {
+   "stem": "The team has two needs: (1) a naming and error-handling standard that must be followed in every interaction, and (2) a multi-step workflow for generating API documentation that is only used occasionally. How should they be organized?",
+   "options": {
+    "A": "The standard in CLAUDE.md (always loaded) and the documentation workflow as a skill invoked on demand.",
+    "B": "Both in CLAUDE.md, to guarantee that Claude always has the instructions.",
+    "C": "Both as skills, since skills load only when relevant and save context.",
+    "D": "The standard as a skill with context: fork and the documentation workflow in CLAUDE.md."
+   },
+   "explanation": "TS 3.2: CLAUDE.md holds universal standards that are always loaded; skills are for task-specific workflows that are invoked on demand.",
+   "distractors": {
+    "B": "Always loading occasional workflows in CLAUDE.md consumes unnecessary context in every session.",
+    "C": "A universal standard in a skill depends on being invoked and can be skipped; it must always be loaded.",
+    "D": "This reverses the roles: the universal standard must not depend on invocation, and the occasional workflow must not occupy permanent context."
+   },
+   "topic": "TS 3.2 Skills vs CLAUDE.md"
+  }
+ },
+ {
+  "id": "cca-s2-08",
+  "domain": "claudecode",
+  "scenario": "s2",
+  "topic": "TS 3.1 @import and .claude/rules",
+  "type": "multi",
+  "choose": 2,
+  "stem": "El CLAUDE.md raíz de un monorepo creció a cientos de líneas mezclando pruebas, convenciones de API y despliegue, y cada paquete solo necesita una parte. Además, los desarrolladores reportan comportamientos distintos entre sesiones. ¿Qué DOS acciones resuelven mejor la situación? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Dividir el contenido en archivos temáticos dentro de .claude/rules/ (por ejemplo testing.md, api-conventions.md, deployment.md)."
+   },
+   {
+    "id": "B",
+    "text": "Mover todo el contenido a ~/.claude/CLAUDE.md de cada desarrollador para que cargue más rápido."
+   },
+   {
+    "id": "C",
+    "text": "Usar @import en el CLAUDE.md de cada paquete para incluir solo los archivos de estándares relevantes a ese paquete."
+   },
+   {
+    "id": "D",
+    "text": "Duplicar el contenido completo del CLAUDE.md raíz en cada paquete para garantizar que nada falte."
+   },
+   {
+    "id": "E",
+    "text": "Eliminar el CLAUDE.md y pedir a los desarrolladores que peguen las convenciones en cada prompt."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "explanation": "TS 3.1: .claude/rules/ permite organizar reglas por tema en lugar de un CLAUDE.md monolítico, y @import incluye selectivamente estándares por paquete. Además, /memory ayuda a verificar qué archivos se cargaron.",
+  "distractors": {
+   "B": "El nivel usuario no se comparte con el equipo y reproduce el problema de inconsistencia entre sesiones y personas.",
+   "D": "Duplicar el contenido completo aumenta el contexto irrelevante y genera divergencias de mantenimiento.",
+   "E": "Pegar convenciones en cada prompt es manual, propenso a omisiones y descarta el mecanismo versionado de configuración."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "The root CLAUDE.md of a monorepo has grown to hundreds of lines mixing testing, API conventions, and deployment, and each package needs only part of it. In addition, developers report different behavior between sessions. Which TWO actions best resolve the situation? Select TWO.",
+   "options": {
+    "A": "Split the content into topic files inside .claude/rules/ (for example testing.md, api-conventions.md, deployment.md).",
+    "B": "Move all the content to each developer's ~/.claude/CLAUDE.md so it loads faster.",
+    "C": "Use @import in each package's CLAUDE.md to include only the standards files relevant to that package.",
+    "D": "Duplicate the full content of the root CLAUDE.md in every package to ensure nothing is missing.",
+    "E": "Delete the CLAUDE.md and ask developers to paste the conventions into every prompt."
+   },
+   "explanation": "TS 3.1: .claude/rules/ lets you organize rules by topic instead of a monolithic CLAUDE.md, and @import selectively includes standards per package. In addition, /memory helps verify which files were loaded.",
+   "distractors": {
+    "B": "User level is not shared with the team and reproduces the problem of inconsistency between sessions and people.",
+    "D": "Duplicating the full content increases irrelevant context and creates maintenance drift.",
+    "E": "Pasting conventions into every prompt is manual, prone to omissions, and discards the version-controlled configuration mechanism."
+   },
+   "topic": "TS 3.1 @import and .claude/rules"
+  }
+ },
+ {
+  "id": "cca-s2-09",
+  "domain": "context",
+  "scenario": "s2",
+  "topic": "TS 5.1 Trimming verbose tool output",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un agente de depuración consulta una herramienta de métricas que devuelve más de 40 campos por servicio, aunque solo 5 son relevantes para el diagnóstico. Tras varias consultas, el contexto se llena y las respuestas pierden precisión. ¿Qué solución ataca mejor la causa?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Pedir a Claude que resuma en prosa cada resultado completo después de leerlo, y conservar solo el resumen."
+   },
+   {
+    "id": "B",
+    "text": "Aumentar la ventana de contexto y confiar en que el modelo ignore los campos irrelevantes."
+   },
+   {
+    "id": "C",
+    "text": "Recortar la salida de la herramienta a los campos relevantes antes de que se acumule en el contexto."
+   },
+   {
+    "id": "D",
+    "text": "Reiniciar la conversación después de cada consulta y repetir el contexto completo a mano."
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "TS 5.1: los resultados de herramientas se acumulan y consumen tokens desproporcionadamente; conviene recortarlos a los campos relevantes antes de que lleguen al contexto.",
+  "distractors": {
+   "A": "El resumen posterior ya consumió el contexto con la salida completa y además puede perder valores numéricos o fechas.",
+   "B": "Más contexto no evita el ruido ni el efecto de información relevante perdida entre contenido irrelevante.",
+   "D": "Reiniciar cada vez pierde el hilo del diagnóstico y obliga a reconstruir manualmente información crítica."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "A debugging agent queries a metrics tool that returns more than 40 fields per service, although only 5 are relevant to the diagnosis. After several queries, the context fills up and responses lose accuracy. Which solution best addresses the cause?",
+   "options": {
+    "A": "Ask Claude to summarize each full result in prose after reading it, and keep only the summary.",
+    "B": "Increase the context window and trust the model to ignore the irrelevant fields.",
+    "C": "Trim the tool output to the relevant fields before it accumulates in the context.",
+    "D": "Restart the conversation after every query and manually repeat the full context."
+   },
+   "explanation": "TS 5.1: Tool results accumulate and consume tokens disproportionately; they should be trimmed to the relevant fields before they reach the context.",
+   "distractors": {
+    "A": "The after-the-fact summary has already consumed context with the full output and may also lose numeric values or dates.",
+    "B": "More context does not prevent the noise or the effect of relevant information getting lost among irrelevant content.",
+    "D": "Restarting every time loses the thread of the diagnosis and forces you to manually rebuild critical information."
+   },
+   "topic": "TS 5.1 Trimming verbose tool output"
+  }
+ },
+ {
+  "id": "cca-s2-10",
+  "domain": "context",
+  "scenario": "s2",
+  "topic": "TS 5.4 Scratchpad files",
+  "type": "single",
+  "choose": 1,
+  "stem": "Durante una larga sesión de exploración de un repositorio grande, Claude empieza a responder con 'patrones típicos' en lugar de citar las clases concretas que había descubierto horas antes, y sus respuestas se vuelven inconsistentes. ¿Qué práctica mitiga mejor esta degradación?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Mantener un scratchpad file con los hallazgos clave y consultarlo para las preguntas posteriores."
+   },
+   {
+    "id": "B",
+    "text": "Pedir a Claude que 'recuerde con más cuidado' en cada pregunta nueva."
+   },
+   {
+    "id": "C",
+    "text": "Continuar la sesión sin cambios y verificar manualmente cada respuesta contra el código."
+   },
+   {
+    "id": "D",
+    "text": "Cargar todo el código fuente relevante de nuevo en cada pregunta."
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "TS 5.4: los scratchpad files persisten hallazgos clave a través de los límites de contexto y contrarrestan la degradación en sesiones extensas, permitiendo referenciar hechos concretos en vez de patrones genéricos.",
+  "distractors": {
+   "B": "Una instrucción de atención no repone información que ya se degradó en un contexto extenso.",
+   "C": "No corrige la causa y traslada al desarrollador el costo de verificar todo manualmente.",
+   "D": "Recargar todo el código vuelve a saturar el contexto con el ruido que provocó la degradación."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "During a long exploration session of a large repository, Claude starts answering with 'typical patterns' instead of citing the specific classes it had discovered hours earlier, and its answers become inconsistent. Which practice best mitigates this degradation?",
+   "options": {
+    "A": "Maintain a scratchpad file with the key findings and consult it for subsequent questions.",
+    "B": "Ask Claude to 'remember more carefully' on each new question.",
+    "C": "Continue the session unchanged and manually verify each answer against the code.",
+    "D": "Reload all the relevant source code on every question."
+   },
+   "explanation": "TS 5.4: Scratchpad files persist key findings across context boundaries and counteract degradation in long sessions, allowing you to reference concrete facts instead of generic patterns.",
+   "distractors": {
+    "B": "An attention instruction does not restore information that has already degraded in a long context.",
+    "C": "It does not fix the cause and shifts the cost of verifying everything manually to the developer.",
+    "D": "Reloading all the code saturates the context again with the same noise that caused the degradation."
+   },
+   "topic": "TS 5.4 Scratchpad files"
+  }
+ },
+ {
+  "id": "cca-s2-11",
+  "domain": "context",
+  "scenario": "s2",
+  "topic": "TS 5.2 Ambiguity resolution",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un desarrollador pide a Claude Code que 'refactorice la función processOrder'. La búsqueda en el repositorio devuelve tres funciones con ese nombre en distintos servicios y nada en el prompt indica cuál es. ¿Cuál es el comportamiento más adecuado?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Elegir la que tenga más referencias, por ser probablemente la más importante, y avisar después."
+   },
+   {
+    "id": "B",
+    "text": "Refactorizar las tres de forma consistente para cubrir cualquier interpretación."
+   },
+   {
+    "id": "C",
+    "text": "Pedir al desarrollador un identificador adicional (servicio o ruta del archivo) antes de modificar nada."
+   },
+   {
+    "id": "D",
+    "text": "Escoger la primera coincidencia devuelta por la búsqueda y continuar para no interrumpir el flujo."
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "TS 5.2: cuando los resultados devuelven múltiples coincidencias, se debe pedir identificadores adicionales en lugar de seleccionar mediante heurísticas, evitando cambios en el código equivocado.",
+  "distractors": {
+   "A": "Seleccionar por número de referencias es una heurística que puede apuntar a la función incorrecta.",
+   "B": "Refactorizar las tres amplía el alcance con cambios no solicitados y riesgo en servicios no previstos.",
+   "D": "La primera coincidencia es arbitraria y puede modificar el código equivocado sin que nadie lo note."
+  },
+  "difficulty": 1,
+  "en": {
+   "stem": "A developer asks Claude Code to 'refactor the processOrder function'. A repository search returns three functions with that name in different services, and nothing in the prompt indicates which one is meant. What is the most appropriate behavior?",
+   "options": {
+    "A": "Pick the one with the most references, as it is probably the most important, and notify afterward.",
+    "B": "Refactor all three consistently to cover any interpretation.",
+    "C": "Ask the developer for an additional identifier (service or file path) before modifying anything.",
+    "D": "Choose the first match returned by the search and continue so as not to interrupt the flow."
+   },
+   "explanation": "TS 5.2: When results return multiple matches, ask for additional identifiers instead of selecting by heuristics, avoiding changes to the wrong code.",
+   "distractors": {
+    "A": "Selecting by reference count is a heuristic that may point to the wrong function.",
+    "B": "Refactoring all three expands the scope with unrequested changes and risk to unintended services.",
+    "D": "The first match is arbitrary and may modify the wrong code without anyone noticing."
+   },
+   "topic": "TS 5.2 Ambiguity resolution"
+  }
+ },
+ {
+  "id": "cca-s2-12",
+  "domain": "context",
+  "scenario": "s2",
+  "topic": "TS 5.4 /compact and subagent delegation",
+  "type": "multi",
+  "choose": 2,
+  "stem": "En una sesión larga de exploración de un servicio heredado, el contexto se está llenando con salida verbosa de búsquedas y lecturas de archivos, y aún falta una fase de análisis de pruebas. ¿Qué DOS acciones preservan mejor la capacidad de coordinación de la sesión principal? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Delegar preguntas específicas (por ejemplo, localizar todos los archivos de prueba) a subagentes que devuelvan solo un resumen."
+   },
+   {
+    "id": "B",
+    "text": "Pegar en el prompt toda la salida de las búsquedas anteriores para que Claude no pierda detalle."
+   },
+   {
+    "id": "C",
+    "text": "Usar /compact para reducir el uso de contexto cuando se acumule salida verbosa de descubrimiento."
+   },
+   {
+    "id": "D",
+    "text": "Continuar en la misma sesión sin intervenir hasta que el contexto se agote y luego empezar de cero sin notas."
+   },
+   {
+    "id": "E",
+    "text": "Pedir que cada respuesta incluya el razonamiento completo para poder auditarlo después."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "explanation": "TS 5.4: la delegación a subagentes aísla la exploración verbosa mientras el agente principal coordina, y /compact reduce el contexto cuando se llena de salida de descubrimiento.",
+  "distractors": {
+   "B": "Reinsertar toda la salida agrava la saturación en lugar de reducirla.",
+   "D": "Esperar al agotamiento pierde hallazgos sin registro; faltan scratchpad files o resúmenes que persistan el estado.",
+   "E": "Respuestas con razonamiento extenso consumen más contexto y no ayudan a preservarlo."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "In a long exploration session of a legacy service, the context is filling up with verbose search and file-read output, and an analysis phase for tests is still to come. Which TWO actions best preserve the main session's ability to coordinate? Select TWO.",
+   "options": {
+    "A": "Delegate specific questions (for example, locating all test files) to subagents that return only a summary.",
+    "B": "Paste all the output from earlier searches into the prompt so Claude does not lose detail.",
+    "C": "Use /compact to reduce context usage when verbose discovery output accumulates.",
+    "D": "Continue in the same session without intervening until the context runs out, then start from scratch without notes.",
+    "E": "Ask for every response to include its full reasoning so it can be audited later."
+   },
+   "explanation": "TS 5.4: Delegating to subagents isolates verbose exploration while the main agent coordinates, and /compact reduces context when it fills with discovery output.",
+   "distractors": {
+    "B": "Reinserting all the output worsens saturation instead of reducing it.",
+    "D": "Waiting until exhaustion loses findings with no record; scratchpad files or summaries that persist state are missing.",
+    "E": "Responses with extensive reasoning consume more context and do not help preserve it."
+   },
+   "topic": "TS 5.4 /compact and subagent delegation"
+  }
+ }
+]

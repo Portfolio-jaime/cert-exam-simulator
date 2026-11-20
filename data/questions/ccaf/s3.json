@@ -1,0 +1,650 @@
+[
+ {
+  "id": "cca-s3-01",
+  "domain": "agentic",
+  "scenario": "s3",
+  "topic": "TS 1.2 Coordinator-subagent decomposition",
+  "type": "single",
+  "choose": 1,
+  "stem": "En el sistema de investigación, el coordinator recibe la consulta \"impacto del cambio climático en la pesca industrial\" y la descompone solo en tres subtareas sobre la pesca en el Atlántico Norte. Los informes finales ignoran regiones y efectos económicos enteros, aunque todos los subagents funcionan bien. ¿Cuál es la corrección más adecuada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Aumentar el número máximo de iteraciones de cada subagent para que busquen más fuentes dentro de su subtarea."
+   },
+   {
+    "id": "B",
+    "text": "Ajustar el prompt del coordinator para que descomponga el tema en toda su amplitud (regiones, tipos de impacto, dimensiones económicas) y evalúe la cobertura antes de sintetizar."
+   },
+   {
+    "id": "C",
+    "text": "Hacer que cada subagent se comunique directamente con los demás para descubrir subtemas faltantes."
+   },
+   {
+    "id": "D",
+    "text": "Añadir un subagent adicional de report generation que reescriba el informe final con más detalle."
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "Según TS 1.2, una descomposición demasiado estrecha por parte del coordinator produce cobertura incompleta de temas amplios; la causa raíz está en la decomposition del coordinator, no en los subagents.",
+  "distractors": {
+   "A": "Más iteraciones profundizan en las subtareas ya definidas, pero no añaden los subtemas que el coordinator nunca asignó.",
+   "C": "La comunicación directa rompe el hub-and-spoke y pierde observabilidad, sin resolver la descomposición incompleta.",
+   "D": "El report generator solo puede redactar con lo que recibe; no puede inventar cobertura que nunca se investigó."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "In the research system, the coordinator receives the query \"impact of climate change on industrial fishing\" and decomposes it into only three subtasks about North Atlantic fishing. The final reports ignore entire regions and economic effects, even though all subagents work well. What is the most appropriate fix?",
+   "options": {
+    "A": "Increase the maximum number of iterations for each subagent so they search more sources within their subtask.",
+    "B": "Adjust the coordinator prompt so it decomposes the topic across its full breadth (regions, impact types, economic dimensions) and evaluates coverage before synthesizing.",
+    "C": "Have each subagent communicate directly with the others to discover missing subtopics.",
+    "D": "Add an additional report generation subagent that rewrites the final report in more detail."
+   },
+   "explanation": "According to TS 1.2, an overly narrow decomposition by the coordinator produces incomplete coverage of broad topics; the root cause lies in the coordinator's decomposition, not in the subagents.",
+   "distractors": {
+    "A": "More iterations go deeper into the subtasks already defined, but do not add the subtopics the coordinator never assigned.",
+    "C": "Direct communication breaks the hub-and-spoke pattern and loses observability, without fixing the incomplete decomposition.",
+    "D": "The report generator can only write with what it receives; it cannot invent coverage that was never researched."
+   },
+   "topic": "TS 1.2 Coordinator-subagent decomposition"
+  }
+ },
+ {
+  "id": "cca-s3-02",
+  "domain": "agentic",
+  "scenario": "s3",
+  "topic": "TS 1.3 Explicit context passing to subagents",
+  "type": "single",
+  "choose": 1,
+  "stem": "El coordinator ejecuta primero el web-search subagent y el document-analysis subagent, y luego invoca al synthesis subagent con una instrucción breve: \"Sintetiza los hallazgos anteriores\". El synthesis subagent responde que no tiene hallazgos que sintetizar. ¿Cuál es la solución correcta?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Configurar el synthesis subagent para que lea automáticamente el historial de conversación del coordinator mediante memoria compartida."
+   },
+   {
+    "id": "B",
+    "text": "Reanudar la misma sesión del web-search subagent y pedirle que ejecute también la síntesis."
+   },
+   {
+    "id": "C",
+    "text": "Incluir en el prompt del synthesis subagent los hallazgos completos de ambos agentes, en un formato estructurado que separe el contenido de los metadatos de fuente."
+   },
+   {
+    "id": "D",
+    "text": "Darle al synthesis subagent las herramientas de búsqueda web para que reconstruya los hallazgos por su cuenta."
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "TS 1.3: los subagents operan con contexto aislado y no heredan el historial del coordinator, por lo que los hallazgos previos deben pasarse explícitamente en el prompt, con datos estructurados que preserven la atribución.",
+  "distractors": {
+   "A": "Los subagents no comparten memoria ni heredan el contexto del padre automáticamente; esa configuración no existe como mecanismo por defecto.",
+   "B": "Mezclar búsqueda y síntesis en un solo agente elimina la especialización y no resuelve el paso de los resultados del otro subagent.",
+   "D": "Repetir las búsquedas duplica trabajo, ignora el análisis de documentos ya hecho y amplía las herramientas más allá de su rol."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "The coordinator first runs the web-search subagent and the document-analysis subagent, and then invokes the synthesis subagent with a brief instruction: \"Synthesize the previous findings.\" The synthesis subagent responds that it has no findings to synthesize. What is the correct solution?",
+   "options": {
+    "A": "Configure the synthesis subagent to automatically read the coordinator's conversation history through shared memory.",
+    "B": "Resume the same web-search subagent session and ask it to also perform the synthesis.",
+    "C": "Include the complete findings from both agents in the synthesis subagent's prompt, in a structured format that separates content from source metadata.",
+    "D": "Give the synthesis subagent the web search tools so it reconstructs the findings on its own."
+   },
+   "explanation": "TS 1.3: subagents operate with isolated context and do not inherit the coordinator's history, so prior findings must be passed explicitly in the prompt, using structured data that preserves attribution.",
+   "distractors": {
+    "A": "Subagents do not share memory or automatically inherit the parent's context; that configuration does not exist as a default mechanism.",
+    "B": "Combining search and synthesis in a single agent removes specialization and does not solve passing the other subagent's results.",
+    "D": "Repeating the searches duplicates work, ignores the document analysis already done, and extends the tools beyond its role."
+   },
+   "topic": "TS 1.3 Explicit context passing to subagents"
+  }
+ },
+ {
+  "id": "cca-s3-03",
+  "domain": "agentic",
+  "scenario": "s3",
+  "topic": "TS 1.3 Parallel subagent spawning with Task",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Quieres que el coordinator investigue en paralelo tres subtemas independientes con distintos subagents, reduciendo la latencia total. ¿Qué DOS acciones son necesarias o recomendables? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Incluir \"Task\" en allowedTools del coordinator para que pueda invocar subagents."
+   },
+   {
+    "id": "B",
+    "text": "Emitir las invocaciones de Task en turnos separados, esperando el resultado de cada una antes de lanzar la siguiente."
+   },
+   {
+    "id": "C",
+    "text": "Pedir al coordinator que escriba en su prompt la secuencia exacta de pasos que cada subagent debe seguir."
+   },
+   {
+    "id": "D",
+    "text": "Hacer que el coordinator emita múltiples llamadas Task en una sola respuesta."
+   },
+   {
+    "id": "E",
+    "text": "Compartir una única sesión entre los tres subagents para que vean el trabajo de los demás."
+   }
+  ],
+  "answer": [
+   "A",
+   "D"
+  ],
+  "explanation": "TS 1.3: el coordinator necesita \"Task\" en allowedTools para spawnear subagents, y el paralelismo se logra emitiendo varias llamadas Task en una misma respuesta en lugar de en turnos separados.",
+  "distractors": {
+   "B": "Lanzar las llamadas en turnos separados serializa la ejecución y anula el beneficio del paralelismo.",
+   "C": "Los prompts del coordinator deben fijar objetivos y criterios de calidad, no pasos procedimentales rígidos, para permitir la adaptación de los subagents.",
+   "E": "Los subagents no comparten memoria entre invocaciones; el contexto debe pasarse explícitamente en cada prompt."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "You want the coordinator to research three independent subtopics in parallel with different subagents, reducing total latency. Which TWO actions are necessary or recommended? Select TWO.",
+   "options": {
+    "A": "Include \"Task\" in the coordinator's allowedTools so it can invoke subagents.",
+    "B": "Issue the Task invocations in separate turns, waiting for each result before launching the next one.",
+    "C": "Ask the coordinator to write in its prompt the exact sequence of steps each subagent must follow.",
+    "D": "Have the coordinator emit multiple Task calls in a single response.",
+    "E": "Share a single session among the three subagents so they see each other's work."
+   },
+   "explanation": "TS 1.3: the coordinator needs \"Task\" in allowedTools to spawn subagents, and parallelism is achieved by emitting several Task calls in the same response instead of in separate turns.",
+   "distractors": {
+    "B": "Launching calls in separate turns serializes execution and defeats the benefit of parallelism.",
+    "C": "Coordinator prompts should set goals and quality criteria, not rigid procedural steps, to allow subagents to adapt.",
+    "E": "Subagents do not share memory between invocations; context must be passed explicitly in each prompt."
+   },
+   "topic": "TS 1.3 Parallel subagent spawning with Task"
+  }
+ },
+ {
+  "id": "cca-s3-04",
+  "domain": "agentic",
+  "scenario": "s3",
+  "topic": "TS 1.2 Iterative refinement loop",
+  "type": "single",
+  "choose": 1,
+  "stem": "Tras recibir la primera síntesis, el coordinator detecta que no hay datos sobre dos de los cinco subtemas planificados. Quieres un diseño que garantice cobertura sin ejecutar siempre el pipeline completo. ¿Qué enfoque es el más adecuado?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Que el coordinator evalúe la síntesis en busca de gaps, re-delegue consultas dirigidas a los subagents de búsqueda y análisis, y vuelva a invocar la síntesis hasta que la cobertura sea suficiente."
+   },
+   {
+    "id": "B",
+    "text": "Entregar el informe tal cual e indicar al usuario que repita la consulta con términos más específicos."
+   },
+   {
+    "id": "C",
+    "text": "Relanzar siempre todos los subagents desde cero con la consulta original hasta obtener un informe más largo."
+   },
+   {
+    "id": "D",
+    "text": "Dejar que el synthesis subagent complete los subtemas faltantes con su conocimiento previo del modelo."
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "TS 1.2 describe loops de refinamiento iterativo: el coordinator evalúa gaps en la síntesis, re-delega búsquedas y análisis dirigidos y re-sintetiza hasta lograr cobertura, seleccionando dinámicamente a quién invocar.",
+  "distractors": {
+   "B": "Traslada al usuario una responsabilidad de orquestación que corresponde al coordinator.",
+   "C": "Repetir todo el pipeline desperdicia recursos y no apunta a los gaps concretos detectados.",
+   "D": "Rellenar con conocimiento no respaldado por fuentes rompe la citación y la trazabilidad del informe."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "After receiving the first synthesis, the coordinator detects that there is no data on two of the five planned subtopics. You want a design that guarantees coverage without always running the full pipeline. Which approach is most appropriate?",
+   "options": {
+    "A": "Have the coordinator evaluate the synthesis for gaps, re-delegate targeted queries to the search and analysis subagents, and invoke the synthesis again until coverage is sufficient.",
+    "B": "Deliver the report as is and tell the user to repeat the query with more specific terms.",
+    "C": "Always relaunch all subagents from scratch with the original query until a longer report is obtained.",
+    "D": "Let the synthesis subagent fill in the missing subtopics with the model's prior knowledge."
+   },
+   "explanation": "TS 1.2 describes iterative refinement loops: the coordinator evaluates the synthesis for gaps, re-delegates targeted searches and analyses, and re-synthesizes until coverage is achieved, dynamically selecting which agents to invoke.",
+   "distractors": {
+    "B": "It shifts an orchestration responsibility that belongs to the coordinator onto the user.",
+    "C": "Repeating the whole pipeline wastes resources and does not target the specific gaps detected.",
+    "D": "Filling in with knowledge not backed by sources breaks citation and the report's traceability."
+   },
+   "topic": "TS 1.2 Iterative refinement loop"
+  }
+ },
+ {
+  "id": "cca-s3-05",
+  "domain": "agentic",
+  "scenario": "s3",
+  "topic": "TS 1.5 PostToolUse hooks for data normalization",
+  "type": "single",
+  "choose": 1,
+  "stem": "Los MCP tools de búsqueda devuelven fechas de publicación en formatos distintos (timestamps Unix, ISO 8601 y cadenas como \"hace 3 días\"), y el agente a veces ordena mal las fuentes por antigüedad. Necesitas una solución determinista. ¿Qué eliges?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Añadir al system prompt una lista de ejemplos de cada formato de fecha y pedir al modelo que los convierta con cuidado."
+   },
+   {
+    "id": "B",
+    "text": "Pedir al synthesis subagent que ordene las fuentes y corrija las fechas durante la redacción del informe."
+   },
+   {
+    "id": "C",
+    "text": "Reducir el número de herramientas de búsqueda a una sola para evitar formatos heterogéneos."
+   },
+   {
+    "id": "D",
+    "text": "Implementar un hook PostToolUse que normalice las fechas a un formato único antes de que el modelo procese el resultado."
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "TS 1.5: los hooks PostToolUse interceptan los resultados de las herramientas y normalizan formatos heterogéneos antes de que el modelo los vea, lo que ofrece garantía determinista frente al cumplimiento probabilístico del prompt.",
+  "distractors": {
+   "A": "Las instrucciones en el prompt son probabilísticas y tienen una tasa de fallo distinta de cero.",
+   "B": "Desplaza la normalización a una etapa tardía y sigue dependiendo del modelo, con riesgo de propagar fechas incorrectas.",
+   "C": "Reduce la capacidad de búsqueda sin garantizar un formato consistente en el único resultado restante."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "The search MCP tools return publication dates in different formats (Unix timestamps, ISO 8601, and strings such as \"3 days ago\"), and the agent sometimes sorts sources incorrectly by age. You need a deterministic solution. What do you choose?",
+   "options": {
+    "A": "Add to the system prompt a list of examples of each date format and ask the model to convert them carefully.",
+    "B": "Ask the synthesis subagent to sort the sources and correct the dates while writing the report.",
+    "C": "Reduce the number of search tools to a single one to avoid heterogeneous formats.",
+    "D": "Implement a PostToolUse hook that normalizes dates to a single format before the model processes the result."
+   },
+   "explanation": "TS 1.5: PostToolUse hooks intercept tool results and normalize heterogeneous formats before the model sees them, providing a deterministic guarantee as opposed to the probabilistic compliance of a prompt.",
+   "distractors": {
+    "A": "Prompt instructions are probabilistic and have a nonzero failure rate.",
+    "B": "It shifts normalization to a late stage and still depends on the model, risking propagation of incorrect dates.",
+    "C": "It reduces search capability without guaranteeing a consistent format in the single remaining result."
+   },
+   "topic": "TS 1.5 PostToolUse hooks for data normalization"
+  }
+ },
+ {
+  "id": "cca-s3-06",
+  "domain": "mcp",
+  "scenario": "s3",
+  "topic": "TS 2.1 Tool descriptions and overlap",
+  "type": "single",
+  "choose": 1,
+  "stem": "El web-search subagent tiene los tools analyze_content y analyze_document con descripciones casi idénticas (\"Analiza contenido\"). El agente los confunde con frecuencia: usa analyze_document sobre páginas web. ¿Qué corrección ataca mejor la causa?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Añadir en el system prompt la regla \"usa siempre analyze_document para todo\"."
+   },
+   {
+    "id": "B",
+    "text": "Renombrar analyze_content a un nombre específico como extract_web_results y reescribir las descripciones con entradas esperadas, salidas y cuándo usar cada tool."
+   },
+   {
+    "id": "C",
+    "text": "Forzar tool_choice con un tool concreto en todas las peticiones del subagent."
+   },
+   {
+    "id": "D",
+    "text": "Fusionar ambos tools en un único analyze con un parámetro \"mode\" opcional."
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "TS 2.1: la descripción es el mecanismo principal para la selección de tools; descripciones solapadas causan misrouting, y se corrige renombrando y diferenciando propósito, entradas y límites de cada tool.",
+  "distractors": {
+   "A": "Una regla genérica en el prompt puede crear asociaciones de palabras clave no deseadas y no resuelve la ambigüedad entre los tools.",
+   "C": "Forzar un tool elimina la elección del modelo y rompe los casos en que el otro tool es el correcto.",
+   "D": "Un tool genérico con modo opcional aumenta la ambigüedad en lugar de definir contratos claros de entrada y salida."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "The web-search subagent has the tools analyze_content and analyze_document with nearly identical descriptions (\"Analyzes content\"). The agent frequently confuses them: it uses analyze_document on web pages. Which fix best addresses the cause?",
+   "options": {
+    "A": "Add the rule \"always use analyze_document for everything\" to the system prompt.",
+    "B": "Rename analyze_content to a specific name such as extract_web_results and rewrite the descriptions with expected inputs, outputs, and when to use each tool.",
+    "C": "Force tool_choice with a specific tool on all of the subagent's requests.",
+    "D": "Merge both tools into a single analyze tool with an optional \"mode\" parameter."
+   },
+   "explanation": "TS 2.1: the description is the primary mechanism for tool selection; overlapping descriptions cause misrouting, and this is fixed by renaming and differentiating the purpose, inputs, and boundaries of each tool.",
+   "distractors": {
+    "A": "A generic prompt rule can create unwanted keyword associations and does not resolve the ambiguity between the tools.",
+    "C": "Forcing a tool removes the model's choice and breaks the cases where the other tool is the correct one.",
+    "D": "A generic tool with an optional mode increases ambiguity instead of defining clear input and output contracts."
+   },
+   "topic": "TS 2.1 Tool descriptions and overlap"
+  }
+ },
+ {
+  "id": "cca-s3-07",
+  "domain": "mcp",
+  "scenario": "s3",
+  "topic": "TS 2.3 Scoped tool access and cross-role tools",
+  "type": "single",
+  "choose": 1,
+  "stem": "El synthesis subagent necesita con frecuencia comprobar datos puntuales (por ejemplo, una cifra o una fecha) y hoy el equipo piensa darle todo el conjunto de tools de búsqueda web, lo que ha provocado que intente buscar en lugar de sintetizar. ¿Cuál es la mejor solución?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Darle un tool acotado verify_fact para las comprobaciones simples y frecuentes, y dejar que las verificaciones complejas pasen por el coordinator."
+   },
+   {
+    "id": "B",
+    "text": "Mantener todos los tools de búsqueda y añadir en el prompt \"no busques salvo que sea imprescindible\"."
+   },
+   {
+    "id": "C",
+    "text": "Quitar todos los tools al synthesis subagent y prohibirle señalar datos dudosos."
+   },
+   {
+    "id": "D",
+    "text": "Darle acceso a los 18 tools del sistema para que elija el más apropiado en cada caso."
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "TS 2.3: restringir cada subagent a las herramientas de su rol y ofrecer tools cross-role acotados para necesidades frecuentes, enrutando los casos complejos por el coordinator, mejora la fiabilidad de selección.",
+  "distractors": {
+   "B": "El prompt es una guía probabilística y mantiene un conjunto de tools fuera de especialización que invita al mal uso.",
+   "C": "Elimina por completo la capacidad de verificación rápida y obliga a viajes innecesarios al coordinator en casos simples.",
+   "D": "Más tools aumentan la complejidad de decisión y degradan la fiabilidad de selección."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "The synthesis subagent frequently needs to check specific data points (for example, a figure or a date), and the team is currently considering giving it the entire set of web search tools, which has led it to try searching instead of synthesizing. What is the best solution?",
+   "options": {
+    "A": "Give it a scoped verify_fact tool for simple, frequent checks, and route complex verifications through the coordinator.",
+    "B": "Keep all the search tools and add \"do not search unless essential\" to the prompt.",
+    "C": "Remove all tools from the synthesis subagent and forbid it from flagging doubtful data.",
+    "D": "Give it access to all 18 tools in the system so it can choose the most appropriate one in each case."
+   },
+   "explanation": "TS 2.3: restricting each subagent to the tools of its role and offering scoped cross-role tools for frequent needs, routing complex cases through the coordinator, improves selection reliability.",
+   "distractors": {
+    "B": "The prompt is probabilistic guidance and keeps an out-of-specialty tool set that invites misuse.",
+    "C": "It completely removes quick verification capability and forces unnecessary round trips to the coordinator in simple cases.",
+    "D": "More tools increase decision complexity and degrade selection reliability."
+   },
+   "topic": "TS 2.3 Scoped tool access and cross-role tools"
+  }
+ },
+ {
+  "id": "cca-s3-08",
+  "domain": "context",
+  "scenario": "s3",
+  "topic": "TS 5.3 Error propagation across subagents",
+  "type": "single",
+  "choose": 1,
+  "stem": "El web-search subagent agota el timeout al consultar una fuente tras reintentar localmente dos veces, pero ya había obtenido resultados de otras tres fuentes. ¿Qué debe devolver al coordinator?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Una lista vacía marcada como éxito, para no interrumpir el flujo del informe."
+   },
+   {
+    "id": "B",
+    "text": "El mensaje genérico \"búsqueda no disponible\" para mantener la respuesta simple."
+   },
+   {
+    "id": "C",
+    "text": "Una excepción que termine todo el workflow de investigación para evitar informes incompletos."
+   },
+   {
+    "id": "D",
+    "text": "Un error estructurado con tipo de fallo, consulta intentada, resultados parciales y alternativas posibles, para que el coordinator decida cómo recuperarse."
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "TS 5.3: los subagents resuelven localmente los fallos transitorios y propagan solo lo que no pueden resolver, con contexto estructurado (tipo, intento, resultados parciales, alternativas) que permite una recuperación inteligente del coordinator.",
+  "distractors": {
+   "A": "Suprimir el error como éxito oculta que faltan datos y produce un informe aparentemente completo pero incorrecto.",
+   "B": "Un estado genérico oculta el contexto que el coordinator necesita para decidir entre reintentar, usar otra fuente o continuar.",
+   "C": "Terminar todo por un fallo único descarta los resultados parciales válidos y es un anti-patrón."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "The web-search subagent hits the timeout when querying one source after retrying locally twice, but it had already obtained results from three other sources. What should it return to the coordinator?",
+   "options": {
+    "A": "An empty list marked as success, so as not to interrupt the report flow.",
+    "B": "The generic message \"search unavailable\" to keep the response simple.",
+    "C": "An exception that terminates the entire research workflow to avoid incomplete reports.",
+    "D": "A structured error with failure type, attempted query, partial results, and possible alternatives, so the coordinator can decide how to recover."
+   },
+   "explanation": "TS 5.3: subagents resolve transient failures locally and propagate only what they cannot resolve, with structured context (type, attempt, partial results, alternatives) that enables intelligent recovery by the coordinator.",
+   "distractors": {
+    "A": "Suppressing the error as a success hides that data is missing and produces a report that appears complete but is incorrect.",
+    "B": "A generic status hides the context the coordinator needs to decide between retrying, using another source, or continuing.",
+    "C": "Terminating everything because of a single failure discards valid partial results and is an anti-pattern."
+   },
+   "topic": "TS 5.3 Error propagation across subagents"
+  }
+ },
+ {
+  "id": "cca-s3-09",
+  "domain": "context",
+  "scenario": "s3",
+  "topic": "TS 5.6 Conflicting statistics and temporal data",
+  "type": "single",
+  "choose": 1,
+  "stem": "Dos fuentes creíbles reportan la capacidad solar instalada global: 1,2 TW y 1,6 TW. Al revisar, se ve que una es de 2023 y la otra de 2024. El document-analysis subagent debe entregar sus resultados al synthesis subagent. ¿Qué práctica es la correcta?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Quedarse con la cifra más alta por ser la más reciente y descartar la otra sin mencionarla."
+   },
+   {
+    "id": "B",
+    "text": "Promediar ambas cifras para presentar un único valor intermedio."
+   },
+   {
+    "id": "C",
+    "text": "Incluir ambos valores con su atribución y su fecha de publicación o recolección, anotando el conflicto para que no se interprete como contradicción temporal."
+   },
+   {
+    "id": "D",
+    "text": "Excluir el dato del informe porque las fuentes no coinciden."
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "TS 5.6: ante estadísticas en conflicto se anotan ambos valores con su fuente, y las fechas obligatorias en los outputs estructurados evitan malinterpretar diferencias temporales como contradicciones.",
+  "distractors": {
+   "A": "Elegir arbitrariamente un valor y ocultar el otro pierde provenance y puede ser incorrecto si no se verificó la fecha.",
+   "B": "Un promedio fabrica una cifra que ninguna fuente respalda.",
+   "D": "Omitir un dato relevante empobrece el informe cuando el conflicto puede anotarse con atribución y contexto."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "Two credible sources report global installed solar capacity: 1.2 TW and 1.6 TW. On review, one is from 2023 and the other from 2024. The document-analysis subagent must deliver its results to the synthesis subagent. Which practice is correct?",
+   "options": {
+    "A": "Keep the higher figure because it is the most recent and discard the other without mentioning it.",
+    "B": "Average both figures to present a single intermediate value.",
+    "C": "Include both values with their attribution and their publication or collection date, noting the conflict so it is not interpreted as a temporal contradiction.",
+    "D": "Exclude the data from the report because the sources do not agree."
+   },
+   "explanation": "TS 5.6: when statistics conflict, both values are annotated with their source, and mandatory dates in structured outputs prevent temporal differences from being misread as contradictions.",
+   "distractors": {
+    "A": "Arbitrarily choosing one value and hiding the other loses provenance and may be incorrect if the date was not verified.",
+    "B": "An average fabricates a figure that no source supports.",
+    "D": "Omitting relevant data weakens the report when the conflict can be annotated with attribution and context."
+   },
+   "topic": "TS 5.6 Conflicting statistics and temporal data"
+  }
+ },
+ {
+  "id": "cca-s3-10",
+  "domain": "context",
+  "scenario": "s3",
+  "topic": "TS 5.1 Lost in the middle and aggregated inputs",
+  "type": "single",
+  "choose": 1,
+  "stem": "El synthesis subagent recibe 40 páginas de hallazgos concatenados de varios subagents y en el informe omite sistemáticamente conclusiones que estaban en la parte central de la entrada. ¿Qué cambio mitiga mejor este problema?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Enviar los hallazgos en orden aleatorio en cada ejecución para compensar el sesgo de posición."
+   },
+   {
+    "id": "B",
+    "text": "Colocar al inicio un resumen de hallazgos clave y organizar el detalle con encabezados de sección explícitos."
+   },
+   {
+    "id": "C",
+    "text": "Pedir al modelo que responda con mayor longitud para que incluya más secciones."
+   },
+   {
+    "id": "D",
+    "text": "Eliminar los encabezados y fusionar todo en un único bloque continuo para reducir tokens de formato."
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "TS 5.1 describe el efecto lost in the middle: el modelo procesa mejor el inicio y el final de entradas largas, así que conviene poner un resumen de hallazgos clave al principio y estructurar el detalle con encabezados.",
+  "distractors": {
+   "A": "Aleatorizar el orden no elimina el efecto de posición y hace los resultados irreproducibles.",
+   "C": "Pedir más longitud no corrige qué partes de la entrada se procesan con menor fiabilidad.",
+   "D": "Quitar la estructura empeora la navegación del contenido y agrava la omisión de secciones intermedias."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "The synthesis subagent receives 40 pages of findings concatenated from several subagents and systematically omits from the report conclusions that were in the middle of the input. Which change best mitigates this problem?",
+   "options": {
+    "A": "Send the findings in random order on each run to compensate for position bias.",
+    "B": "Place a summary of key findings at the beginning and organize the detail with explicit section headings.",
+    "C": "Ask the model to respond at greater length so it includes more sections.",
+    "D": "Remove the headings and merge everything into a single continuous block to reduce formatting tokens."
+   },
+   "explanation": "TS 5.1 describes the lost in the middle effect: the model processes the beginning and end of long inputs better, so it is advisable to put a summary of key findings at the start and structure the detail with headings.",
+   "distractors": {
+    "A": "Randomizing the order does not eliminate the position effect and makes results irreproducible.",
+    "C": "Asking for more length does not correct which parts of the input are processed less reliably.",
+    "D": "Removing the structure worsens content navigation and aggravates the omission of middle sections."
+   },
+   "topic": "TS 5.1 Lost in the middle and aggregated inputs"
+  }
+ },
+ {
+  "id": "cca-s3-11",
+  "domain": "context",
+  "scenario": "s3",
+  "topic": "TS 5.6 Claim-source provenance in synthesis",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Los informes citados pierden con frecuencia la atribución: afirmaciones de la sección final no se pueden rastrear a su fuente tras la síntesis. ¿Qué DOS cambios preservan mejor el provenance? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Pedir a la síntesis que condense los hallazgos en prosa fluida y añada una bibliografía genérica al final."
+   },
+   {
+    "id": "B",
+    "text": "Requerir a los subagents salidas con mapeos estructurados de afirmación a fuente (URL, nombre de documento, extracto relevante)."
+   },
+   {
+    "id": "C",
+    "text": "Eliminar las fechas y el contexto metodológico para que la salida sea más corta y fácil de mezclar."
+   },
+   {
+    "id": "D",
+    "text": "Convertir todo el contenido, incluidos datos financieros y noticias, a un único formato uniforme de viñetas."
+   },
+   {
+    "id": "E",
+    "text": "Instruir al synthesis subagent para preservar y fusionar esos mapeos claim-source al combinar hallazgos, y estructurar el informe separando hallazgos bien establecidos de los discutidos."
+   }
+  ],
+  "answer": [
+   "B",
+   "E"
+  ],
+  "explanation": "TS 5.6: la atribución se pierde al resumir sin mapeos afirmación-fuente; los subagents deben emitir mapeos estructurados y la síntesis debe preservarlos y fusionarlos, distinguiendo claramente hallazgos establecidos y disputados.",
+  "distractors": {
+   "A": "La prosa condensada con bibliografía genérica rompe el vínculo entre cada afirmación y su fuente concreta.",
+   "C": "Las fechas y el contexto metodológico son necesarios para interpretar correctamente los datos y su temporalidad.",
+   "D": "Cada tipo de contenido debe renderizarse de forma apropiada (tablas para finanzas, prosa para noticias), no con un formato uniforme."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "Cited reports frequently lose attribution: claims in the final section cannot be traced back to their source after synthesis. Which TWO changes best preserve provenance? Select TWO.",
+   "options": {
+    "A": "Ask the synthesis to condense the findings into flowing prose and add a generic bibliography at the end.",
+    "B": "Require subagents to produce outputs with structured claim-to-source mappings (URL, document name, relevant excerpt).",
+    "C": "Remove dates and methodological context so the output is shorter and easier to merge.",
+    "D": "Convert all content, including financial data and news, into a single uniform bullet-point format.",
+    "E": "Instruct the synthesis subagent to preserve and merge those claim-source mappings when combining findings, and to structure the report by separating well-established findings from contested ones."
+   },
+   "explanation": "TS 5.6: attribution is lost when summarizing without claim-source mappings; subagents must emit structured mappings and the synthesis must preserve and merge them, clearly distinguishing established and disputed findings.",
+   "distractors": {
+    "A": "Condensed prose with a generic bibliography breaks the link between each claim and its specific source.",
+    "C": "Dates and methodological context are necessary to correctly interpret the data and its temporality.",
+    "D": "Each content type should be rendered appropriately (tables for financial data, prose for news), not in a uniform format."
+   },
+   "topic": "TS 5.6 Claim-source provenance in synthesis"
+  }
+ },
+ {
+  "id": "cca-s3-12",
+  "domain": "context",
+  "scenario": "s3",
+  "topic": "TS 5.1 Structured upstream outputs for limited context",
+  "type": "single",
+  "choose": 1,
+  "stem": "El synthesis subagent tiene un presupuesto de contexto limitado, y el document-analysis subagent le envía transcripciones completas con todo su razonamiento intermedio, lo que desplaza información valiosa. ¿Qué cambio es el más adecuado?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Modificar el subagent upstream para que devuelva datos estructurados (hechos clave, citas y puntuaciones de relevancia) en lugar de contenido verboso y cadenas de razonamiento."
+   },
+   {
+    "id": "B",
+    "text": "Truncar las transcripciones a los primeros N tokens antes de enviarlas."
+   },
+   {
+    "id": "C",
+    "text": "Pedir al synthesis subagent que ignore todo lo que considere poco importante sin ninguna estructura previa."
+   },
+   {
+    "id": "D",
+    "text": "Ejecutar la síntesis en la misma sesión del coordinator para compartir su ventana de contexto."
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "TS 5.1: cuando los agentes downstream tienen presupuesto de contexto limitado, se modifican los agentes upstream para devolver datos estructurados con hechos clave, citas y relevancia, no contenido verboso con razonamiento.",
+  "distractors": {
+   "B": "Truncar por posición descarta información de forma arbitraria, incluida la que está en el final del documento.",
+   "C": "Sin estructura previa el modelo sigue consumiendo el contexto con todo el texto antes de poder filtrar.",
+   "D": "Mezclar la síntesis con el coordinator infla su contexto y elimina el aislamiento que protege su coordinación."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "The synthesis subagent has a limited context budget, and the document-analysis subagent sends it complete transcripts with all its intermediate reasoning, which displaces valuable information. Which change is most appropriate?",
+   "options": {
+    "A": "Modify the upstream subagent to return structured data (key facts, quotes, and relevance scores) instead of verbose content and reasoning chains.",
+    "B": "Truncate the transcripts to the first N tokens before sending them.",
+    "C": "Ask the synthesis subagent to ignore anything it considers unimportant without any prior structure.",
+    "D": "Run the synthesis in the coordinator's same session to share its context window."
+   },
+   "explanation": "TS 5.1: when downstream agents have a limited context budget, upstream agents are modified to return structured data with key facts, quotes, and relevance, not verbose content with reasoning.",
+   "distractors": {
+    "B": "Truncating by position discards information arbitrarily, including what is at the end of the document.",
+    "C": "Without prior structure the model still consumes context with all the text before it can filter.",
+    "D": "Merging the synthesis with the coordinator bloats its context and removes the isolation that protects its coordination."
+   },
+   "topic": "TS 5.1 Structured upstream outputs for limited context"
+  }
+ }
+]

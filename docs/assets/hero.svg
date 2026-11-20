@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-labelledby="t d">
+  <title id="t">Cert Exam Simulator</title>
+  <desc id="d">Animated banner: practice exam simulator for SAA-C03 and CCAR-F</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"><animate attributeName="stop-color" values="#0f172a;#1e1b4b;#0c4a6e;#0f172a" dur="12s" repeatCount="indefinite"/></stop>
+      <stop offset="1" stop-color="#1e293b"><animate attributeName="stop-color" values="#1e293b;#312e81;#134e4a;#1e293b" dur="12s" repeatCount="indefinite"/></stop>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#38bdf8"/><stop offset="0.5" stop-color="#a78bfa"/><stop offset="1" stop-color="#34d399"/>
+    </linearGradient>
+    <clipPath id="clip"><rect width="1200" height="320" rx="20"/></clipPath>
+  </defs>
+  <g clip-path="url(#clip)">
+    <rect width="1200" height="320" fill="url(#bg)"/>
+    <g opacity="0.18" stroke="#94a3b8" stroke-width="1">
+      <path d="M0 80H1200M0 160H1200M0 240H1200"/>
+      <path d="M150 0V320M300 0V320M450 0V320M600 0V320M750 0V320M900 0V320M1050 0V320"/>
+    </g>
+    <g fill="#38bdf8" opacity="0.55">
+      <circle cx="140" cy="70" r="5"><animate attributeName="cy" values="70;50;70" dur="5s" repeatCount="indefinite"/></circle>
+      <circle cx="980" cy="250" r="7" fill="#a78bfa"><animate attributeName="cy" values="250;228;250" dur="6s" repeatCount="indefinite"/></circle>
+      <circle cx="1090" cy="90" r="4" fill="#34d399"><animate attributeName="cy" values="90;112;90" dur="4.5s" repeatCount="indefinite"/></circle>
+      <circle cx="60" cy="250" r="4" fill="#a78bfa"><animate attributeName="cy" values="250;232;250" dur="5.5s" repeatCount="indefinite"/></circle>
+    </g>
+    <text x="600" y="128" text-anchor="middle" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="64" font-weight="800" fill="url(#accent)">Cert Exam Simulator
+      <animate attributeName="opacity" values="0;1" dur="1.2s" fill="freeze"/>
+    </text>
+    <text x="600" y="176" text-anchor="middle" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" fill="#cbd5e1">Realistic practice exams · timer · scoring · PDF report · EN/ES
+      <animate attributeName="opacity" values="0;0;1" keyTimes="0;0.4;1" dur="2s" fill="freeze"/>
+    </text>
+    <g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="22" font-weight="700">
+      <g>
+        <rect x="360" y="212" width="230" height="46" rx="23" fill="#0ea5e9" fill-opacity="0.18" stroke="#38bdf8"/>
+        <text x="475" y="242" text-anchor="middle" fill="#7dd3fc">AWS · SAA-C03</text>
+        <animateTransform attributeName="transform" type="translate" values="0 0;0 -4;0 0" dur="3.2s" repeatCount="indefinite"/>
+      </g>
+      <g>
+        <rect x="610" y="212" width="230" height="46" rx="23" fill="#a78bfa" fill-opacity="0.18" stroke="#a78bfa"/>
+        <text x="725" y="242" text-anchor="middle" fill="#c4b5fd">Claude · CCAR-F</text>
+        <animateTransform attributeName="transform" type="translate" values="0 0;0 -4;0 0" dur="3.2s" begin="0.8s" repeatCount="indefinite"/>
+      </g>
+    </g>
+    <rect x="0" y="312" width="1200" height="8" fill="url(#accent)">
+      <animate attributeName="width" values="0;1200;1200" keyTimes="0;0.6;1" dur="6s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+</svg>
