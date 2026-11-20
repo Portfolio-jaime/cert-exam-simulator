@@ -1,0 +1,588 @@
+[
+  {
+    "id": "perf-01",
+    "domain": "performance",
+    "topic": "EBS io2 vs gp3",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una base de datos Oracle en Amazon EC2 necesita sostener 60.000 IOPS con latencia inferior al milisegundo y alta durabilidad. Los volúmenes gp3 actuales se quedan cortos en IOPS. ¿Qué tipo de volumen EBS debe usar el arquitecto para obtener el MAYOR rendimiento de IOPS?",
+    "options": [
+      {
+        "id": "A",
+        "text": "io2 Block Express"
+      },
+      {
+        "id": "B",
+        "text": "gp3 con más throughput aprovisionado"
+      },
+      {
+        "id": "C",
+        "text": "st1"
+      },
+      {
+        "id": "D",
+        "text": "sc1"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "io2 Block Express soporta hasta 256.000 IOPS por volumen con latencia de submilisegundo y 99,999% de durabilidad, ideal para bases de datos críticas con muchas IOPS.",
+    "distractors": {
+      "B": "gp3 tiene un máximo de 16.000 IOPS; subir el throughput no aumenta las IOPS más allá de ese límite.",
+      "C": "st1 es HDD optimizado para throughput secuencial y no sirve para cargas transaccionales de IOPS altas.",
+      "D": "sc1 es HDD de almacenamiento frío, con el menor rendimiento y orientado a datos de acceso poco frecuente."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-02",
+    "domain": "performance",
+    "topic": "EBS st1 throughput",
+    "type": "single",
+    "choose": 1,
+    "stem": "Un clúster de análisis lee archivos de log muy grandes de forma secuencial desde volúmenes EBS adjuntos a instancias EC2. La carga requiere alto throughput, no IOPS aleatorias, y el equipo quiere el menor costo por GB posible dentro de esa necesidad. ¿Qué tipo de volumen debe elegir?",
+    "options": [
+      {
+        "id": "A",
+        "text": "io2 Block Express"
+      },
+      {
+        "id": "B",
+        "text": "st1 (Throughput Optimized HDD)"
+      },
+      {
+        "id": "C",
+        "text": "gp3 con 16.000 IOPS"
+      },
+      {
+        "id": "D",
+        "text": "Instance store en instancias T3"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "st1 está diseñado para cargas secuenciales de gran throughput (big data, logs, data warehouses) a menor costo por GB que los SSD.",
+    "distractors": {
+      "A": "io2 es SSD de alto costo pensado para IOPS aleatorias, innecesario para lectura secuencial.",
+      "C": "gp3 funciona pero cuesta más por GB que st1 y paga por IOPS que la carga no necesita.",
+      "D": "Las instancias T3 no ofrecen instance store, por lo que la opción no es viable."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-03",
+    "domain": "performance",
+    "topic": "Instance store",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una aplicación de procesamiento de vídeo necesita un espacio temporal de lectura y escritura con el MAYOR rendimiento de E/S local posible. Los datos intermedios se regeneran fácilmente y el resultado final se guarda en Amazon S3. ¿Qué almacenamiento ofrece la mayor velocidad para este caso?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Volúmenes EBS io2 Block Express"
+      },
+      {
+        "id": "B",
+        "text": "Un sistema de archivos Amazon EFS en modo Max I/O"
+      },
+      {
+        "id": "C",
+        "text": "Instance store NVMe en una instancia optimizada para almacenamiento"
+      },
+      {
+        "id": "D",
+        "text": "Un bucket de S3 Standard montado con un cliente FUSE"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "El instance store NVMe está físicamente conectado al host y ofrece la menor latencia y mayor IOPS; es adecuado para datos temporales que pueden perderse al detener la instancia.",
+    "distractors": {
+      "A": "io2 es muy rápido, pero es almacenamiento en red y más costoso que el instance store para datos efímeros.",
+      "B": "EFS es almacenamiento de red con latencia mayor que el almacenamiento local NVMe.",
+      "D": "S3 montado vía FUSE añade latencia y no está pensado como scratch de alto rendimiento."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-04",
+    "domain": "performance",
+    "topic": "FSx for Lustre",
+    "type": "single",
+    "choose": 1,
+    "stem": "Un equipo de investigación ejecuta simulaciones HPC que procesan cientos de TB almacenados en Amazon S3. Necesitan un sistema de archivos compartido con throughput de cientos de GB/s y latencias de submilisegundo, integrado con los datos del bucket. ¿Qué servicio debe usarse?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Amazon EFS en modo Bursting"
+      },
+      {
+        "id": "B",
+        "text": "Amazon FSx for Windows File Server"
+      },
+      {
+        "id": "C",
+        "text": "Amazon S3 Standard con acceso directo desde las instancias"
+      },
+      {
+        "id": "D",
+        "text": "Amazon FSx for Lustre vinculado al bucket de S3"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "FSx for Lustre está diseñado para HPC y machine learning, ofrece alto throughput y latencia baja, y se integra de forma nativa con S3 para cargar y exportar datos.",
+    "distractors": {
+      "A": "EFS no alcanza el rendimiento paralelo de Lustre para cargas HPC de este tamaño.",
+      "B": "FSx for Windows usa SMB y está pensado para cargas Windows, no para HPC en Linux.",
+      "C": "S3 es almacenamiento de objetos sin semántica POSIX ni la latencia de un sistema de archivos paralelo."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-05",
+    "domain": "performance",
+    "topic": "FSx for NetApp ONTAP",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una empresa migra a AWS aplicaciones que acceden a los mismos datos por NFS desde Linux, por SMB desde Windows y por iSCSI desde otro servidor. Quieren conservar las funciones de NetApp como snapshots y deduplicación con el MENOR esfuerzo de migración. ¿Qué servicio cumple los requisitos?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Amazon FSx for NetApp ONTAP"
+      },
+      {
+        "id": "B",
+        "text": "Amazon EFS"
+      },
+      {
+        "id": "C",
+        "text": "Amazon FSx for Windows File Server"
+      },
+      {
+        "id": "D",
+        "text": "Amazon FSx for Lustre"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "FSx for NetApp ONTAP soporta NFS, SMB e iSCSI sobre el mismo sistema de archivos y ofrece las funciones de ONTAP, lo que simplifica la migración desde NetApp.",
+    "distractors": {
+      "B": "EFS solo soporta NFS y no ofrece SMB ni iSCSI.",
+      "C": "FSx for Windows solo expone SMB y no ofrece NFS ni iSCSI.",
+      "D": "FSx for Lustre está orientado a HPC y no soporta SMB ni las funciones de NetApp."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-06",
+    "domain": "performance",
+    "topic": "S3 Transfer Acceleration",
+    "type": "single",
+    "choose": 1,
+    "stem": "Oficinas remotas en varios continentes suben archivos de 5 GB a un único bucket de S3 en us-east-1 y las cargas son lentas e inestables. Se necesita acelerar las subidas y poder reanudar partes fallidas sin reenviar todo el archivo. ¿Qué combinación es la más adecuada?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Activar Cross-Region Replication hacia cada oficina"
+      },
+      {
+        "id": "B",
+        "text": "Activar S3 Transfer Acceleration y usar multipart upload"
+      },
+      {
+        "id": "C",
+        "text": "Cambiar la clase de almacenamiento a S3 Glacier Instant Retrieval"
+      },
+      {
+        "id": "D",
+        "text": "Crear un prefijo distinto por cada oficina"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Transfer Acceleration enruta el tráfico por edge locations de CloudFront y la red de AWS, y multipart upload sube partes en paralelo y permite reintentar solo las que fallan.",
+    "distractors": {
+      "A": "CRR replica objetos ya almacenados entre buckets; no acelera la subida desde las oficinas.",
+      "C": "La clase de almacenamiento no cambia la velocidad de carga.",
+      "D": "Los prefijos mejoran el paralelismo de solicitudes por prefijo, pero no resuelven la latencia de red de larga distancia."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-07",
+    "domain": "performance",
+    "topic": "Global Accelerator vs CloudFront",
+    "type": "single",
+    "choose": 1,
+    "stem": "Un juego multijugador usa tráfico UDP hacia servidores en dos Regiones de AWS. Se requieren direcciones IP estáticas de entrada y enrutamiento por la red global de AWS hacia el endpoint saludable más cercano con la MENOR latencia. ¿Qué servicio debe usarse?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Amazon CloudFront con origen personalizado"
+      },
+      {
+        "id": "B",
+        "text": "Amazon Route 53 con enrutamiento por geolocalización"
+      },
+      {
+        "id": "C",
+        "text": "AWS Global Accelerator"
+      },
+      {
+        "id": "D",
+        "text": "Un Application Load Balancer que abarque ambas Regiones"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Global Accelerator proporciona dos IP anycast estáticas, soporta TCP y UDP y dirige el tráfico por la red troncal de AWS al endpoint saludable más cercano.",
+    "distractors": {
+      "A": "CloudFront está orientado a contenido HTTP/HTTPS y no soporta tráfico de juego UDP.",
+      "B": "Route 53 hace resolución DNS; no ofrece IP estáticas ni usa la red troncal de AWS para el tráfico.",
+      "D": "Un ALB es regional, solo maneja HTTP/HTTPS y no abarca varias Regiones."
+    },
+    "difficulty": 3
+  },
+  {
+    "id": "perf-08",
+    "domain": "performance",
+    "topic": "ElastiCache Redis vs Memcached",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una aplicación de juegos necesita una tabla de clasificación en tiempo real con rankings ordenados, además de replicación y conmutación por error automática del caché. ¿Qué opción de Amazon ElastiCache cumple estos requisitos?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Memcached con varios nodos"
+      },
+      {
+        "id": "B",
+        "text": "Memcached con Auto Discovery"
+      },
+      {
+        "id": "C",
+        "text": "DAX en frente de la base de datos"
+      },
+      {
+        "id": "D",
+        "text": "ElastiCache for Redis con grupos de replicación"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Redis ofrece estructuras como sorted sets, ideales para leaderboards, además de replicación y failover con Multi-AZ.",
+    "distractors": {
+      "A": "Memcached es un almacén clave-valor simple, sin sorted sets ni replicación nativa.",
+      "B": "Auto Discovery solo permite a los clientes encontrar nodos; no añade estructuras de datos ni alta disponibilidad.",
+      "C": "DAX es un caché exclusivo para DynamoDB y no sirve como motor de rankings genérico."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-09",
+    "domain": "performance",
+    "topic": "DynamoDB DAX",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una aplicación de catálogo realiza millones de lecturas repetidas sobre una tabla de Amazon DynamoDB y necesita latencias de microsegundos. El equipo quiere hacer los MÍNIMOS cambios de código. ¿Qué solución recomienda?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Colocar DynamoDB Accelerator (DAX) delante de la tabla"
+      },
+      {
+        "id": "B",
+        "text": "Migrar los datos a Amazon RDS con réplicas de lectura"
+      },
+      {
+        "id": "C",
+        "text": "Usar DynamoDB Streams con una función Lambda que actualice un caché"
+      },
+      {
+        "id": "D",
+        "text": "Aumentar las unidades de capacidad de lectura de la tabla"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "DAX es un caché en memoria compatible con la API de DynamoDB que reduce la latencia de lecturas a microsegundos con cambios mínimos, solo apuntando el cliente al clúster DAX.",
+    "distractors": {
+      "B": "Migrar a RDS exige rediseñar la aplicación y no garantiza microsegundos.",
+      "C": "Construir un caché propio con Streams y Lambda añade complejidad y no es transparente.",
+      "D": "Más capacidad de lectura mejora el throughput pero no baja la latencia a microsegundos."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-10",
+    "domain": "performance",
+    "topic": "Kinesis Data Firehose",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una empresa recibe eventos de miles de dispositivos y debe entregarlos de forma continua a Amazon S3 en formato comprimido. No necesitan consumidores personalizados y quieren el MENOR esfuerzo operativo. ¿Qué servicio debe usar?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Kinesis Data Streams con un consumidor en EC2"
+      },
+      {
+        "id": "B",
+        "text": "Amazon Data Firehose"
+      },
+      {
+        "id": "C",
+        "text": "Amazon SQS estándar con instancias que escriben en S3"
+      },
+      {
+        "id": "D",
+        "text": "Amazon MSK con un conector propio"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Amazon Data Firehose (Kinesis Data Firehose) es un servicio totalmente administrado que entrega streaming a S3 con buffering y compresión sin administrar consumidores.",
+    "distractors": {
+      "A": "Data Streams exige desarrollar y operar consumidores y gestionar shards.",
+      "C": "SQS no está pensado para streaming y requiere código y servidores adicionales.",
+      "D": "MSK implica operar un clúster y conectores, más esfuerzo del necesario."
+    },
+    "difficulty": 1
+  },
+  {
+    "id": "perf-11",
+    "domain": "performance",
+    "topic": "Athena ad hoc queries",
+    "type": "single",
+    "choose": 1,
+    "stem": "Un equipo de analistas debe ejecutar consultas SQL ocasionales sobre terabytes de datos en formato Parquet almacenados en Amazon S3. No quieren aprovisionar ni administrar infraestructura y desean pagar solo por consulta. ¿Qué servicio es el más adecuado?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Un clúster provisionado de Amazon Redshift"
+      },
+      {
+        "id": "B",
+        "text": "Un clúster de Amazon EMR con Hive"
+      },
+      {
+        "id": "C",
+        "text": "Amazon Athena con el AWS Glue Data Catalog"
+      },
+      {
+        "id": "D",
+        "text": "Amazon RDS for PostgreSQL"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Athena es serverless, consulta datos en S3 con SQL estándar y cobra por datos escaneados; el Glue Data Catalog guarda el esquema.",
+    "distractors": {
+      "A": "Redshift provisionado requiere administrar un clúster y se paga aunque no haya consultas.",
+      "B": "EMR requiere configurar y operar un clúster, más esfuerzo para consultas ocasionales.",
+      "D": "Cargar terabytes en RDS no escala ni es rentable para análisis ad hoc."
+    },
+    "difficulty": 1
+  },
+  {
+    "id": "perf-12",
+    "domain": "performance",
+    "topic": "NLB vs ALB",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una aplicación de trading recibe millones de conexiones TCP por segundo, necesita latencias ultra bajas y una dirección IP estática por zona de disponibilidad para que los clientes configuren listas de permitidos. ¿Qué balanceador debe usarse?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Application Load Balancer con reglas por ruta"
+      },
+      {
+        "id": "B",
+        "text": "Gateway Load Balancer"
+      },
+      {
+        "id": "C",
+        "text": "Classic Load Balancer"
+      },
+      {
+        "id": "D",
+        "text": "Network Load Balancer con Elastic IP"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "NLB opera en la capa 4, maneja millones de solicitudes por segundo con latencia ultra baja y soporta una Elastic IP por zona de disponibilidad.",
+    "distractors": {
+      "A": "ALB trabaja en la capa 7, añade más latencia y no ofrece IP estáticas por AZ.",
+      "B": "GWLB despliega y escala appliances de red virtuales, no balancea aplicaciones de usuario.",
+      "C": "Classic Load Balancer es de generación anterior y no ofrece este rendimiento ni IP estáticas."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-13",
+    "domain": "performance",
+    "topic": "Cluster placement group",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una simulación HPC de acoplamiento estrecho ejecuta nodos EC2 que intercambian mensajes MPI constantemente. Se necesita la MENOR latencia de red entre instancias y el mayor throughput entre nodos. ¿Qué configuración es la adecuada?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Un cluster placement group con instancias compatibles con Elastic Fabric Adapter"
+      },
+      {
+        "id": "B",
+        "text": "Un spread placement group entre tres zonas de disponibilidad"
+      },
+      {
+        "id": "C",
+        "text": "Un partition placement group con una partición por nodo"
+      },
+      {
+        "id": "D",
+        "text": "Instancias en Regiones distintas conectadas con VPC peering"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "El placement group tipo cluster agrupa instancias en una misma zona de disponibilidad con red de baja latencia, y EFA mejora la comunicación entre nodos en HPC.",
+    "distractors": {
+      "B": "Spread distribuye instancias en hardware distinto para tolerancia a fallos, sin priorizar latencia mínima.",
+      "C": "Partition está orientado a aplicaciones distribuidas grandes como Hadoop o Cassandra, no a baja latencia entre nodos.",
+      "D": "Entre Regiones la latencia es mucho mayor."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-14",
+    "domain": "performance",
+    "topic": "Aurora read replicas",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una aplicación en Amazon Aurora MySQL sufre lentitud en las escrituras porque los informes de BI ejecutan consultas pesadas contra la instancia principal. Se quiere aislar los informes sin copiar datos manualmente y con baja latencia de replicación. ¿Qué debe hacer el arquitecto?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Aumentar el tamaño de la instancia escritora sin más cambios"
+      },
+      {
+        "id": "B",
+        "text": "Añadir Aurora Replicas y dirigir los informes al reader endpoint"
+      },
+      {
+        "id": "C",
+        "text": "Exportar a diario un snapshot a S3 y consultarlo con Athena"
+      },
+      {
+        "id": "D",
+        "text": "Crear una réplica en otra Región con escritura habilitada"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Las Aurora Replicas comparten el mismo volumen de almacenamiento y tienen retraso típico de milisegundos; el reader endpoint reparte las lecturas entre ellas y libera al escritor.",
+    "distractors": {
+      "A": "Escalar verticalmente no elimina la contención entre informes y escrituras y es más costoso.",
+      "C": "Los snapshots diarios dan datos desactualizados y añaden pasos manuales.",
+      "D": "Las réplicas entre Regiones son de solo lectura y añaden latencia; no ayudan a escalar escrituras."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-15",
+    "domain": "performance",
+    "topic": "API Gateway caching",
+    "type": "multi",
+    "choose": 2,
+    "stem": "Una API REST de Amazon API Gateway sirve respuestas GET que casi no cambian a clientes en todo el mundo y el backend se sobrecarga con solicitudes repetidas. Se busca reducir la latencia percibida y la carga del backend. Elige DOS.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Habilitar el caché de API Gateway en la etapa"
+      },
+      {
+        "id": "B",
+        "text": "Usar un endpoint edge-optimized de API Gateway"
+      },
+      {
+        "id": "C",
+        "text": "Aumentar el timeout de integración a 29 segundos"
+      },
+      {
+        "id": "D",
+        "text": "Cambiar a un endpoint privado"
+      },
+      {
+        "id": "E",
+        "text": "Subir el límite de throttling de la cuenta"
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "explanation": "El caché de etapa devuelve respuestas sin invocar al backend, y el endpoint edge-optimized enruta por CloudFront para reducir la latencia de clientes globales.",
+    "distractors": {
+      "C": "Un timeout mayor no reduce la latencia ni la carga, solo permite esperar más.",
+      "D": "Un endpoint privado solo es accesible desde una VPC, lo opuesto a servir clientes globales.",
+      "E": "Subir el throttling permite más tráfico al backend y empeora su sobrecarga."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-16",
+    "domain": "performance",
+    "topic": "DMS and Snowball Edge",
+    "type": "multi",
+    "choose": 2,
+    "stem": "Una empresa debe migrar 150 TB de datos de archivos y una base de datos PostgreSQL activa desde un datacenter con enlace de solo 100 Mbps. La base de datos debe seguir replicándose hasta el corte con mínimo tiempo de inactividad. Elige DOS.",
+    "options": [
+      {
+        "id": "A",
+        "text": "Usar AWS Snowball Edge para transferir en bloque los archivos"
+      },
+      {
+        "id": "B",
+        "text": "Usar AWS DMS con captura de cambios (CDC) para la base de datos"
+      },
+      {
+        "id": "C",
+        "text": "Subir todo por la red con AWS DataSync a 100 Mbps"
+      },
+      {
+        "id": "D",
+        "text": "Usar AWS Schema Conversion Tool para convertir el esquema a Oracle"
+      },
+      {
+        "id": "E",
+        "text": "Usar Amazon S3 Transfer Acceleration para los 150 TB"
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "explanation": "Snowball Edge mueve datos masivos sin depender del ancho de banda, y DMS con CDC replica continuamente los cambios para un corte con mínima inactividad.",
+    "distractors": {
+      "C": "A 100 Mbps, 150 TB tardarían más de un año, por lo que la transferencia por red no es viable.",
+      "D": "SCT convierte esquemas entre motores distintos; aquí el destino puede seguir siendo PostgreSQL y no resuelve el volumen.",
+      "E": "Transfer Acceleration no supera el límite del enlace local de 100 Mbps."
+    },
+    "difficulty": 3
+  }
+]
