@@ -1,19 +1,29 @@
-import { BANK, BANK_MAP } from '../bank';
-import { ExamSession, MODE_CONFIG } from '../exam/engine';
+import { ALL_QUESTIONS, BANK_MAP, bankFor } from '../bank';
+import { ExamSession, modeConfig } from '../exam/engine';
 import { buildExam } from '../exam/sampler';
 import { certificateEligible, isCorrect } from '../exam/scoring';
+import { daysUntil, EXAMS, examById, type ExamDef } from '../exams';
+import { scenarioView, tr, view, type Lang } from '../i18n';
 import { downloadPdf } from '../pdf/certificate';
+import { PLANS, RESOURCES } from '../plans';
 import { Store } from '../store';
-import { DOMAINS, DOMAIN_LABEL, MODE_LABEL, PASS_SCALED, type Attempt, type Domain, type Mode, type Question } from '../types';
+import type { Attempt, Mode, Question } from '../types';
 import { fmtClock, h, mount } from './dom';
 
 const store = new Store();
 const root = document.getElementById('app')!;
 let session: ExamSession | null = null;
 let timer: number | undefined;
-let view: 'q' | 'summary' = 'q';
+let sub: 'q' | 'summary' = 'q';
 
-const NUM_WORD = ['', 'UNA', 'DOS', 'TRES', 'CUATRO'];
+const lang = (): Lang => store.lang();
+const T = (es: string, en: string) => tr(lang(), es, en);
+const cur = (): ExamDef => examById(store.exam());
+const MODE_EN: Record<Mode, string> = { block: 'Block', full: 'Full simulation', domain: 'Domain practice', review: 'Missed review' };
+const MODE_ES: Record<Mode, string> = { block: 'Bloque', full: 'Simulacro completo', domain: 'Práctica por dominio', review: 'Repaso de falladas' };
+const modeLabel = (m: Mode) => (lang() === 'en' ? MODE_EN[m] : MODE_ES[m]);
+const NUM_ES = ['', 'UNA', 'DOS', 'TRES'];
+const NUM_EN = ['', 'ONE', 'TWO', 'THREE'];
 
 function stats() {
   return store.stats((a, id) => {
@@ -27,7 +37,10 @@ function stopTimer() {
   timer = undefined;
 }
 
-/* ------------------------------ routing ------------------------------ */
+const go = (hash: string) => {
+  if (location.hash === hash) route();
+  else location.hash = hash;
+};
 
 export function route(): void {
   const [, page = '', arg = ''] = location.hash.replace(/^#/, '').split('/');
@@ -37,73 +50,124 @@ export function route(): void {
     case 'results': return renderResults(arg);
     case 'review': return renderReview(arg);
     case 'history': return renderHistory();
+    case 'plan': return renderPlan();
     default: return renderHome();
   }
 }
 
-const go = (hash: string) => {
-  if (location.hash === hash) route();
-  else location.hash = hash;
-};
+/* ------------------------------ shared bits ------------------------------ */
+
+function langSwitch(): HTMLElement {
+  const btn = (l: Lang) => h('button', { class: lang() === l ? 'primary' : '', onclick: () => { store.setLang(l); route(); } }, l.toUpperCase());
+  return h('div', { class: 'row' }, btn('es'), btn('en'));
+}
+
+function questionBody(q: Question, exam: ExamDef): Node[] {
+  const sc = scenarioView(exam, q.scenario, lang());
+  return sc ? [h('div', { class: 'scenario' }, h('strong', {}, `${T('Escenario', 'Scenario')}: ${sc.title}`), h('p', { class: 'small' }, sc.text))] : [];
+}
 
 /* -------------------------------- home -------------------------------- */
 
 function renderHome(): void {
+  const exam = cur();
+  const bank = bankFor(exam.id);
   const st = stats();
   const saved = store.loadSession();
-  const counts = Object.fromEntries(DOMAINS.map((d) => [d, BANK.filter((q) => q.domain === d).length])) as Record<Domain, number>;
-  const nameInput = h('input', { type: 'text', placeholder: 'Tu nombre (para el PDF)', value: store.name(), maxLength: 60 });
+  const days = daysUntil(exam.date);
+  const history = store.history().filter((a) => a.exam === exam.id);
+  const nameInput = h('input', { type: 'text', placeholder: T('Tu nombre (para el PDF)', 'Your name (for the PDF)'), value: store.name(), maxLength: 60 });
   nameInput.oninput = () => store.setName(nameInput.value);
-  const domainSel = h('select', {}, ...DOMAINS.map((d) => h('option', { value: d }, `${DOMAIN_LABEL[d]} (${counts[d]})`)));
+  const domainSel = h('select', {}, ...exam.domains.map((d) => h('option', { value: d.id }, `${d.label} (${bank.filter((q) => q.domain === d.id).length})`)));
+  const failedHere = [...st.failed].filter((id) => BANK_MAP.get(id) && bank.includes(BANK_MAP.get(id)!)).length;
+
+  const tabs = h('div', { class: 'row' }, ...EXAMS.map((e) =>
+    h('button', { class: e.id === exam.id ? 'primary' : '', onclick: () => { store.setExam(e.id); renderHome(); } }, e.short)));
 
   const modeCard = (mode: Mode, desc: string, extra?: Node, disabled = false) =>
-    h('div', { class: 'card' },
-      h('h3', {}, MODE_LABEL[mode]),
-      h('p', { class: 'muted small' }, desc),
-      extra,
-      h('button', { class: 'primary', disabled, onclick: () => startExam(mode, mode === 'domain' ? (domainSel.value as Domain) : undefined) }, 'Empezar'),
-    );
+    h('div', { class: 'card' }, h('h3', {}, modeLabel(mode)), h('p', { class: 'muted small' }, desc), extra,
+      h('button', { class: 'primary', disabled: disabled || bank.length === 0, onclick: () => startExam(mode, mode === 'domain' ? domainSel.value : undefined) }, T('Empezar', 'Start')));
 
-  const recent = store.history().slice(-5).reverse();
+  // Readiness per domain, from this exam's attempts.
+  const agg = Object.fromEntries(exam.domains.map((d) => [d.id, { c: 0, t: 0 }]));
+  for (const a of history) for (const d of exam.domains) { const r = a.result.byDomain[d.id]; if (r) { agg[d.id].c += r.correct; agg[d.id].t += r.total; } }
+
+  const countdown = days > 0 ? T(`Faltan ${days} día${days === 1 ? '' : 's'}`, `${days} day${days === 1 ? '' : 's'} to go`) : days === 0 ? T('¡Hoy es el examen!', 'Exam day is today!') : T('Fecha pasada', 'Date passed');
+  const recent = history.slice(-5).reverse();
+
   mount(root,
-    h('h1', {}, 'SAA-C03 Practice Exam'),
-    h('p', { class: 'muted' }, `Banco: ${BANK.length} preguntas · aprueba con ≥ ${PASS_SCALED} (estimado) · selección múltiple todo-o-nada`),
-    saved && h('div', { class: 'card banner' },
-      h('strong', {}, 'Tienes un intento en curso'),
-      h('p', { class: 'muted small' }, `${MODE_LABEL[saved.mode]} · ${Object.keys(saved.answers).length} de ${saved.items.length} respondidas`),
-      h('div', { class: 'row' },
-        h('button', { class: 'primary', onclick: resumeExam }, 'Continuar'),
-        h('button', { class: 'danger', onclick: () => { store.clearSession(); renderHome(); } }, 'Descartar'))),
+    h('div', { class: 'row spread' }, h('h1', {}, 'Cert Exam Simulator'), langSwitch()),
+    tabs,
+    h('div', { class: 'card' },
+      h('div', { class: 'row spread' }, h('div', {}, h('strong', {}, exam.name), h('div', { class: 'muted small' }, `${exam.code} · ${exam.date} · ${countdown}`)),
+        h('button', { onclick: () => go('#/plan') }, T('Plan de estudio', 'Study plan'))),
+      h('p', { class: 'muted small' }, T(`Banco: ${bank.length} preguntas · aprueba con ≥ ${exam.passScaled} (estimado) · selección múltiple todo-o-nada`, `Bank: ${bank.length} questions · pass at ≥ ${exam.passScaled} (estimated) · multi-select is all-or-nothing`)),
+      exam.id === 'saa' && lang() === 'en' && h('p', { class: 'small', style: 'color:var(--warn)' }, 'The AWS question bank is currently in Spanish only.')),
+    saved && h('div', { class: 'card banner' }, h('strong', {}, T('Tienes un intento en curso', 'You have an attempt in progress')),
+      h('p', { class: 'muted small' }, `${modeLabel(saved.mode)} · ${Object.keys(saved.answers).length}/${saved.items.length}`),
+      h('div', { class: 'row' }, h('button', { class: 'primary', onclick: resumeExam }, T('Continuar', 'Resume')),
+        h('button', { class: 'danger', onclick: () => { store.clearSession(); renderHome(); } }, T('Descartar', 'Discard')))),
     h('div', { class: 'card' }, nameInput),
     h('div', { class: 'grid' },
-      modeCard('block', '22 preguntas · 44 min · sin feedback hasta entregar.'),
-      modeCard('full', '65 preguntas (50 puntuadas + 15 sin puntuar) · 130 min. Emite certificado si apruebas.', BANK.length < 65 ? h('p', { class: 'small', style: 'color:var(--warn)' }, `El banco tiene ${BANK.length}; el simulacro usará todas.`) : undefined),
-      modeCard('domain', 'Preguntas de un solo dominio.', domainSel),
-      modeCard('review', `Solo las que fallaste (${st.failed.size}).`, undefined, st.failed.size === 0)),
+      modeCard('block', T(`${exam.block.size} preguntas · ${exam.block.limitSec / 60} min · sin feedback hasta entregar.`, `${exam.block.size} questions · ${exam.block.limitSec / 60} min · no feedback until you submit.`)),
+      modeCard('full', exam.full.scenarioCount
+        ? T(`${exam.full.size} preguntas · ${exam.full.scenarioCount} escenarios al azar de ${exam.scenarios?.length} · ${exam.full.limitSec / 60} min. Emite certificado si apruebas.`, `${exam.full.size} questions · ${exam.full.scenarioCount} random scenarios out of ${exam.scenarios?.length} · ${exam.full.limitSec / 60} min. Certificate if you pass.`)
+        : T(`${exam.full.size} preguntas (${exam.full.size - exam.full.unscored} puntuadas + ${exam.full.unscored} sin puntuar) · ${exam.full.limitSec / 60} min. Emite certificado si apruebas.`, `${exam.full.size} questions (${exam.full.size - exam.full.unscored} scored + ${exam.full.unscored} unscored) · ${exam.full.limitSec / 60} min. Certificate if you pass.`),
+        bank.length < exam.full.size ? h('p', { class: 'small', style: 'color:var(--warn)' }, T(`El banco tiene ${bank.length}; el simulacro usará todas.`, `The bank has ${bank.length}; the simulation will use them all.`)) : undefined),
+      modeCard('domain', T('Preguntas de un solo dominio.', 'Questions from a single domain.'), domainSel),
+      modeCard('review', T(`Solo las que fallaste (${failedHere}).`, `Only the ones you missed (${failedHere}).`), undefined, failedHere === 0)),
+    history.length > 0 && h('div', { class: 'card' }, h('h3', {}, T('Preparación por dominio', 'Readiness by domain')),
+      ...exam.domains.map((d) => { const x = agg[d.id]; const pct = x.t ? Math.round((x.c / x.t) * 100) : 0; return h('div', { style: 'margin:8px 0' },
+        h('div', { class: 'row spread small' }, h('span', {}, d.label), h('span', {}, x.t ? `${pct} %` : '—')),
+        h('div', { class: `bar${x.t && pct < 70 ? ' weak' : ''}` }, h('i', { style: `width:${pct}%` }))); })),
     h('div', { class: 'card' },
-      h('div', { class: 'row spread' }, h('h3', {}, 'Últimos intentos'), h('button', { onclick: () => go('#/history') }, 'Ver historial')),
-      recent.length === 0
-        ? h('p', { class: 'muted small' }, 'Aún no hay intentos.')
+      h('div', { class: 'row spread' }, h('h3', {}, T('Últimos intentos', 'Recent attempts')), h('button', { onclick: () => go('#/history') }, T('Ver historial', 'View history'))),
+      recent.length === 0 ? h('p', { class: 'muted small' }, T('Aún no hay intentos.', 'No attempts yet.'))
         : h('table', {}, ...recent.map((a) => h('tr', {},
-            h('td', {}, new Date(a.finishedAt).toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' })),
-            h('td', {}, MODE_LABEL[a.mode]),
-            h('td', { class: a.result.passed ? 'pass' : 'fail' }, `${a.result.scaled}`),
-            h('td', {}, h('a', { href: `#/results/${a.id}` }, 'Detalle')))))),
-  );
+            h('td', {}, new Date(a.finishedAt).toLocaleString(lang() === 'en' ? 'en-US' : 'es-CO', { dateStyle: 'short', timeStyle: 'short' })),
+            h('td', {}, modeLabel(a.mode)), h('td', { class: a.result.passed ? 'pass' : 'fail' }, `${a.result.scaled}`),
+            h('td', {}, h('a', { href: `#/results/${a.id}` }, T('Detalle', 'Details'))))))));
+}
+
+/* ------------------------------- study plan ------------------------------- */
+
+function renderPlan(): void {
+  const exam = cur();
+  const done = store.planDone();
+  const plan = PLANS[exam.id];
+  const today = new Date().toISOString().slice(0, 10);
+  const all = plan.flatMap((d) => d.tasks.map((_, i) => `${exam.id}:${d.date}:${i}`));
+  const nDone = all.filter((id) => done.has(id)).length;
+  const days = daysUntil(exam.date);
+
+  mount(root,
+    h('div', { class: 'row spread' }, h('h1', {}, T('Plan de estudio', 'Study plan')), h('div', { class: 'row' }, langSwitch(), h('button', { onclick: () => go('#/') }, T('← Inicio', '← Home')))),
+    h('div', { class: 'card' }, h('strong', {}, exam.name), h('div', { class: 'muted small' }, `${exam.code} · ${exam.date} · ${days > 0 ? T(`faltan ${days} días`, `${days} days to go`) : T('hoy / pasado', 'today / past')}`),
+      h('div', { class: 'bar', style: 'margin-top:10px' }, h('i', { style: `width:${all.length ? Math.round((nDone / all.length) * 100) : 0}%` })),
+      h('p', { class: 'small muted' }, T(`${nDone} de ${all.length} tareas completadas`, `${nDone} of ${all.length} tasks done`))),
+    ...plan.map((d) => h('div', { class: `card${d.date === today ? ' banner' : ''}` },
+      h('div', { class: 'row spread' }, h('h3', {}, `${d.date} · ${T(d.title[0], d.title[1])}`), d.date === today && h('span', { class: 'tag' }, T('Hoy', 'Today')), d.examDay && h('span', { class: 'tag multi' }, T('Examen', 'Exam'))),
+      ...d.tasks.map((t, i) => { const id = `${exam.id}:${d.date}:${i}`;
+        const cb = h('input', { type: 'checkbox', checked: done.has(id), onchange: () => { store.togglePlan(id); renderPlan(); } });
+        return h('label', { class: 'row', style: 'margin:6px 0;cursor:pointer' }, cb, h('span', { style: done.has(id) ? 'text-decoration:line-through;opacity:.6' : '' }, T(t[0], t[1]))); }),
+      d.focus && h('div', { class: 'row' }, ...d.focus.map((f) => h('span', { class: 'tag' }, exam.domains.find((x) => x.id === f)?.label ?? f))))),
+    h('div', { class: 'card' }, h('h3', {}, T('Recursos', 'Resources')), ...RESOURCES[exam.id].map((r) => h('p', { class: 'small' }, h('a', { href: r.url, target: '_blank', rel: 'noopener noreferrer' }, r.label)))));
 }
 
 /* ------------------------------- exam flow ------------------------------- */
 
-function startExam(mode: Mode, domain?: Domain): void {
-  const cfg = MODE_CONFIG[mode];
+function startExam(mode: Mode, domain?: string): void {
+  const exam = cur();
+  const cfg = modeConfig(exam, mode);
+  const bank = bankFor(exam.id);
   const { seen, failed } = stats();
   const items = buildExam({
-    bank: BANK, size: cfg.size, seed: (Date.now() ^ (Math.random() * 1e9)) >>> 0, seen, failed, domain,
-    onlyIds: mode === 'review' ? failed : undefined, unscored: cfg.unscored,
+    bank, exam, size: cfg.size, seed: (Date.now() ^ (Math.random() * 1e9)) >>> 0, seen, failed, domain,
+    onlyIds: mode === 'review' ? failed : undefined, unscored: cfg.unscored, byScenario: mode === 'full' && !!exam.full.scenarioCount,
   });
   if (items.length === 0) return;
-  session = ExamSession.create(mode, items, BANK_MAP, Date.now());
-  view = 'q';
+  session = ExamSession.create(exam, mode, items, BANK_MAP, Date.now());
+  sub = 'q';
   store.saveSession(session.state);
   go('#/exam');
 }
@@ -111,8 +175,9 @@ function startExam(mode: Mode, domain?: Domain): void {
 function resumeExam(): void {
   const s = store.loadSession();
   if (!s) return;
+  store.setExam(s.exam ?? 'saa');
   session = new ExamSession(s, BANK_MAP);
-  view = 'q';
+  sub = 'q';
   go('#/exam');
 }
 
@@ -133,6 +198,7 @@ function renderExam(): void {
     session = new ExamSession(s, BANK_MAP);
   }
   const s = session;
+  const exam = examById(s.state.exam);
   if (s.isExpired(Date.now())) return submit(true);
 
   const timerEl = h('span', { class: 'timer' });
@@ -145,84 +211,85 @@ function renderExam(): void {
   stopTimer();
   tick();
   timer = window.setInterval(tick, 1000);
+  const persist = () => store.saveSession(s.state);
 
   const navigator = () => h('div', { class: 'nav' }, ...s.state.items.map((it, i) =>
     h('button', {
-      class: [s.isAnswered(i) ? 'answered' : '', s.state.flags.includes(it.id) ? 'flagged' : '', view === 'q' && i === s.state.index ? 'current' : ''].join(' '),
-      onclick: () => { s.goto(i); view = 'q'; persist(); renderExam(); },
+      class: [s.isAnswered(i) ? 'answered' : '', s.state.flags.includes(it.id) ? 'flagged' : '', sub === 'q' && i === s.state.index ? 'current' : ''].join(' '),
+      onclick: () => { s.goto(i); sub = 'q'; persist(); renderExam(); },
     }, String(i + 1))));
 
-  const persist = () => store.saveSession(s.state);
   const top = (label: string) => h('div', { class: 'topbar' }, h('div', { class: 'row spread' },
-    h('span', {}, label), h('span', { class: 'row' }, timerEl,
-      view === 'q' && h('button', { onclick: () => { view = 'summary'; renderExam(); } }, 'Revisar y entregar'))));
+    h('span', {}, label), h('span', { class: 'row' }, langSwitch(), timerEl,
+      sub === 'q' && h('button', { onclick: () => { sub = 'summary'; renderExam(); } }, T('Revisar y entregar', 'Review and submit')))));
 
-  if (view === 'summary') {
+  if (sub === 'summary') {
     const n = s.length;
     const unanswered = s.state.items.filter((_, i) => !s.isAnswered(i)).length;
     const incomplete = s.state.items.filter((_, i) => s.isAnswered(i) && !s.isComplete(i)).length;
-    const confirmBtn = h('button', { class: 'primary', onclick: () => submit(false) }, 'Entregar examen');
-    return mount(root, top('Revisión'),
-      h('div', { class: 'card' },
-        h('h2', {}, 'Antes de entregar'),
-        h('p', {}, `${n - unanswered} de ${n} respondidas · ${unanswered} sin responder · ${incomplete} incompletas · ${s.state.flags.length} marcadas.`),
+    return mount(root, top(T('Revisión', 'Review')),
+      h('div', { class: 'card' }, h('h2', {}, T('Antes de entregar', 'Before you submit')),
+        h('p', {}, T(`${n - unanswered} de ${n} respondidas · ${unanswered} sin responder · ${incomplete} incompletas · ${s.state.flags.length} marcadas.`, `${n - unanswered} of ${n} answered · ${unanswered} unanswered · ${incomplete} incomplete · ${s.state.flags.length} flagged.`)),
         navigator(),
-        h('div', { class: 'row', style: 'margin-top:14px' },
-          h('button', { onclick: () => { view = 'q'; renderExam(); } }, 'Volver al examen'), confirmBtn)));
+        h('div', { class: 'row', style: 'margin-top:14px' }, h('button', { onclick: () => { sub = 'q'; renderExam(); } }, T('Volver al examen', 'Back to exam')),
+          h('button', { class: 'primary', onclick: () => submit(false) }, T('Entregar examen', 'Submit exam')))));
   }
 
   const q = s.question();
+  const v = view(q, lang());
   const sel = new Set(s.state.answers[q.id] ?? []);
   const flagged = s.state.flags.includes(q.id);
   const multi = q.type === 'multi';
-  mount(root, top(`${MODE_LABEL[s.state.mode]} · Pregunta ${s.state.index + 1} de ${s.length}`),
+  const words = lang() === 'en' ? NUM_EN : NUM_ES;
+  mount(root, top(`${modeLabel(s.state.mode)} · ${T('Pregunta', 'Question')} ${s.state.index + 1}/${s.length}`),
+    ...questionBody(q, exam),
     h('div', { class: 'card' },
-      h('div', { class: 'row' }, multi && h('span', { class: 'tag multi' }, `ELIGE ${NUM_WORD[q.choose] ?? q.choose}`), flagged && h('span', { class: 'tag' }, 'Marcada')),
-      h('div', { class: 'stem' }, q.stem),
-      ...q.options.map((o) => h('label', { class: `opt${sel.has(o.id) ? ' sel' : ''}` },
+      h('div', { class: 'row' }, multi && h('span', { class: 'tag multi' }, T(`ELIGE ${words[q.choose] ?? q.choose}`, `SELECT ${words[q.choose] ?? q.choose}`)), flagged && h('span', { class: 'tag' }, T('Marcada', 'Flagged'))),
+      h('div', { class: 'stem' }, v.stem),
+      ...v.options.map((o) => h('label', { class: `opt${sel.has(o.id) ? ' sel' : ''}` },
         h('input', { type: multi ? 'checkbox' : 'radio', name: 'opt', checked: sel.has(o.id), onchange: () => { s.select(o.id); persist(); renderExam(); } }),
         h('span', {}, `${o.id}. ${o.text}`))),
       h('div', { class: 'row spread', style: 'margin-top:12px' },
-        h('button', { disabled: s.state.index === 0, onclick: () => { s.goto(s.state.index - 1); persist(); renderExam(); } }, '← Anterior'),
-        h('button', { onclick: () => { s.toggleFlag(); persist(); renderExam(); } }, flagged ? 'Quitar marca' : 'Marcar para revisar'),
+        h('button', { disabled: s.state.index === 0, onclick: () => { s.goto(s.state.index - 1); persist(); renderExam(); } }, T('← Anterior', '← Previous')),
+        h('button', { onclick: () => { s.toggleFlag(); persist(); renderExam(); } }, flagged ? T('Quitar marca', 'Unflag') : T('Marcar para revisar', 'Flag for review')),
         s.state.index === s.length - 1
-          ? h('button', { class: 'primary', onclick: () => { view = 'summary'; renderExam(); } }, 'Revisar y entregar')
-          : h('button', { onclick: () => { s.goto(s.state.index + 1); persist(); renderExam(); } }, 'Siguiente →'))),
+          ? h('button', { class: 'primary', onclick: () => { sub = 'summary'; renderExam(); } }, T('Revisar y entregar', 'Review and submit'))
+          : h('button', { onclick: () => { s.goto(s.state.index + 1); persist(); renderExam(); } }, T('Siguiente →', 'Next →')))),
     h('div', { class: 'card' }, navigator()));
 }
 
 /* ------------------------------- results ------------------------------- */
 
-function findAttempt(id: string): Attempt | undefined {
-  return store.history().find((a) => a.id === id);
-}
+const findAttempt = (id: string): Attempt | undefined => store.history().find((a) => a.id === id);
 
 function renderResults(id: string): void {
   const a = findAttempt(id);
   if (!a) return go('#/');
+  const exam = examById(a.exam);
   const r = a.result;
-  const nameInput = h('input', { type: 'text', placeholder: 'Tu nombre (para el PDF)', value: store.name(), maxLength: 60 });
+  const nameInput = h('input', { type: 'text', placeholder: T('Tu nombre (para el PDF)', 'Your name (for the PDF)'), value: store.name(), maxLength: 60 });
   nameInput.oninput = () => store.setName(nameInput.value);
-  const pdfBtn = h('button', { class: 'primary', onclick: async () => { pdfBtn.disabled = true; await downloadPdf(a, store.name()); pdfBtn.disabled = false; } },
-    certificateEligible(a) ? 'Descargar certificado PDF' : 'Descargar informe PDF');
-  const weakest = [...DOMAINS].filter((d) => r.byDomain[d].total > 0).sort((x, y) => r.byDomain[x].pct - r.byDomain[y].pct)[0];
+  const pdfBtn = h('button', { class: 'primary', onclick: async () => { pdfBtn.disabled = true; await downloadPdf(a, store.name(), exam, lang()); pdfBtn.disabled = false; } },
+    certificateEligible(a) ? T('Descargar certificado PDF', 'Download certificate PDF') : T('Descargar informe PDF', 'Download report PDF'));
+  const scored = exam.domains.filter((d) => r.byDomain[d.id]?.total > 0).sort((x, y) => r.byDomain[x.id].pct - r.byDomain[y.id].pct);
+  const weakest = scored[0];
 
   mount(root,
-    h('h1', {}, `Resultado · ${MODE_LABEL[a.mode]}`),
+    h('div', { class: 'row spread' }, h('h1', {}, `${T('Resultado', 'Result')} · ${exam.short} · ${modeLabel(a.mode)}`), langSwitch()),
     h('div', { class: 'card' },
       h('div', { class: `score ${r.passed ? 'pass' : 'fail'}` }, `${r.scaled} / 1000`),
-      h('p', {}, r.passed ? `Aprobado (estimado, umbral ${PASS_SCALED}).` : `Por debajo del umbral de ${PASS_SCALED} (estimado).`),
-      h('p', { class: 'muted small' }, `${r.correct} de ${r.total} correctas (${r.pct} %) · ${r.unanswered} sin responder · duración ${fmtClock(a.durationSec)}${a.autoSubmitted ? ' · entrega automática por tiempo' : ''}. `
-        + (a.mode === 'full' ? 'Las 15 preguntas sin puntuar no cuentan, como en el examen real. ' : '') + 'El puntaje escalado es una estimación; AWS no publica su fórmula.')),
-    h('div', { class: 'card' },
-      h('h3', {}, 'Por dominio'),
-      ...DOMAINS.map((d) => { const x = r.byDomain[d]; return h('div', { style: 'margin:10px 0' },
-        h('div', { class: 'row spread small' }, h('span', {}, DOMAIN_LABEL[d]), h('span', {}, x.total ? `${x.correct}/${x.total} · ${x.pct} %` : 'sin preguntas')),
+      h('p', {}, r.passed ? T(`Aprobado (estimado, umbral ${exam.passScaled}).`, `Pass (estimated, threshold ${exam.passScaled}).`) : T(`Por debajo del umbral de ${exam.passScaled} (estimado).`, `Below the ${exam.passScaled} threshold (estimated).`)),
+      h('p', { class: 'muted small' }, T(`${r.correct} de ${r.total} correctas (${r.pct} %) · ${r.unanswered} sin responder · duración ${fmtClock(a.durationSec)}${a.autoSubmitted ? ' · entrega automática por tiempo' : ''}. `, `${r.correct} of ${r.total} correct (${r.pct}%) · ${r.unanswered} unanswered · duration ${fmtClock(a.durationSec)}${a.autoSubmitted ? ' · auto-submitted on time-out' : ''}. `)
+        + (a.mode === 'full' && exam.full.unscored ? T('Las preguntas sin puntuar no cuentan, como en el examen real. ', 'Unscored questions do not count, as in the real exam. ') : '')
+        + T('El puntaje escalado es una estimación; el examen real no publica su fórmula.', 'The scaled score is an estimate; the real exam does not publish its formula.'))),
+    h('div', { class: 'card' }, h('h3', {}, T('Por dominio', 'By domain')),
+      ...exam.domains.map((d) => { const x = r.byDomain[d.id] ?? { correct: 0, total: 0, pct: 0 }; return h('div', { style: 'margin:10px 0' },
+        h('div', { class: 'row spread small' }, h('span', {}, d.label), h('span', {}, x.total ? `${x.correct}/${x.total} · ${x.pct} %` : T('sin preguntas', 'no questions'))),
         h('div', { class: `bar${x.total && x.pct < 70 ? ' weak' : ''}` }, h('i', { style: `width:${x.pct}%` }))); }),
-      weakest && h('p', { class: 'small muted' }, `Dominio más débil: ${DOMAIN_LABEL[weakest]}.`)),
+      weakest && h('p', { class: 'small muted' }, T(`Dominio más débil: ${weakest.label}.`, `Weakest domain: ${weakest.label}.`))),
     h('div', { class: 'card' }, nameInput, h('div', { class: 'row', style: 'margin-top:10px' }, pdfBtn,
-      h('button', { onclick: () => go(`#/review/${a.id}`) }, 'Ver revisión'), h('button', { onclick: () => go('#/') }, 'Inicio')),
-      !certificateEligible(a) && h('p', { class: 'small muted' }, 'El certificado se emite al aprobar un simulacro completo; cualquier otro intento genera un informe.')));
+      h('button', { onclick: () => go(`#/review/${a.id}`) }, T('Ver revisión', 'View review')), h('button', { onclick: () => go('#/') }, T('Inicio', 'Home'))),
+      !certificateEligible(a) && h('p', { class: 'small muted' }, T('El certificado se emite al aprobar un simulacro completo; cualquier otro intento genera un informe.', 'The certificate is issued when you pass a full simulation; any other attempt produces a report.'))));
 }
 
 /* -------------------------------- review -------------------------------- */
@@ -230,6 +297,7 @@ function renderResults(id: string): void {
 function renderReview(id: string): void {
   const a = findAttempt(id);
   if (!a) return go('#/');
+  const exam = examById(a.exam);
   const onlyWrong = h('input', { type: 'checkbox' });
   const list = h('div');
   const draw = () => {
@@ -240,58 +308,63 @@ function renderReview(id: string): void {
       const picked = a.answers[q.id] ?? [];
       const ok = isCorrect(q, picked);
       if (onlyWrong.checked && ok) return;
-      nodes.push(reviewCard(q, idx + 1, picked, ok, it.scored));
+      nodes.push(reviewCard(q, exam, idx + 1, picked, ok, it.scored));
     });
-    list.replaceChildren(...(nodes.length ? nodes : [h('p', { class: 'muted' }, 'Nada que mostrar.')]));
+    list.replaceChildren(...(nodes.length ? nodes : [h('p', { class: 'muted' }, T('Nada que mostrar.', 'Nothing to show.'))]));
   };
   onlyWrong.onchange = draw;
   draw();
-  mount(root, h('div', { class: 'row spread' }, h('h1', {}, 'Revisión'), h('button', { onclick: () => go(`#/results/${a.id}`) }, '← Resultado')),
-    h('label', { class: 'row' }, onlyWrong, 'Solo incorrectas / sin responder'), list);
+  mount(root, h('div', { class: 'row spread' }, h('h1', {}, T('Revisión', 'Review')), h('div', { class: 'row' }, langSwitch(), h('button', { onclick: () => go(`#/results/${a.id}`) }, T('← Resultado', '← Result')))),
+    h('label', { class: 'row' }, onlyWrong, T('Solo incorrectas / sin responder', 'Only incorrect / unanswered')), list);
 }
 
-function reviewCard(q: Question, n: number, picked: string[], ok: boolean, scored: boolean): HTMLElement {
+function reviewCard(q: Question, exam: ExamDef, n: number, picked: string[], ok: boolean, scored: boolean): HTMLElement {
+  const v = view(q, lang());
+  const dom = exam.domains.find((d) => d.id === q.domain)?.label ?? q.domain;
+  const sc = scenarioView(exam, q.scenario, lang());
   return h('div', { class: 'card' },
     h('div', { class: 'row' },
-      h('span', { class: `tag ${ok ? 'pass' : 'fail'}` }, ok ? 'Correcta' : picked.length ? 'Incorrecta' : 'Sin responder'),
-      h('span', { class: 'tag' }, DOMAIN_LABEL[q.domain]), h('span', { class: 'tag' }, q.topic),
-      q.type === 'multi' && h('span', { class: 'tag multi' }, `Elige ${q.choose}`), !scored && h('span', { class: 'tag' }, 'Sin puntuar')),
-    h('div', { class: 'stem' }, `${n}. ${q.stem}`),
-    ...q.options.map((o) => {
+      h('span', { class: `tag ${ok ? 'pass' : 'fail'}` }, ok ? T('Correcta', 'Correct') : picked.length ? T('Incorrecta', 'Incorrect') : T('Sin responder', 'Unanswered')),
+      h('span', { class: 'tag' }, dom), h('span', { class: 'tag' }, v.topic), sc && h('span', { class: 'tag' }, sc.title),
+      q.type === 'multi' && h('span', { class: 'tag multi' }, T(`Elige ${q.choose}`, `Select ${q.choose}`)), !scored && h('span', { class: 'tag' }, T('Sin puntuar', 'Unscored'))),
+    h('div', { class: 'stem' }, `${n}. ${v.stem}`),
+    ...v.options.map((o) => {
       const right = q.answer.includes(o.id);
       const mine = picked.includes(o.id);
-      const why = q.distractors[o.id];
+      const why = v.distractors[o.id];
       return h('div', {},
-        h('div', { class: `opt ${right ? 'right' : mine ? 'wrong' : ''}` }, h('span', {}, `${o.id}. ${o.text}${mine ? '  ← tu respuesta' : ''}${right ? '  ✓' : ''}`)),
+        h('div', { class: `opt ${right ? 'right' : mine ? 'wrong' : ''}` }, h('span', {}, `${o.id}. ${o.text}${mine ? `  ← ${T('tu respuesta', 'your answer')}` : ''}${right ? '  ✓' : ''}`)),
         why && !right && h('div', { class: 'why' }, why));
     }),
-    h('p', { class: 'small' }, h('strong', {}, 'Explicación: '), q.explanation));
+    h('p', { class: 'small' }, h('strong', {}, T('Explicación: ', 'Explanation: ')), v.explanation));
 }
 
 /* -------------------------------- history -------------------------------- */
 
 function renderHistory(): void {
-  const hist = store.history().slice().reverse();
-  const clearBtn = h('button', { class: 'danger' }, 'Borrar historial');
+  const all = store.history();
+  const hist = all.slice().reverse();
+  const clearBtn = h('button', { class: 'danger' }, T('Borrar historial', 'Clear history'));
   let armed = false;
   clearBtn.onclick = () => {
-    if (!armed) { armed = true; clearBtn.textContent = 'Confirmar borrado'; return; }
+    if (!armed) { armed = true; clearBtn.textContent = T('Confirmar borrado', 'Confirm delete'); return; }
     store.clearHistory(); renderHistory();
   };
-  const bars = store.history().slice(-20);
-  mount(root, h('div', { class: 'row spread' }, h('h1', {}, 'Historial'), h('button', { onclick: () => go('#/') }, '← Inicio')),
-    bars.length > 0 && h('div', { class: 'card' }, h('h3', {}, 'Tendencia (últimos 20)'),
+  const bars = all.slice(-20);
+  mount(root, h('div', { class: 'row spread' }, h('h1', {}, T('Historial', 'History')), h('div', { class: 'row' }, langSwitch(), h('button', { onclick: () => go('#/') }, T('← Inicio', '← Home')))),
+    bars.length > 0 && h('div', { class: 'card' }, h('h3', {}, T('Tendencia (últimos 20)', 'Trend (last 20)')),
       h('div', { class: 'row', style: 'align-items:flex-end;height:110px;gap:4px' }, ...bars.map((a) =>
-        h('div', { title: `${a.result.scaled}`, style: `flex:1;height:${Math.round(((a.result.scaled - 100) / 900) * 100)}%;min-height:3px;background:${a.result.passed ? 'var(--ok)' : 'var(--bad)'};border-radius:3px` }))),
-      h('p', { class: 'small muted' }, `Umbral ${PASS_SCALED}. Verde = por encima.`)),
-    h('div', { class: 'card' }, hist.length === 0 ? h('p', { class: 'muted' }, 'Sin intentos todavía.') :
-      h('table', {}, h('tr', {}, ...['Fecha', 'Modo', 'Puntaje', 'Aciertos', 'Duración', ''].map((t) => h('th', {}, t))),
+        h('div', { title: `${a.exam?.toUpperCase()} ${a.result.scaled}`, style: `flex:1;height:${Math.round(((a.result.scaled - 100) / 900) * 100)}%;min-height:3px;background:${a.result.passed ? 'var(--ok)' : 'var(--bad)'};border-radius:3px` }))),
+      h('p', { class: 'small muted' }, T('Verde = por encima del umbral de 720.', 'Green = above the 720 threshold.'))),
+    h('div', { class: 'card' }, hist.length === 0 ? h('p', { class: 'muted' }, T('Sin intentos todavía.', 'No attempts yet.')) :
+      h('table', {}, h('tr', {}, ...[T('Fecha', 'Date'), T('Examen', 'Exam'), T('Modo', 'Mode'), T('Puntaje', 'Score'), T('Aciertos', 'Correct'), T('Duración', 'Duration'), ''].map((t) => h('th', {}, t))),
         ...hist.map((a) => h('tr', {},
-          h('td', {}, new Date(a.finishedAt).toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' })),
-          h('td', {}, MODE_LABEL[a.mode]),
+          h('td', {}, new Date(a.finishedAt).toLocaleString(lang() === 'en' ? 'en-US' : 'es-CO', { dateStyle: 'short', timeStyle: 'short' })),
+          h('td', {}, examById(a.exam).short), h('td', {}, modeLabel(a.mode)),
           h('td', { class: a.result.passed ? 'pass' : 'fail' }, String(a.result.scaled)),
-          h('td', {}, `${a.result.correct}/${a.result.total}`),
-          h('td', {}, fmtClock(a.durationSec)),
-          h('td', {}, h('a', { href: `#/results/${a.id}` }, 'Detalle')))))),
+          h('td', {}, `${a.result.correct}/${a.result.total}`), h('td', {}, fmtClock(a.durationSec)),
+          h('td', {}, h('a', { href: `#/results/${a.id}` }, T('Detalle', 'Details'))))))),
     hist.length > 0 && clearBtn);
 }
+
+void ALL_QUESTIONS;
