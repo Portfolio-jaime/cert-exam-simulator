@@ -1,0 +1,650 @@
+[
+ {
+  "id": "cca-s1-01",
+  "domain": "agentic",
+  "scenario": "s1",
+  "topic": "TS 1.1 Agentic loops",
+  "type": "single",
+  "choose": 1,
+  "stem": "En el Customer Support Resolution Agent, el loop llama a Claude, ejecuta las herramientas MCP solicitadas y repite. Un revisor detecta que a veces el agente se detiene después de decir 'Voy a verificar tu pedido' sin haber llamado a lookup_order. ¿Qué condición de control de flujo es la correcta para el loop?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Terminar el loop cuando la respuesta contiene texto del asistente, porque indica que el agente ya respondió al cliente."
+   },
+   {
+    "id": "B",
+    "text": "Continuar mientras stop_reason sea 'tool_use', agregando cada tool result al historial, y terminar cuando stop_reason sea 'end_turn'."
+   },
+   {
+    "id": "C",
+    "text": "Terminar tras un máximo fijo de 5 iteraciones para garantizar que el loop siempre acabe."
+   },
+   {
+    "id": "D",
+    "text": "Analizar el texto del asistente buscando frases como 'caso resuelto' para decidir si el loop debe terminar."
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "TS 1.1: el loop se controla con stop_reason: 'tool_use' implica ejecutar herramientas y devolver resultados; 'end_turn' implica terminar. Los resultados se agregan al historial para que el modelo razone el siguiente paso.",
+  "distractors": {
+   "A": "Comprobar la presencia de texto como indicador de finalización es un anti-patrón: el modelo puede emitir texto junto con un bloque tool_use.",
+   "C": "Un tope arbitrario de iteraciones como mecanismo principal corta casos legítimos o permite ejecuciones inútiles; no refleja si la tarea terminó.",
+   "D": "Parsear señales en lenguaje natural es frágil y es un anti-patrón explícito frente a usar stop_reason."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "In the Customer Support Resolution Agent, the loop calls Claude, executes the requested MCP tools, and repeats. A reviewer notices that the agent sometimes stops after saying 'I'll check your order' without having called lookup_order. Which flow-control condition is correct for the loop?",
+   "options": {
+    "A": "End the loop when the response contains assistant text, because it indicates the agent has already replied to the customer.",
+    "B": "Continue while stop_reason is 'tool_use', appending each tool result to the history, and end when stop_reason is 'end_turn'.",
+    "C": "End after a fixed maximum of 5 iterations to guarantee the loop always terminates.",
+    "D": "Parse the assistant text for phrases such as 'case resolved' to decide whether the loop should end."
+   },
+   "explanation": "TS 1.1: the loop is controlled by stop_reason: 'tool_use' means execute the tools and return the results; 'end_turn' means terminate. Results are appended to the history so the model can reason about the next step.",
+   "distractors": {
+    "A": "Checking for the presence of text as a completion indicator is an anti-pattern: the model can emit text alongside a tool_use block.",
+    "C": "An arbitrary iteration cap as the primary mechanism cuts off legitimate cases or allows pointless runs; it does not reflect whether the task is complete.",
+    "D": "Parsing natural-language signals is brittle and is an explicit anti-pattern compared to using stop_reason."
+   },
+   "topic": "TS 1.1 Agentic loops"
+  }
+ },
+ {
+  "id": "cca-s1-02",
+  "domain": "agentic",
+  "scenario": "s1",
+  "topic": "TS 1.4 Programmatic prerequisites",
+  "type": "single",
+  "choose": 1,
+  "stem": "Se observó que en ~3% de las conversaciones el agente llama a process_refund sin haber verificado la identidad del cliente con get_customer, a pesar de que el system prompt dice 'siempre verifica antes de reembolsar'. Los reembolsos son operaciones financieras. ¿Qué cambio es el más adecuado?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Reescribir el system prompt en mayúsculas y repetir la instrucción de verificación al inicio y al final."
+   },
+   {
+    "id": "B",
+    "text": "Agregar tres few-shot examples más donde el agente verifica la identidad antes de reembolsar."
+   },
+   {
+    "id": "C",
+    "text": "Implementar un prerequisite gate programático que bloquee process_refund hasta que get_customer haya devuelto un customer ID verificado."
+   },
+   {
+    "id": "D",
+    "text": "Pedir al modelo que informe un confidence score de 0 a 100 y bloquear el reembolso si es menor a 90."
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "TS 1.4: cuando se exige cumplimiento determinista (verificación de identidad antes de operaciones financieras), las instrucciones del prompt tienen una tasa de fallo no nula; un gate programático garantiza el orden.",
+  "distractors": {
+   "A": "Enfatizar el prompt sigue siendo guía probabilística y no elimina el fallo residual.",
+   "B": "Los few-shot mejoran la tendencia pero no dan una garantía determinista para una operación financiera.",
+   "D": "Los confidence scores autoinformados no son un proxy fiable y no imponen el orden de las herramientas."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "It was observed that in about 3% of conversations the agent calls process_refund without having verified the customer's identity with get_customer, even though the system prompt says 'always verify before refunding'. Refunds are financial operations. Which change is most appropriate?",
+   "options": {
+    "A": "Rewrite the system prompt in capital letters and repeat the verification instruction at the beginning and end.",
+    "B": "Add three more few-shot examples in which the agent verifies identity before refunding.",
+    "C": "Implement a programmatic prerequisite gate that blocks process_refund until get_customer has returned a verified customer ID.",
+    "D": "Ask the model to report a confidence score from 0 to 100 and block the refund if it is below 90."
+   },
+   "explanation": "TS 1.4: when deterministic compliance is required (identity verification before financial operations), prompt instructions have a non-zero failure rate; a programmatic gate guarantees the ordering.",
+   "distractors": {
+    "A": "Emphasizing the prompt is still probabilistic guidance and does not eliminate the residual failure rate.",
+    "B": "Few-shot examples improve the tendency but do not provide a deterministic guarantee for a financial operation.",
+    "D": "Self-reported confidence scores are not a reliable proxy and do not enforce tool ordering."
+   },
+   "topic": "TS 1.4 Programmatic prerequisites"
+  }
+ },
+ {
+  "id": "cca-s1-03",
+  "domain": "agentic",
+  "scenario": "s1",
+  "topic": "TS 1.5 Tool call interception hooks",
+  "type": "single",
+  "choose": 1,
+  "stem": "La política indica que los reembolsos superiores a $500 deben ser aprobados por una persona. Necesitas garantizar que el Agent SDK nunca ejecute un process_refund por encima de ese monto y que el caso pase a revisión humana. ¿Qué diseño usas?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un hook que intercepta la llamada saliente a process_refund, bloquea montos mayores a $500 y redirige al flujo de escalamiento a un humano."
+   },
+   {
+    "id": "B",
+    "text": "Un hook PostToolUse que revisa el resultado de process_refund y, si el monto fue mayor a $500, lo anula con otra llamada."
+   },
+   {
+    "id": "C",
+    "text": "Una instrucción en el system prompt que describa el umbral de $500 y pida escalar en esos casos."
+   },
+   {
+    "id": "D",
+    "text": "Una descripción en la herramienta process_refund que diga 'no usar para montos mayores a $500'."
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "TS 1.5: los hooks que interceptan llamadas salientes aplican reglas de cumplimiento de forma determinista y pueden redirigir a un flujo alternativo, como el escalamiento humano, antes de que ocurra el efecto.",
+  "distractors": {
+   "B": "PostToolUse actúa después de que el reembolso ya se ejecutó; sirve para normalizar resultados, no para prevenir la operación.",
+   "C": "El prompt es cumplimiento probabilístico; la regla de negocio exige garantía.",
+   "D": "La descripción de la herramienta orienta la selección pero no impide una llamada con montos fuera de política."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "Policy states that refunds above $500 must be approved by a person. You need to guarantee that the Agent SDK never executes a process_refund above that amount and that the case is routed to human review. Which design do you use?",
+   "options": {
+    "A": "A hook that intercepts the outgoing call to process_refund, blocks amounts above $500, and redirects to the human escalation flow.",
+    "B": "A PostToolUse hook that inspects the result of process_refund and, if the amount was above $500, reverses it with another call.",
+    "C": "A system prompt instruction describing the $500 threshold and asking to escalate in those cases.",
+    "D": "A description on the process_refund tool saying 'do not use for amounts above $500'."
+   },
+   "explanation": "TS 1.5: hooks that intercept outgoing calls enforce compliance rules deterministically and can redirect to an alternative flow, such as human escalation, before the side effect occurs.",
+   "distractors": {
+    "B": "PostToolUse acts after the refund has already been executed; it is useful for normalizing results, not for preventing the operation.",
+    "C": "The prompt provides probabilistic compliance; the business rule requires a guarantee.",
+    "D": "The tool description guides selection but does not prevent a call with amounts outside policy."
+   },
+   "topic": "TS 1.5 Tool call interception hooks"
+  }
+ },
+ {
+  "id": "cca-s1-04",
+  "domain": "agentic",
+  "scenario": "s1",
+  "topic": "TS 1.4 Structured handoff",
+  "type": "single",
+  "choose": 1,
+  "stem": "Cuando el agente invoca escalate_to_human, los agentes humanos de nivel 2 no tienen acceso a la transcripción de la conversación. Hoy reciben solo el último mensaje del cliente y se quejan de tener que volver a preguntar todo. ¿Qué mejora es la más efectiva?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Adjuntar la transcripción completa en bruto para que el humano la lea de principio a fin."
+   },
+   {
+    "id": "B",
+    "text": "Enviar solo el motivo de escalamiento en una frase corta para no saturar al humano."
+   },
+   {
+    "id": "C",
+    "text": "Pedir al cliente que repita su caso al humano para asegurar que la información es actual."
+   },
+   {
+    "id": "D",
+    "text": "Compilar un resumen estructurado con customer ID, causa raíz, monto del reembolso y acción recomendada antes de escalar."
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "TS 1.4: los handoffs a humanos sin acceso a la transcripción deben incluir un resumen estructurado (customer ID, causa raíz, monto, acción recomendada) para que puedan actuar sin reinvestigar.",
+  "distractors": {
+   "A": "Una transcripción cruda obliga a reconstruir el caso y entierra los datos clave; además el humano no tiene acceso a ella según el escenario.",
+   "B": "Una frase corta omite datos accionables como customer ID, monto y recomendación.",
+   "C": "Hacer repetir al cliente degrada la experiencia y contradice el objetivo de resolver en el primer contacto."
+  },
+  "difficulty": 1,
+  "en": {
+   "stem": "When the agent invokes escalate_to_human, the tier-2 human agents do not have access to the conversation transcript. Today they receive only the customer's last message and complain about having to ask everything again. Which improvement is most effective?",
+   "options": {
+    "A": "Attach the full raw transcript so the human can read it from start to finish.",
+    "B": "Send only the escalation reason in one short sentence to avoid overwhelming the human.",
+    "C": "Ask the customer to repeat their case to the human to ensure the information is current.",
+    "D": "Compile a structured summary with customer ID, root cause, refund amount, and recommended action before escalating."
+   },
+   "explanation": "TS 1.4: handoffs to humans who lack access to the transcript must include a structured summary (customer ID, root cause, amount, recommended action) so they can act without re-investigating.",
+   "distractors": {
+    "A": "A raw transcript forces the human to reconstruct the case and buries key data; moreover, the human has no access to it per the scenario.",
+    "B": "A short sentence omits actionable data such as customer ID, amount, and recommendation.",
+    "C": "Making the customer repeat themselves degrades the experience and contradicts the goal of first-contact resolution."
+   },
+   "topic": "TS 1.4 Structured handoff"
+  }
+ },
+ {
+  "id": "cca-s1-05",
+  "domain": "agentic",
+  "scenario": "s1",
+  "topic": "TS 1.3 Subagent spawning and context",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Un cliente escribe: 'Quiero devolver el pedido 4417, no reconozco un cargo de $89 y necesito cambiar mi dirección'. Diseñas un coordinator que delega cada una de las tres preocupaciones a un subagent distinto mediante la Task tool. ¿Qué dos prácticas son correctas? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Incluir 'Task' en allowedTools del coordinator para que pueda invocar subagents."
+   },
+   {
+    "id": "B",
+    "text": "Confiar en que cada subagent hereda automáticamente el historial de conversación del coordinator."
+   },
+   {
+    "id": "C",
+    "text": "Pasar en el prompt de cada subagent el customer ID verificado y los datos relevantes ya obtenidos, porque el contexto no se hereda."
+   },
+   {
+    "id": "D",
+    "text": "Emitir las llamadas Task en turnos separados para que el modelo pueda revisar cada resultado antes de lanzar la siguiente."
+   },
+   {
+    "id": "E",
+    "text": "Asumir que los subagents comparten memoria entre invocaciones, así que basta con indicar su tarea."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "explanation": "TS 1.3: la Task tool es el mecanismo de spawning y requiere 'Task' en allowedTools; además los subagents tienen contexto aislado, por lo que los hallazgos previos deben ir explícitos en su prompt.",
+  "distractors": {
+   "B": "Los subagents operan con contexto aislado y no heredan el historial del coordinator.",
+   "D": "Para paralelizar se emiten múltiples Task calls en una sola respuesta del coordinator; separarlas en turnos las serializa.",
+   "E": "Los subagents no comparten memoria entre invocaciones; todo el contexto debe pasarse en el prompt."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "A customer writes: 'I want to return order 4417, I don't recognize a $89 charge, and I need to change my address'. You design a coordinator that delegates each of the three concerns to a different subagent via the Task tool. Which two practices are correct? Select TWO.",
+   "options": {
+    "A": "Include 'Task' in the coordinator's allowedTools so it can invoke subagents.",
+    "B": "Rely on each subagent automatically inheriting the coordinator's conversation history.",
+    "C": "Pass the verified customer ID and the relevant data already retrieved in each subagent's prompt, because context is not inherited.",
+    "D": "Emit the Task calls in separate turns so the model can review each result before launching the next.",
+    "E": "Assume subagents share memory across invocations, so it is enough to state their task."
+   },
+   "explanation": "TS 1.3: the Task tool is the spawning mechanism and requires 'Task' in allowedTools; in addition, subagents have isolated context, so prior findings must be passed explicitly in their prompt.",
+   "distractors": {
+    "B": "Subagents operate with isolated context and do not inherit the coordinator's history.",
+    "D": "To parallelize, multiple Task calls are emitted in a single coordinator response; splitting them across turns serializes them.",
+    "E": "Subagents do not share memory across invocations; all context must be passed in the prompt."
+   },
+   "topic": "TS 1.3 Subagent spawning and context"
+  }
+ },
+ {
+  "id": "cca-s1-06",
+  "domain": "mcp",
+  "scenario": "s1",
+  "topic": "TS 2.1 Tool descriptions",
+  "type": "single",
+  "choose": 1,
+  "stem": "El agente confunde get_customer y lookup_order: ambos tienen la descripción mínima 'Busca información'. Con frecuencia llama a lookup_order con un correo electrónico. ¿Cuál es la corrección de menor costo y mayor efecto?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Ampliar las descripciones con formatos de entrada, ejemplos de consulta, casos límite y cuándo usar cada una frente a la otra."
+   },
+   {
+    "id": "B",
+    "text": "Agregar un clasificador de enrutamiento previo que elija la herramienta con reglas por palabras clave."
+   },
+   {
+    "id": "C",
+    "text": "Fusionar ambas en una sola herramienta genérica query_backend que reciba texto libre."
+   },
+   {
+    "id": "D",
+    "text": "Eliminar lookup_order y obligar a obtener los pedidos desde la respuesta de get_customer."
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "TS 2.1: las descripciones son el mecanismo principal para la selección de herramientas; deben diferenciar propósito, entradas esperadas, ejemplos y límites frente a herramientas similares.",
+  "distractors": {
+   "B": "Un clasificador por palabras clave añade una capa frágil y no corrige la causa: descripciones insuficientes.",
+   "C": "Una herramienta genérica de texto libre aumenta la ambigüedad en lugar de definir contratos de entrada y salida claros.",
+   "D": "Eliminar la herramienta elimina capacidad en vez de resolver la ambigüedad de descripción."
+  },
+  "difficulty": 1,
+  "en": {
+   "stem": "The agent confuses get_customer and lookup_order: both have the minimal description 'Looks up information'. It frequently calls lookup_order with an email address. What is the lowest-cost, highest-impact fix?",
+   "options": {
+    "A": "Expand the descriptions with input formats, example queries, edge cases, and when to use each versus the other.",
+    "B": "Add a pre-routing classifier that picks the tool using keyword rules.",
+    "C": "Merge both into a single generic query_backend tool that accepts free text.",
+    "D": "Remove lookup_order and force orders to be obtained from the get_customer response."
+   },
+   "explanation": "TS 2.1: descriptions are the primary mechanism for tool selection; they must differentiate purpose, expected inputs, examples, and boundaries relative to similar tools.",
+   "distractors": {
+    "B": "A keyword-based classifier adds a brittle layer and does not fix the root cause: insufficient descriptions.",
+    "C": "A generic free-text tool increases ambiguity instead of defining clear input and output contracts.",
+    "D": "Removing the tool removes capability instead of resolving the description ambiguity."
+   },
+   "topic": "TS 2.1 Tool descriptions"
+  }
+ },
+ {
+  "id": "cca-s1-07",
+  "domain": "mcp",
+  "scenario": "s1",
+  "topic": "TS 2.2 Structured error responses",
+  "type": "single",
+  "choose": 1,
+  "stem": "process_refund devuelve a veces el mensaje 'Operation failed' en todos los casos de fallo. El agente reintenta indefinidamente incluso cuando el pedido está fuera de la ventana de devolución de 30 días. ¿Qué rediseño de la respuesta de error es el mejor?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Devolver siempre HTTP 500 y dejar que el agente decida por su cuenta cuántas veces reintentar."
+   },
+   {
+    "id": "B",
+    "text": "Devolver isError con errorCategory, un flag isRetryable y una descripción legible; para violaciones de política, retriable false y una explicación apta para el cliente."
+   },
+   {
+    "id": "C",
+    "text": "Capturar el error y devolver un resultado vacío exitoso para que el agente continúe sin interrupciones."
+   },
+   {
+    "id": "D",
+    "text": "Terminar toda la conversación al primer error de process_refund y escalar siempre a un humano."
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "TS 2.2: los errores estructurados (errorCategory, isRetryable, descripción) permiten distinguir errores transitorios de errores de negocio y evitar reintentos inútiles, con explicaciones aptas para el cliente.",
+  "distractors": {
+   "A": "Un error uniforme no da al agente metadatos para distinguir transitorios de no reintentables.",
+   "C": "Devolver un vacío exitoso suprime el error y oculta que la operación no se realizó.",
+   "D": "Terminar todo ante cada fallo es desproporcionado; los errores transitorios o de validación pueden resolverse localmente."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "process_refund sometimes returns the message 'Operation failed' for every failure case. The agent retries indefinitely, even when the order is outside the 30-day return window. Which redesign of the error response is best?",
+   "options": {
+    "A": "Always return HTTP 500 and let the agent decide on its own how many times to retry.",
+    "B": "Return isError with an errorCategory, an isRetryable flag, and a human-readable description; for policy violations, retryable false and a customer-friendly explanation.",
+    "C": "Catch the error and return an empty successful result so the agent continues uninterrupted.",
+    "D": "End the entire conversation at the first process_refund error and always escalate to a human."
+   },
+   "explanation": "TS 2.2: structured errors (errorCategory, isRetryable, description) make it possible to distinguish transient errors from business errors and avoid pointless retries, with customer-friendly explanations.",
+   "distractors": {
+    "A": "A uniform error gives the agent no metadata to distinguish transient from non-retryable failures.",
+    "C": "Returning an empty success suppresses the error and hides that the operation was not performed.",
+    "D": "Ending everything on every failure is disproportionate; transient or validation errors can be resolved locally."
+   },
+   "topic": "TS 2.2 Structured error responses"
+  }
+ },
+ {
+  "id": "cca-s1-08",
+  "domain": "mcp",
+  "scenario": "s1",
+  "topic": "TS 2.3 Scoped tools and tool_choice",
+  "type": "single",
+  "choose": 1,
+  "stem": "Al evaluar identificación del cliente, quieres que la primera acción del agente en cada conversación sea siempre una llamada a get_customer, y que los pasos posteriores los decida el modelo. ¿Qué configuración de tool_choice usas?",
+  "options": [
+   {
+    "id": "A",
+    "text": "tool_choice 'auto' junto con una instrucción en el prompt que pida llamar a get_customer primero."
+   },
+   {
+    "id": "B",
+    "text": "tool_choice 'any' en todos los turnos para que el modelo elija cualquier herramienta disponible."
+   },
+   {
+    "id": "C",
+    "text": "Forzar {'type': 'tool', 'name': 'get_customer'} en el primer turno y volver a 'auto' en los turnos siguientes."
+   },
+   {
+    "id": "D",
+    "text": "Forzar get_customer en todos los turnos de la conversación para mantener el orden."
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "TS 2.3: tool_choice forzado garantiza que una herramienta específica se llame primero; los pasos subsiguientes se procesan en turnos posteriores, donde el modelo vuelve a decidir.",
+  "distractors": {
+   "A": "'auto' permite que el modelo responda con texto o elija otra herramienta; no garantiza el orden.",
+   "B": "'any' garantiza que se llame alguna herramienta, pero no cuál; no asegura get_customer primero.",
+   "D": "Forzar la misma herramienta en cada turno impide avanzar a lookup_order o process_refund."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "When evaluating customer identification, you want the agent's first action in every conversation to always be a call to get_customer, with subsequent steps decided by the model. Which tool_choice configuration do you use?",
+   "options": {
+    "A": "tool_choice 'auto' together with a prompt instruction asking to call get_customer first.",
+    "B": "tool_choice 'any' on every turn so the model picks any available tool.",
+    "C": "Force {'type': 'tool', 'name': 'get_customer'} on the first turn and return to 'auto' on subsequent turns.",
+    "D": "Force get_customer on every turn of the conversation to maintain the order."
+   },
+   "explanation": "TS 2.3: a forced tool_choice guarantees that a specific tool is called first; subsequent steps are handled in later turns, where the model decides again.",
+   "distractors": {
+    "A": "'auto' allows the model to respond with text or choose another tool; it does not guarantee the order.",
+    "B": "'any' guarantees that some tool is called, but not which one; it does not ensure get_customer comes first.",
+    "D": "Forcing the same tool on every turn prevents progressing to lookup_order or process_refund."
+   },
+   "topic": "TS 2.3 Scoped tools and tool_choice"
+  }
+ },
+ {
+  "id": "cca-s1-09",
+  "domain": "mcp",
+  "scenario": "s1",
+  "topic": "TS 2.4 MCP server scoping",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Tu equipo desarrolló un MCP server propio que expone get_customer y lookup_order sobre el backend de soporte y requiere un token de API. Además, un desarrollador quiere probar a título personal un servidor MCP experimental de analítica. ¿Qué dos configuraciones son correctas? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Registrar el servidor del equipo en .mcp.json del proyecto con el token referenciado como ${SUPPORT_API_TOKEN}."
+   },
+   {
+    "id": "B",
+    "text": "Escribir el token en texto plano dentro de .mcp.json para que todos puedan conectarse sin configurar nada."
+   },
+   {
+    "id": "C",
+    "text": "Pedir a cada desarrollador que registre manualmente el servidor del equipo en su ~/.claude.json."
+   },
+   {
+    "id": "D",
+    "text": "Configurar el servidor experimental en el ~/.claude.json de ese desarrollador, a nivel de usuario."
+   },
+   {
+    "id": "E",
+    "text": "Esperar que solo las herramientas del primer servidor configurado queden disponibles para el agente."
+   }
+  ],
+  "answer": [
+   "A",
+   "D"
+  ],
+  "explanation": "TS 2.4: el .mcp.json de proyecto sirve a herramientas compartidas del equipo con expansión de variables de entorno para credenciales, y ~/.claude.json de usuario para servidores personales o experimentales.",
+  "distractors": {
+   "B": "Comprometer un secreto en el repositorio expone credenciales; debe usarse expansión de variables de entorno.",
+   "C": "Configurar cada máquina a mano evita el alcance de proyecto y genera deriva; las herramientas compartidas pertenecen a .mcp.json.",
+   "E": "Las herramientas de todos los servidores configurados se descubren al conectar y están disponibles simultáneamente."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "Your team built its own MCP server that exposes get_customer and lookup_order over the support backend and requires an API token. In addition, a developer wants to personally try out an experimental analytics MCP server. Which two configurations are correct? Select TWO.",
+   "options": {
+    "A": "Register the team server in the project's .mcp.json with the token referenced as ${SUPPORT_API_TOKEN}.",
+    "B": "Write the token in plain text inside .mcp.json so everyone can connect without configuring anything.",
+    "C": "Ask each developer to manually register the team server in their ~/.claude.json.",
+    "D": "Configure the experimental server in that developer's ~/.claude.json, at the user level.",
+    "E": "Expect that only the tools from the first configured server will be available to the agent."
+   },
+   "explanation": "TS 2.4: the project-level .mcp.json serves shared team tools with environment variable expansion for credentials, and the user-level ~/.claude.json serves personal or experimental servers.",
+   "distractors": {
+    "B": "Committing a secret to the repository exposes credentials; environment variable expansion should be used.",
+    "C": "Configuring each machine by hand bypasses project scope and causes drift; shared tools belong in .mcp.json.",
+    "E": "Tools from all configured servers are discovered on connection and are available simultaneously."
+   },
+   "topic": "TS 2.4 MCP server scoping"
+  }
+ },
+ {
+  "id": "cca-s1-10",
+  "domain": "context",
+  "scenario": "s1",
+  "topic": "TS 5.1 Case facts and tool output trimming",
+  "type": "single",
+  "choose": 1,
+  "stem": "En sesiones largas con varias incidencias, el agente resume el historial y luego cita montos y fechas de manera imprecisa ('un reembolso de unos 80 dólares hace un tiempo'). Además, cada lookup_order devuelve más de 40 campos y solo 5 son relevantes. ¿Qué estrategia aborda ambos problemas?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Duplicar el tamaño de la ventana de contexto y mantener todos los campos de cada pedido."
+   },
+   {
+    "id": "B",
+    "text": "Resumir progresivamente cada pocos turnos para que el historial sea más corto y legible."
+   },
+   {
+    "id": "C",
+    "text": "Pedir al cliente que repita montos y fechas cuando el agente los necesite."
+   },
+   {
+    "id": "D",
+    "text": "Mantener un bloque persistente de 'case facts' (montos, fechas, números de pedido, estados) fuera del historial resumido y recortar las salidas de herramientas a los campos relevantes."
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "TS 5.1: extraer hechos transaccionales a un bloque de case facts incluido en cada prompt evita la pérdida por resumen progresivo, y recortar los resultados verbosos limita el consumo de tokens irrelevantes.",
+  "distractors": {
+   "A": "Más contexto no evita la pérdida por resumen ni el ruido de campos irrelevantes; los resultados verbosos siguen acumulándose.",
+   "B": "El resumen progresivo es justamente lo que condensa cifras y fechas en descripciones vagas.",
+   "C": "Delegar la memoria al cliente degrada la experiencia y no resuelve el diseño del contexto."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "In long sessions with multiple issues, the agent summarizes the history and then cites amounts and dates imprecisely ('a refund of about 80 dollars some time ago'). In addition, each lookup_order returns more than 40 fields and only 5 are relevant. Which strategy addresses both problems?",
+   "options": {
+    "A": "Double the context window size and keep all fields of each order.",
+    "B": "Progressively summarize every few turns so the history is shorter and more readable.",
+    "C": "Ask the customer to repeat amounts and dates whenever the agent needs them.",
+    "D": "Maintain a persistent 'case facts' block (amounts, dates, order numbers, statuses) outside the summarized history and trim tool outputs to the relevant fields."
+   },
+   "explanation": "TS 5.1: extracting transactional facts into a case facts block included in every prompt prevents the loss caused by progressive summarization, and trimming verbose results limits the consumption of irrelevant tokens.",
+   "distractors": {
+    "A": "More context does not prevent summarization loss or noise from irrelevant fields; verbose results keep accumulating.",
+    "B": "Progressive summarization is precisely what condenses figures and dates into vague descriptions.",
+    "C": "Offloading memory to the customer degrades the experience and does not solve the context design."
+   },
+   "topic": "TS 5.1 Case facts and tool output trimming"
+  }
+ },
+ {
+  "id": "cca-s1-11",
+  "domain": "context",
+  "scenario": "s1",
+  "topic": "TS 5.2 Escalation criteria",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un cliente enojado escribe: 'Esto es inaceptable, quiero hablar con una persona ahora mismo'. El problema es una devolución estándar que el agente podría resolver. ¿Cómo debe actuar el agente según un buen diseño de escalamiento?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Intentar primero investigar y resolver, porque el caso es sencillo y la resolución en el primer contacto es la meta."
+   },
+   {
+    "id": "B",
+    "text": "Honrar la petición explícita escalando de inmediato a un humano con un handoff estructurado, sin investigar primero."
+   },
+   {
+    "id": "C",
+    "text": "Calcular un puntaje de sentimiento y escalar solo si supera un umbral definido."
+   },
+   {
+    "id": "D",
+    "text": "Pedir al modelo que estime su confianza y escalar únicamente si es menor al 50%."
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "TS 5.2: cuando el cliente pide explícitamente un agente humano, se honra de inmediato sin investigar antes; la frustración sin esa petición permitiría ofrecer resolver, pero aquí hay solicitud explícita.",
+  "distractors": {
+   "A": "Investigar antes ignora la petición explícita del cliente; ofrecer resolver aplica a frustración sin demanda de humano.",
+   "C": "El sentimiento es un proxy poco fiable de la complejidad real del caso y no sustituye una petición explícita.",
+   "D": "Los confidence scores autoinformados no están calibrados y no son un criterio fiable de escalamiento."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "An angry customer writes: 'This is unacceptable, I want to talk to a person right now'. The issue is a standard return that the agent could resolve. How should the agent act under a good escalation design?",
+   "options": {
+    "A": "First try to investigate and resolve, because the case is simple and first-contact resolution is the goal.",
+    "B": "Honor the explicit request by escalating immediately to a human with a structured handoff, without investigating first.",
+    "C": "Compute a sentiment score and escalate only if it exceeds a defined threshold.",
+    "D": "Ask the model to estimate its confidence and escalate only if it is below 50%."
+   },
+   "explanation": "TS 5.2: when the customer explicitly asks for a human agent, the request is honored immediately without investigating first; frustration without such a request would allow offering to resolve, but here there is an explicit request.",
+   "distractors": {
+    "A": "Investigating first ignores the customer's explicit request; offering to resolve applies to frustration without a demand for a human.",
+    "C": "Sentiment is an unreliable proxy for the real complexity of the case and does not replace an explicit request.",
+    "D": "Self-reported confidence scores are uncalibrated and are not a reliable escalation criterion."
+   },
+   "topic": "TS 5.2 Escalation criteria"
+  }
+ },
+ {
+  "id": "cca-s1-12",
+  "domain": "context",
+  "scenario": "s1",
+  "topic": "TS 5.3 Error propagation and empty results",
+  "type": "single",
+  "choose": 1,
+  "stem": "En el flujo de verificación, un subagent de lookup_order consulta pedidos de un cliente. Hay dos situaciones: en una el servicio expira por timeout; en otra, la consulta tuvo éxito pero no hay pedidos. ¿Qué debe reportar el subagent al coordinator?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Para el timeout, un error estructurado (tipo de fallo, consulta intentada, resultados parciales, alternativas) tras agotar su recuperación local; para la consulta sin pedidos, un resultado exitoso vacío."
+   },
+   {
+    "id": "B",
+    "text": "En ambos casos, un resultado vacío exitoso para mantener el flujo sin interrupciones."
+   },
+   {
+    "id": "C",
+    "text": "En ambos casos, el estado genérico 'consulta no disponible' para ser conservador."
+   },
+   {
+    "id": "D",
+    "text": "Para el timeout, terminar todo el workflow; para la consulta sin pedidos, un error de validación."
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "TS 5.3: hay que distinguir fallos de acceso (que requieren decisiones de reintento, con contexto estructurado) de resultados vacíos válidos; los subagents recuperan localmente lo transitorio y propagan solo lo irresoluble.",
+  "distractors": {
+   "B": "Reportar un timeout como vacío exitoso suprime el error y hace creer que el cliente no tiene pedidos.",
+   "C": "Un estado genérico oculta al coordinator el tipo de fallo y qué se intentó, y confunde el vacío válido con un fallo.",
+   "D": "Terminar todo el workflow por un fallo único es un anti-patrón, y un resultado vacío válido no es un error de validación."
+  },
+  "difficulty": 3,
+  "en": {
+   "stem": "In the verification flow, a lookup_order subagent queries a customer's orders. There are two situations: in one, the service times out; in the other, the query succeeded but there are no orders. What should the subagent report to the coordinator?",
+   "options": {
+    "A": "For the timeout, a structured error (failure type, attempted query, partial results, alternatives) after exhausting its local recovery; for the query with no orders, an empty successful result.",
+    "B": "In both cases, an empty successful result to keep the flow uninterrupted.",
+    "C": "In both cases, the generic status 'query unavailable' to be conservative.",
+    "D": "For the timeout, terminate the entire workflow; for the query with no orders, a validation error."
+   },
+   "explanation": "TS 5.3: access failures (which require retry decisions, with structured context) must be distinguished from valid empty results; subagents recover locally from transient issues and propagate only what is unresolvable.",
+   "distractors": {
+    "B": "Reporting a timeout as an empty success suppresses the error and makes it seem the customer has no orders.",
+    "C": "A generic status hides the failure type and what was attempted from the coordinator, and confuses a valid empty result with a failure.",
+    "D": "Terminating the whole workflow over a single failure is an anti-pattern, and a valid empty result is not a validation error."
+   },
+   "topic": "TS 5.3 Error propagation and empty results"
+  }
+ }
+]

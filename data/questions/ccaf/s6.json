@@ -1,0 +1,650 @@
+[
+ {
+  "id": "cca-s6-01",
+  "domain": "prompting",
+  "scenario": "s6",
+  "topic": "TS 4.3 Forced tool_choice",
+  "type": "single",
+  "choose": 1,
+  "stem": "Tu pipeline de extracción de facturas expone tres tools: extract_metadata, lookup_vendor y classify_gl_code. Los pasos de enriquecimiento dependen de que extract_metadata se ejecute primero sobre cada documento. ¿Qué configuración garantiza ese orden de la forma más fiable?",
+  "options": [
+   {
+    "id": "A",
+    "text": "tool_choice 'auto' y una instrucción en el system prompt que pida llamar a extract_metadata primero."
+   },
+   {
+    "id": "B",
+    "text": "En la primera request, forzar tool_choice con type 'tool' y name 'extract_metadata'; en requests posteriores exponer las tools de enriquecimiento."
+   },
+   {
+    "id": "C",
+    "text": "tool_choice 'any' con las tres tools disponibles desde la primera request."
+   },
+   {
+    "id": "D",
+    "text": "Sin tools: pedir el JSON en texto y parsearlo con una expresión regular antes de enriquecer."
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "TS 4.3: forzar una tool concreta con tool_choice {type:'tool', name:...} asegura que una extracción específica corra antes de los pasos de enriquecimiento; 'auto' y 'any' no fijan cuál tool se llama.",
+  "distractors": {
+   "A": "Con 'auto' el modelo puede devolver texto o elegir otra tool; una instrucción en el prompt no es una garantía.",
+   "C": "'any' obliga a llamar a alguna tool pero el modelo elige cuál, así que podría empezar por lookup_vendor.",
+   "D": "Parsear texto libre con regex reintroduce errores de sintaxis JSON que tool_use con JSON schema elimina."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "Your invoice extraction pipeline exposes three tools: extract_metadata, lookup_vendor, and classify_gl_code. The enrichment steps depend on extract_metadata running first on each document. Which configuration guarantees that order most reliably?",
+   "options": {
+    "A": "tool_choice 'auto' and a system prompt instruction to call extract_metadata first.",
+    "B": "On the first request, force tool_choice with type 'tool' and name 'extract_metadata'; on subsequent requests, expose the enrichment tools.",
+    "C": "tool_choice 'any' with all three tools available from the first request.",
+    "D": "No tools: ask for the JSON as text and parse it with a regular expression before enrichment."
+   },
+   "explanation": "TS 4.3: forcing a specific tool with tool_choice {type:'tool', name:...} ensures a particular extraction runs before the enrichment steps; 'auto' and 'any' do not fix which tool is called.",
+   "distractors": {
+    "A": "With 'auto' the model may return text or pick another tool; a prompt instruction is not a guarantee.",
+    "C": "'any' forces a tool call but the model chooses which one, so it could start with lookup_vendor.",
+    "D": "Parsing free text with a regex reintroduces JSON syntax errors that tool_use with a JSON schema eliminates."
+   },
+   "topic": "TS 4.3 Forced tool_choice"
+  }
+ },
+ {
+  "id": "cca-s6-02",
+  "domain": "prompting",
+  "scenario": "s6",
+  "topic": "TS 4.3 tool_choice any with unknown doc type",
+  "type": "single",
+  "choose": 1,
+  "stem": "El sistema recibe documentos de tipo desconocido (facturas, contratos o recibos) y define una tool de extracción con su propio JSON schema para cada tipo. Necesitas que SIEMPRE se devuelva salida estructurada, sin respuestas en texto plano. ¿Qué configuración eliges?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Forzar tool_choice a extract_invoice, ya que las facturas son el tipo más frecuente."
+   },
+   {
+    "id": "B",
+    "text": "tool_choice 'auto' y confiar en que el modelo llame a la tool adecuada."
+   },
+   {
+    "id": "C",
+    "text": "tool_choice 'any' con las tres tools de extracción definidas."
+   },
+   {
+    "id": "D",
+    "text": "Un único schema universal con todos los campos de los tres tipos marcados como required."
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "TS 4.3: cuando existen varios schemas y el tipo de documento es desconocido, tool_choice 'any' garantiza que el modelo llame a una tool (salida estructurada) y deja que elija la más adecuada.",
+  "distractors": {
+   "A": "Forzar una tool concreta obliga a encajar contratos y recibos en el schema de facturas.",
+   "B": "Con 'auto' el modelo puede responder con texto en lugar de llamar a una tool, perdiendo la garantía.",
+   "D": "Marcar como required campos que no aplican al documento empuja al modelo a fabricar valores."
+  },
+  "difficulty": 1,
+  "en": {
+   "stem": "The system receives documents of unknown type (invoices, contracts, or receipts) and defines an extraction tool with its own JSON schema for each type. You need structured output to ALWAYS be returned, with no plain-text responses. Which configuration do you choose?",
+   "options": {
+    "A": "Force tool_choice to extract_invoice, since invoices are the most frequent type.",
+    "B": "tool_choice 'auto' and trust the model to call the appropriate tool.",
+    "C": "tool_choice 'any' with the three extraction tools defined.",
+    "D": "A single universal schema with all fields from the three types marked as required."
+   },
+   "explanation": "TS 4.3: when multiple schemas exist and the document type is unknown, tool_choice 'any' guarantees the model calls a tool (structured output) and lets it choose the most appropriate one.",
+   "distractors": {
+    "A": "Forcing a specific tool makes contracts and receipts fit into the invoice schema.",
+    "B": "With 'auto' the model may respond with text instead of calling a tool, losing the guarantee.",
+    "D": "Marking fields that do not apply to the document as required pushes the model to fabricate values."
+   },
+   "topic": "TS 4.3 tool_choice any with unknown doc type"
+  }
+ },
+ {
+  "id": "cca-s6-03",
+  "domain": "prompting",
+  "scenario": "s6",
+  "topic": "TS 4.3 Optional and nullable fields",
+  "type": "single",
+  "choose": 1,
+  "stem": "Al extraer contratos, el campo contract_end_date es required en el JSON schema, pero muchos contratos son indefinidos y no incluyen fecha de fin. Observas que el modelo inventa fechas plausibles. ¿Cuál es la corrección más adecuada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Hacer el campo opcional/nullable en el schema e indicar que devuelva null cuando el documento no lo contenga."
+   },
+   {
+    "id": "B",
+    "text": "Mantenerlo required y añadir al prompt la frase 'nunca dejes un campo vacío'."
+   },
+   {
+    "id": "C",
+    "text": "Mantenerlo required con un valor por defecto de 1970-01-01 que el sistema downstream ignore."
+   },
+   {
+    "id": "D",
+    "text": "Bajar la temperature a 0 para que el modelo deje de inventar valores."
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "TS 4.3: diseñar como nullable los campos que la fuente puede no contener evita que el modelo fabrique valores para satisfacer un campo required.",
+  "distractors": {
+   "B": "Esa instrucción agrava el problema: presiona al modelo a rellenar con datos inventados.",
+   "C": "Un valor centinela es un dato falso que puede contaminar sistemas downstream si alguien no lo filtra.",
+   "D": "La temperature no cambia que el schema exija un valor; el modelo seguirá debiendo inventar uno."
+  },
+  "difficulty": 1,
+  "en": {
+   "stem": "When extracting contracts, the contract_end_date field is required in the JSON schema, but many contracts are open-ended and include no end date. You observe that the model invents plausible dates. What is the most appropriate fix?",
+   "options": {
+    "A": "Make the field optional/nullable in the schema and instruct the model to return null when the document does not contain it.",
+    "B": "Keep it required and add the phrase 'never leave a field empty' to the prompt.",
+    "C": "Keep it required with a default value of 1970-01-01 that the downstream system ignores.",
+    "D": "Lower the temperature to 0 so the model stops inventing values."
+   },
+   "explanation": "TS 4.3: designing fields the source may not contain as nullable prevents the model from fabricating values to satisfy a required field.",
+   "distractors": {
+    "B": "That instruction makes the problem worse: it pressures the model to fill in invented data.",
+    "C": "A sentinel value is false data that can contaminate downstream systems if someone fails to filter it.",
+    "D": "Temperature does not change the fact that the schema demands a value; the model will still have to invent one."
+   },
+   "topic": "TS 4.3 Optional and nullable fields"
+  }
+ },
+ {
+  "id": "cca-s6-04",
+  "domain": "prompting",
+  "scenario": "s6",
+  "topic": "TS 4.4 Retry limits and error feedback",
+  "type": "single",
+  "choose": 1,
+  "stem": "Tras la extracción, un validador rechaza dos grupos de documentos: (1) tax_id con formato incorrecto, y (2) purchase_order_number ausente porque ese dato vive solo en un ERP externo que no se le entrega a Claude. ¿Qué estrategia de retry es la más sensata?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Reintentar ambos grupos hasta 3 veces con el mismo prompt original."
+   },
+   {
+    "id": "B",
+    "text": "Reintentar ambos grupos añadiendo la instrucción genérica 'sé más cuidadoso'."
+   },
+   {
+    "id": "C",
+    "text": "Reintentar ambos grupos con un max_tokens mayor para que el modelo encuentre el dato."
+   },
+   {
+    "id": "D",
+    "text": "Reintentar el grupo 1 enviando el documento, la extracción fallida y el error de validación específico; para el grupo 2 no reintentar y dejar el campo en null para revisión o enriquecimiento externo."
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "TS 4.4: el retry con feedback de errores específicos corrige fallos de formato o estructura, pero es ineficaz cuando la información falta en el documento fuente.",
+  "distractors": {
+   "A": "El mismo prompt reproduce el mismo error y no aporta información de corrección.",
+   "B": "Un mensaje genérico no dice qué falló; el feedback debe ser el error de validación concreto.",
+   "C": "Más tokens no crean información que no está en el documento."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "After extraction, a validator rejects two groups of documents: (1) tax_id with an incorrect format, and (2) missing purchase_order_number because that data lives only in an external ERP that is not provided to Claude. Which retry strategy is the most sensible?",
+   "options": {
+    "A": "Retry both groups up to 3 times with the same original prompt.",
+    "B": "Retry both groups adding the generic instruction 'be more careful'.",
+    "C": "Retry both groups with a higher max_tokens so the model can find the data.",
+    "D": "Retry group 1 by sending the document, the failed extraction, and the specific validation error; for group 2, do not retry and leave the field null for review or external enrichment."
+   },
+   "explanation": "TS 4.4: retrying with specific error feedback fixes format or structure failures, but is ineffective when the information is missing from the source document.",
+   "distractors": {
+    "A": "The same prompt reproduces the same error and provides no corrective information.",
+    "B": "A generic message does not say what failed; the feedback must be the concrete validation error.",
+    "C": "More tokens do not create information that is not in the document."
+   },
+   "topic": "TS 4.4 Retry limits and error feedback"
+  }
+ },
+ {
+  "id": "cca-s6-05",
+  "domain": "prompting",
+  "scenario": "s6",
+  "topic": "TS 4.4 Semantic validation",
+  "type": "single",
+  "choose": 1,
+  "stem": "Con tool_use y JSON schema estricto ya no hay errores de sintaxis, pero algunas facturas llegan con line_items cuya suma no coincide con el total declarado. ¿Cómo diseñas la detección de esta discrepancia?",
+  "options": [
+   {
+    "id": "A",
+    "text": "No hace falta: un schema estricto garantiza que los valores sean correctos."
+   },
+   {
+    "id": "B",
+    "text": "Extraer calculated_total junto a stated_total, añadir un booleano conflict_detected y validar la diferencia en código."
+   },
+   {
+    "id": "C",
+    "text": "Cambiar a tool_choice forzado, que impide los errores semánticos."
+   },
+   {
+    "id": "D",
+    "text": "Pedir al modelo que corrija silenciosamente el total para que coincida con la suma."
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "TS 4.3/4.4: el schema estricto elimina errores de sintaxis pero no los semánticos; extraer calculated_total junto a stated_total y conflict_detected permite marcar discrepancias.",
+  "distractors": {
+   "A": "Los schemas garantizan estructura, no que los valores sumen o estén en el campo correcto.",
+   "C": "tool_choice controla qué tool se llama, no la coherencia semántica de los valores.",
+   "D": "Corregir en silencio oculta el conflicto de la fuente y puede introducir un dato no respaldado."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "With tool_use and a strict JSON schema there are no more syntax errors, but some invoices arrive with line_items whose sum does not match the stated total. How do you design the detection of this discrepancy?",
+   "options": {
+    "A": "It is not needed: a strict schema guarantees that values are correct.",
+    "B": "Extract calculated_total alongside stated_total, add a conflict_detected boolean, and validate the difference in code.",
+    "C": "Switch to forced tool_choice, which prevents semantic errors.",
+    "D": "Ask the model to silently correct the total so it matches the sum."
+   },
+   "explanation": "TS 4.3/4.4: a strict schema eliminates syntax errors but not semantic ones; extracting calculated_total alongside stated_total and conflict_detected allows discrepancies to be flagged.",
+   "distractors": {
+    "A": "Schemas guarantee structure, not that values add up or are in the correct field.",
+    "C": "tool_choice controls which tool is called, not the semantic consistency of the values.",
+    "D": "Silently correcting hides the conflict in the source and can introduce unsupported data."
+   },
+   "topic": "TS 4.4 Semantic validation"
+  }
+ },
+ {
+  "id": "cca-s6-06",
+  "domain": "prompting",
+  "scenario": "s6",
+  "topic": "TS 4.5 Batch API vs synchronous",
+  "type": "single",
+  "choose": 1,
+  "stem": "Hay dos cargas: (1) re-extracción semanal de 100 000 documentos archivados, sin nadie esperando; (2) extracción de un documento que sube un cliente y bloquea su flujo de onboarding. Quieres minimizar costo sin romper la experiencia. ¿Qué decides?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Message Batches API para ambas cargas, aprovechando el 50% de ahorro."
+   },
+   {
+    "id": "B",
+    "text": "API síncrona para ambas cargas, para tener un único camino de código."
+   },
+   {
+    "id": "C",
+    "text": "Message Batches API para la carga (1), correlacionando resultados con custom_id, y API síncrona para la carga (2)."
+   },
+   {
+    "id": "D",
+    "text": "Batch API también para (2), haciendo polling cada pocos segundos porque suele terminar rápido."
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "TS 4.5: la Batch API da 50% de ahorro con ventana de hasta 24 h y sin SLA de latencia, apta para cargas tolerantes a latencia; los flujos bloqueantes requieren API síncrona; custom_id correlaciona request/response.",
+  "distractors": {
+   "A": "Batch no garantiza latencia, así que bloquearía el onboarding del cliente.",
+   "B": "Se pierde el ahorro del 50% en una carga masiva que tolera la espera.",
+   "D": "No hay SLA de latencia en batch; 'suele terminar rápido' no es una garantía."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "There are two workloads: (1) weekly re-extraction of 100,000 archived documents, with nobody waiting; (2) extraction of a single document uploaded by a customer that blocks their onboarding flow. You want to minimize cost without breaking the experience. What do you decide?",
+   "options": {
+    "A": "Message Batches API for both workloads, taking advantage of the 50% savings.",
+    "B": "Synchronous API for both workloads, to have a single code path.",
+    "C": "Message Batches API for workload (1), correlating results with custom_id, and synchronous API for workload (2).",
+    "D": "Batch API for (2) as well, polling every few seconds because it usually finishes quickly."
+   },
+   "explanation": "TS 4.5: the Batch API offers 50% savings with a window of up to 24 h and no latency SLA, suited to latency-tolerant workloads; blocking flows require the synchronous API; custom_id correlates request and response.",
+   "distractors": {
+    "A": "Batch does not guarantee latency, so it would block the customer's onboarding.",
+    "B": "The 50% savings are lost on a massive workload that tolerates waiting.",
+    "D": "Batch has no latency SLA; 'usually finishes quickly' is not a guarantee."
+   },
+   "topic": "TS 4.5 Batch API vs synchronous"
+  }
+ },
+ {
+  "id": "cca-s6-07",
+  "domain": "prompting",
+  "scenario": "s6",
+  "topic": "TS 4.2 Few-shot for varied formats",
+  "type": "multi",
+  "choose": 2,
+  "stem": "El extractor devuelve null en campos como cargo_peso cuando los documentos usan medidas informales («unos dos palés y medio») o estructuras distintas (datos en el encabezado vs. embebidos en el cuerpo). Las instrucciones detalladas por sí solas no corrigen el problema. ¿Qué acciones mejoran la consistencia? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Añadir 2-4 ejemplos few-shot de documentos con formatos distintos que muestren la extracción correcta, incluidas medidas informales."
+   },
+   {
+    "id": "B",
+    "text": "Incluir few-shot de casos ambiguos que expliquen por qué se eligió un valor sobre alternativas plausibles."
+   },
+   {
+    "id": "C",
+    "text": "Añadir 30 ejemplos con exactamente el mismo formato de documento para cubrir todos los casos."
+   },
+   {
+    "id": "D",
+    "text": "Alargar el prompt con frases como 'sé preciso y no alucines'."
+   },
+   {
+    "id": "E",
+    "text": "Marcar el campo como required para forzar al modelo a rellenarlo."
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "explanation": "TS 4.2: pocos ejemplos few-shot dirigidos a formatos variados y casos ambiguos, con el razonamiento de la decisión, reducen extracciones vacías y alucinaciones y permiten generalizar.",
+  "distractors": {
+   "C": "Muchos ejemplos de un solo formato no enseñan a generalizar a estructuras variadas.",
+   "D": "Instrucciones genéricas no muestran el comportamiento deseado y no resuelven la inconsistencia.",
+   "E": "Forzar un campo required sin ejemplos tiende a fabricar valores en lugar de extraer correctamente."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "The extractor returns null in fields such as cargo_peso when documents use informal measurements (“about two and a half pallets”) or different structures (data in the header vs. embedded in the body). Detailed instructions alone do not fix the problem. Which actions improve consistency? Select TWO.",
+   "options": {
+    "A": "Add 2-4 few-shot examples of documents with different formats showing the correct extraction, including informal measurements.",
+    "B": "Include few-shot examples of ambiguous cases that explain why one value was chosen over plausible alternatives.",
+    "C": "Add 30 examples with exactly the same document format to cover all cases.",
+    "D": "Lengthen the prompt with phrases like 'be precise and do not hallucinate'.",
+    "E": "Mark the field as required to force the model to fill it in."
+   },
+   "explanation": "TS 4.2: a few targeted few-shot examples covering varied formats and ambiguous cases, with the reasoning behind the decision, reduce empty extractions and hallucinations and enable generalization.",
+   "distractors": {
+    "C": "Many examples of a single format do not teach the model to generalize to varied structures.",
+    "D": "Generic instructions do not demonstrate the desired behavior and do not resolve the inconsistency.",
+    "E": "Forcing a required field without examples tends to fabricate values instead of extracting correctly."
+   },
+   "topic": "TS 4.2 Few-shot for varied formats"
+  }
+ },
+ {
+  "id": "cca-s6-08",
+  "domain": "context",
+  "scenario": "s6",
+  "topic": "TS 5.5 Accuracy by segment",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una evaluación muestra 97% de precisión global en la extracción y el equipo propone reducir drásticamente la revisión humana. ¿Qué haces antes de automatizar?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Medir la precisión por tipo de documento y por campo con un set validado, y verificar que cada segmento sea consistente antes de reducir revisión."
+   },
+   {
+    "id": "B",
+    "text": "Reducir la revisión ya, porque 97% supera el objetivo."
+   },
+   {
+    "id": "C",
+    "text": "Muestrear solo las extracciones de baja confianza, que son las únicas con riesgo."
+   },
+   {
+    "id": "D",
+    "text": "Pedir al modelo una confianza global y eliminar la revisión por encima de 0.9."
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "TS 5.5: las métricas agregadas pueden ocultar mal desempeño en tipos de documento o campos específicos; hay que validar por segmento antes de automatizar extracciones de alta confianza.",
+  "distractors": {
+   "B": "El promedio puede esconder un tipo de documento o campo con errores altos.",
+   "C": "Ignorar las de alta confianza impide medir su tasa de error real y detectar patrones nuevos.",
+   "D": "Una confianza global autorreportada sin calibrar no es un proxy fiable de la precisión por campo."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "An evaluation shows 97% overall extraction accuracy and the team proposes drastically reducing human review. What do you do before automating?",
+   "options": {
+    "A": "Measure accuracy by document type and by field using a validated set, and verify that each segment is consistent before reducing review.",
+    "B": "Reduce review now, because 97% exceeds the target.",
+    "C": "Sample only the low-confidence extractions, which are the only ones at risk.",
+    "D": "Ask the model for an overall confidence and remove review above 0.9."
+   },
+   "explanation": "TS 5.5: aggregate metrics can hide poor performance on specific document types or fields; you must validate by segment before automating high-confidence extractions.",
+   "distractors": {
+    "B": "The average can hide a document type or field with high error rates.",
+    "C": "Ignoring high-confidence extractions prevents measuring their real error rate and detecting new patterns.",
+    "D": "An uncalibrated, self-reported overall confidence is not a reliable proxy for per-field accuracy."
+   },
+   "topic": "TS 5.5 Accuracy by segment"
+  }
+ },
+ {
+  "id": "cca-s6-09",
+  "domain": "context",
+  "scenario": "s6",
+  "topic": "TS 5.5 Field-level confidence calibration",
+  "type": "single",
+  "choose": 1,
+  "stem": "Los revisores humanos solo pueden cubrir una fracción de los documentos. Quieres priorizar su atención hacia las extracciones con mayor riesgo de error. ¿Qué diseño es el más defendible?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Aceptar un único score de confianza por documento y revisar lo que quede bajo 0.8 sin más análisis."
+   },
+   {
+    "id": "B",
+    "text": "Revisar los documentos cuyo tono o sentimiento parezca más problemático."
+   },
+   {
+    "id": "C",
+    "text": "Revisar una muestra aleatoria fija del 10% sin considerar la confianza."
+   },
+   {
+    "id": "D",
+    "text": "Hacer que el modelo emita confianza por campo, calibrar los umbrales con un set de validación etiquetado y enrutar a revisión los de baja confianza o con fuentes ambiguas o contradictorias."
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "TS 5.5: los scores de confianza por campo, calibrados contra un set de validación etiquetado, permiten enrutar la revisión limitada hacia extracciones de baja confianza o fuentes contradictorias.",
+  "distractors": {
+   "A": "Un score sin calibrar y a nivel documento no indica qué campos fallan ni si el umbral es válido.",
+   "B": "El sentimiento no es un proxy fiable de la complejidad o del riesgo de error de la extracción.",
+   "C": "Una muestra ciega no prioriza el riesgo y desperdicia capacidad de revisión."
+  },
+  "difficulty": 3,
+  "en": {
+   "stem": "Human reviewers can only cover a fraction of the documents. You want to direct their attention to the extractions with the highest risk of error. Which design is the most defensible?",
+   "options": {
+    "A": "Accept a single confidence score per document and review whatever falls below 0.8 without further analysis.",
+    "B": "Review the documents whose tone or sentiment seems most problematic.",
+    "C": "Review a fixed random sample of 10% without considering confidence.",
+    "D": "Have the model emit per-field confidence, calibrate thresholds with a labeled validation set, and route to review those with low confidence or with ambiguous or contradictory sources."
+   },
+   "explanation": "TS 5.5: per-field confidence scores, calibrated against a labeled validation set, allow limited review capacity to be routed toward low-confidence extractions or contradictory sources.",
+   "distractors": {
+    "A": "An uncalibrated, document-level score does not indicate which fields fail or whether the threshold is valid.",
+    "B": "Sentiment is not a reliable proxy for the complexity or error risk of the extraction.",
+    "C": "A blind sample does not prioritize risk and wastes review capacity."
+   },
+   "topic": "TS 5.5 Field-level confidence calibration"
+  }
+ },
+ {
+  "id": "cca-s6-10",
+  "domain": "context",
+  "scenario": "s6",
+  "topic": "TS 5.6 Conflicting values with attribution",
+  "type": "single",
+  "choose": 1,
+  "stem": "Al extraer ingresos anuales de una empresa, el informe anual dice 12,4 M y una nota de prensa dice 11,9 M. Ambas fuentes son creíbles. ¿Cómo debe tratar la extracción esta discrepancia antes de pasar a la síntesis?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Quedarse con el valor más alto para ser conservador."
+   },
+   {
+    "id": "B",
+    "text": "Promediar ambos valores en un único número."
+   },
+   {
+    "id": "C",
+    "text": "Incluir ambos valores anotados con su fuente (y fecha), marcando el conflicto para que el coordinator decida cómo reconciliarlos."
+   },
+   {
+    "id": "D",
+    "text": "Descartar silenciosamente el valor de la nota de prensa por ser menos formal."
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "TS 5.6: ante estadísticas conflictivas de fuentes creíbles se anotan ambos valores con atribución en lugar de elegir uno arbitrariamente, dejando la reconciliación al coordinator.",
+  "distractors": {
+   "A": "Elegir arbitrariamente un valor oculta el conflicto y puede propagar un dato incorrecto.",
+   "B": "Un promedio fabrica una cifra que ninguna fuente respalda.",
+   "D": "Descartar sin registrar pierde información y atribución de fuente."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "When extracting a company's annual revenue, the annual report says 12.4M and a press release says 11.9M. Both sources are credible. How should the extraction handle this discrepancy before passing to synthesis?",
+   "options": {
+    "A": "Keep the higher value to be conservative.",
+    "B": "Average both values into a single number.",
+    "C": "Include both values annotated with their source (and date), flagging the conflict so the coordinator decides how to reconcile them.",
+    "D": "Silently discard the press release value because it is less formal."
+   },
+   "explanation": "TS 5.6: when credible sources provide conflicting statistics, annotate both values with attribution instead of arbitrarily choosing one, leaving reconciliation to the coordinator.",
+   "distractors": {
+    "A": "Arbitrarily choosing a value hides the conflict and may propagate an incorrect figure.",
+    "B": "An average fabricates a figure that no source supports.",
+    "D": "Discarding without recording loses information and source attribution."
+   },
+   "topic": "TS 5.6 Conflicting values with attribution"
+  }
+ },
+ {
+  "id": "cca-s6-11",
+  "domain": "context",
+  "scenario": "s6",
+  "topic": "TS 5.1 Preserving key facts in long context",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una sesión de extracción agrega resultados de 40 documentos en un solo prompt de síntesis. El resultado omite hallazgos de los documentos centrales y, tras varios resúmenes progresivos, cifras y fechas quedan en términos vagos. ¿Qué enfoque mitiga mejor ambos problemas?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Resumir progresivamente el historial cada pocos documentos para ahorrar tokens."
+   },
+   {
+    "id": "B",
+    "text": "Confiar en una ventana de contexto más grande, que elimina el efecto de posición."
+   },
+   {
+    "id": "C",
+    "text": "Conservar las respuestas completas de cada lookup (40+ campos) para no perder información."
+   },
+   {
+    "id": "D",
+    "text": "Colocar un resumen de hallazgos clave al inicio, organizar el detalle con encabezados de sección explícitos y mantener un bloque persistente de hechos (montos, fechas, IDs) fuera del historial resumido."
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "TS 5.1: el efecto 'lost in the middle' se mitiga con resúmenes al inicio y secciones explícitas, y la pérdida por resumen progresivo con un bloque persistente de hechos transaccionales.",
+  "distractors": {
+   "A": "El resumen progresivo condensa cifras y fechas en descripciones vagas.",
+   "B": "Más contexto no elimina que la información del medio se procese peor.",
+   "C": "Resultados verbosos consumen tokens desproporcionadamente; conviene recortarlos a los campos relevantes."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "An extraction session aggregates results from 40 documents in a single synthesis prompt. The output omits findings from the middle documents and, after several progressive summaries, figures and dates are reduced to vague terms. Which approach best mitigates both problems?",
+   "options": {
+    "A": "Progressively summarize the history every few documents to save tokens.",
+    "B": "Rely on a larger context window, which eliminates the position effect.",
+    "C": "Keep the full responses of every lookup (40+ fields) so no information is lost.",
+    "D": "Place a summary of key findings at the beginning, organize the detail with explicit section headings, and maintain a persistent block of facts (amounts, dates, IDs) outside the summarized history."
+   },
+   "explanation": "TS 5.1: the 'lost in the middle' effect is mitigated with summaries at the start and explicit sections, and loss from progressive summarization with a persistent block of transactional facts.",
+   "distractors": {
+    "A": "Progressive summarization condenses figures and dates into vague descriptions.",
+    "B": "More context does not eliminate the fact that information in the middle is processed worse.",
+    "C": "Verbose results consume tokens disproportionately; they should be trimmed to the relevant fields."
+   },
+   "topic": "TS 5.1 Preserving key facts in long context"
+  }
+ },
+ {
+  "id": "cca-s6-12",
+  "domain": "context",
+  "scenario": "s6",
+  "topic": "TS 5.6 Provenance and temporal data",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Varios subagents extraen métricas de documentos distintos y un agente de síntesis las combina para sistemas downstream. Quieres conservar la trazabilidad y evitar falsas contradicciones. ¿Qué requisitos de salida estructurada aplicas? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Cada valor extraído debe incluir un mapeo claim-source (nombre del documento, extracto relevante) que la síntesis preserve y fusione."
+   },
+   {
+    "id": "B",
+    "text": "Cada valor debe incluir su fecha de publicación o recolección para no interpretar diferencias temporales como contradicciones."
+   },
+   {
+    "id": "C",
+    "text": "La síntesis debe fusionar los valores en uno solo y descartar las fuentes para mantener el schema compacto."
+   },
+   {
+    "id": "D",
+    "text": "Ante valores distintos, elegir el del documento más largo por tener más contexto."
+   },
+   {
+    "id": "E",
+    "text": "Convertir todo el resultado a párrafos de prosa uniformes, sean datos financieros o hallazgos técnicos."
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "explanation": "TS 5.6: los mapeos claim-source estructurados y las fechas de publicación/recolección preservan la procedencia y permiten interpretar correctamente diferencias entre fuentes.",
+  "distractors": {
+   "C": "Descartar las fuentes rompe la atribución, que se pierde justamente al comprimir sin claim-source mappings.",
+   "D": "La longitud del documento no es un criterio válido; los conflictos deben anotarse con atribución.",
+   "E": "Cada tipo de contenido se debe renderizar adecuadamente (p. ej. tablas para datos financieros), no uniformarlo en prosa."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "Several subagents extract metrics from different documents and a synthesis agent combines them for downstream systems. You want to preserve traceability and avoid false contradictions. Which structured output requirements do you apply? Select TWO.",
+   "options": {
+    "A": "Each extracted value must include a claim-source mapping (document name, relevant excerpt) that the synthesis preserves and merges.",
+    "B": "Each value must include its publication or collection date so that temporal differences are not interpreted as contradictions.",
+    "C": "The synthesis must merge the values into one and discard the sources to keep the schema compact.",
+    "D": "When values differ, choose the one from the longest document because it has more context.",
+    "E": "Convert the entire output into uniform prose paragraphs, whether it is financial data or technical findings."
+   },
+   "explanation": "TS 5.6: structured claim-source mappings and publication/collection dates preserve provenance and allow differences between sources to be interpreted correctly.",
+   "distractors": {
+    "C": "Discarding the sources breaks attribution, which is lost precisely when compressing without claim-source mappings.",
+    "D": "Document length is not a valid criterion; conflicts must be annotated with attribution.",
+    "E": "Each content type should be rendered appropriately (e.g., tables for financial data), not flattened into prose."
+   },
+   "topic": "TS 5.6 Provenance and temporal data"
+  }
+ }
+]

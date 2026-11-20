@@ -1,0 +1,650 @@
+[
+ {
+  "id": "cca-s5-01",
+  "domain": "claudecode",
+  "scenario": "s5",
+  "topic": "TS 3.6 CI/CD integration non-interactive mode",
+  "type": "single",
+  "choose": 1,
+  "stem": "Tu job de GitHub Actions invoca Claude Code para revisar cada pull request, pero el job se queda colgado hasta agotar el timeout sin producir salida. Los logs muestran que el proceso está esperando entrada del usuario. ¿Cuál es la corrección más directa?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Aumentar el timeout del job y redirigir stdin desde /dev/null para que el prompt interactivo expire."
+   },
+   {
+    "id": "B",
+    "text": "Ejecutar Claude Code dentro de un terminal pseudo-interactivo (tty) simulado y enviar Enter automáticamente."
+   },
+   {
+    "id": "C",
+    "text": "Invocar Claude Code con el flag -p (--print) y el prompt de revisión como argumento, para que corra en modo no interactivo."
+   },
+   {
+    "id": "D",
+    "text": "Mover las instrucciones de revisión a ~/.claude/CLAUDE.md del runner para que Claude no necesite pedir confirmación."
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "TS 3.6: el flag -p (--print) ejecuta Claude Code en modo no interactivo, procesa el prompt, imprime el resultado y termina, evitando que el pipeline se cuelgue esperando entrada.",
+  "distractors": {
+   "A": "Solo oculta el síntoma: sin -p la sesión sigue siendo interactiva y el timeout más largo no la hace terminar correctamente.",
+   "B": "Simular un tty con Enter automático es frágil y mantiene el modo interactivo en lugar de usar el modo diseñado para CI.",
+   "D": "El CLAUDE.md de usuario aporta contexto, no cambia el modo de ejecución interactivo ni evita el bloqueo."
+  },
+  "difficulty": 1,
+  "en": {
+   "stem": "Your GitHub Actions job invokes Claude Code to review every pull request, but the job hangs until it hits the timeout without producing any output. The logs show the process is waiting for user input. What is the most direct fix?",
+   "options": {
+    "A": "Increase the job timeout and redirect stdin from /dev/null so the interactive prompt times out.",
+    "B": "Run Claude Code inside a simulated pseudo-interactive terminal (tty) and send Enter automatically.",
+    "C": "Invoke Claude Code with the -p (--print) flag and the review prompt as an argument so it runs in non-interactive mode.",
+    "D": "Move the review instructions to ~/.claude/CLAUDE.md on the runner so Claude does not need to ask for confirmation."
+   },
+   "explanation": "TS 3.6: the -p (--print) flag runs Claude Code in non-interactive mode, processes the prompt, prints the result, and exits, preventing the pipeline from hanging while waiting for input.",
+   "distractors": {
+    "A": "It only masks the symptom: without -p the session is still interactive, and a longer timeout does not make it terminate correctly.",
+    "B": "Simulating a tty with automatic Enter is brittle and keeps interactive mode instead of using the mode designed for CI.",
+    "D": "A user-level CLAUDE.md provides context; it does not change the interactive execution mode or prevent the hang."
+   },
+   "topic": "TS 3.6 CI/CD integration non-interactive mode"
+  }
+ },
+ {
+  "id": "cca-s5-02",
+  "domain": "claudecode",
+  "scenario": "s5",
+  "topic": "TS 3.6 Structured findings with --json-schema",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un paso posterior del pipeline debe publicar los hallazgos de Claude Code como comentarios inline en el PR (archivo, línea, severidad, mensaje). Actualmente se parsea con regex el texto libre de la revisión y falla con frecuencia. ¿Qué enfoque es más robusto?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Ejecutar Claude Code con --output-format json y --json-schema describiendo el arreglo de findings, y publicar los comentarios a partir del JSON validado."
+   },
+   {
+    "id": "B",
+    "text": "Pedir en el prompt que la respuesta sea 'solo JSON, sin texto adicional' y aplicar JSON.parse sobre la salida."
+   },
+   {
+    "id": "C",
+    "text": "Añadir a CLAUDE.md una plantilla markdown de findings y mejorar las regex para cada variante observada."
+   },
+   {
+    "id": "D",
+    "text": "Hacer que Claude publique directamente los comentarios con gh api para saltarse el parseo intermedio."
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "TS 3.6: --output-format json junto con --json-schema produce hallazgos estructurados y legibles por máquina, ideales para publicarlos automáticamente como comentarios inline en el PR.",
+  "distractors": {
+   "B": "Una instrucción en el prompt no garantiza el cumplimiento del esquema; el JSON puede venir malformado o con campos distintos.",
+   "C": "Una plantilla en markdown sigue siendo texto libre y las regex continúan siendo frágiles ante variaciones.",
+   "D": "Elimina la validación y el control del pipeline, y no resuelve la necesidad de un formato estable y verificable de hallazgos."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "A downstream pipeline step must publish Claude Code's findings as inline PR comments (file, line, severity, message). Currently the free-text review is parsed with regex and fails frequently. Which approach is more robust?",
+   "options": {
+    "A": "Run Claude Code with --output-format json and --json-schema describing the findings array, and publish the comments from the validated JSON.",
+    "B": "Ask in the prompt for the response to be 'JSON only, no additional text' and apply JSON.parse to the output.",
+    "C": "Add a markdown findings template to CLAUDE.md and improve the regexes for each observed variant.",
+    "D": "Have Claude post the comments directly with gh api to skip the intermediate parsing."
+   },
+   "explanation": "TS 3.6: --output-format json together with --json-schema produces structured, machine-readable findings, ideal for automatically publishing them as inline PR comments.",
+   "distractors": {
+    "B": "A prompt instruction does not guarantee schema compliance; the JSON may be malformed or have different fields.",
+    "C": "A markdown template is still free text, and regexes remain brittle against variations.",
+    "D": "It removes validation and pipeline control, and does not address the need for a stable, verifiable findings format."
+   },
+   "topic": "TS 3.6 Structured findings with --json-schema"
+  }
+ },
+ {
+  "id": "cca-s5-03",
+  "domain": "claudecode",
+  "scenario": "s5",
+  "topic": "TS 3.6 Re-running reviews without duplicate comments",
+  "type": "single",
+  "choose": 1,
+  "stem": "Tras cada nuevo commit en un PR, el pipeline vuelve a ejecutar la revisión y publica de nuevo hallazgos que ya fueron comentados o corregidos, generando ruido y que los desarrolladores ignoren al bot. ¿Qué ajuste resuelve mejor el problema?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Ejecutar la revisión solo en el primer commit del PR y desactivarla en los siguientes."
+   },
+   {
+    "id": "B",
+    "text": "Borrar todos los comentarios anteriores del bot antes de cada ejecución para que el PR siempre muestre solo la última revisión."
+   },
+   {
+    "id": "C",
+    "text": "Bajar la temperatura para que Claude produzca hallazgos idénticos y deduplicar por hash del texto."
+   },
+   {
+    "id": "D",
+    "text": "Incluir en el contexto los hallazgos de la revisión previa e indicar a Claude que reporte únicamente problemas nuevos o aún sin resolver."
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "TS 3.6: al re-ejecutar la revisión tras nuevos commits se aportan los hallazgos previos y se instruye a Claude a reportar solo lo nuevo o aún no atendido, evitando comentarios duplicados.",
+  "distractors": {
+   "A": "Deja sin revisar los cambios posteriores, que pueden introducir nuevos defectos.",
+   "B": "Pierde el historial de conversación y sigue sin decirle a Claude qué ya se reportó, por lo que se repetirían los mismos hallazgos.",
+   "C": "No garantiza redacciones idénticas y la deduplicación por hash no distingue lo resuelto de lo pendiente."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "After every new commit on a PR, the pipeline re-runs the review and posts again findings that were already commented on or fixed, creating noise and causing developers to ignore the bot. Which adjustment best solves the problem?",
+   "options": {
+    "A": "Run the review only on the first commit of the PR and disable it on subsequent ones.",
+    "B": "Delete all of the bot's previous comments before each run so the PR always shows only the latest review.",
+    "C": "Lower the temperature so Claude produces identical findings and deduplicate by text hash.",
+    "D": "Include the findings from the previous review in the context and instruct Claude to report only new or still-unresolved issues."
+   },
+   "explanation": "TS 3.6: when re-running the review after new commits, the prior findings are provided and Claude is instructed to report only what is new or not yet addressed, avoiding duplicate comments.",
+   "distractors": {
+    "A": "It leaves later changes unreviewed, and they may introduce new defects.",
+    "B": "It loses the conversation history and still does not tell Claude what was already reported, so the same findings would be repeated.",
+    "C": "It does not guarantee identical wording, and hash-based deduplication cannot distinguish resolved from pending issues."
+   },
+   "topic": "TS 3.6 Re-running reviews without duplicate comments"
+  }
+ },
+ {
+  "id": "cca-s5-04",
+  "domain": "claudecode",
+  "scenario": "s5",
+  "topic": "TS 3.3 Path-specific rules for test files",
+  "type": "single",
+  "choose": 1,
+  "stem": "Quieres que Claude Code aplique convenciones de tests (naming, uso de fixtures) a todos los archivos *.test.ts, que están repartidos por decenas de directorios del monorepo, sin cargar esas reglas al editar código de producción. ¿Qué configuración es la más adecuada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un CLAUDE.md en cada directorio que contenga tests, copiando las mismas reglas."
+   },
+   {
+    "id": "B",
+    "text": "Un archivo en .claude/rules/ con frontmatter YAML paths que use el patrón glob **/*.test.ts."
+   },
+   {
+    "id": "C",
+    "text": "Todas las convenciones en el CLAUDE.md raíz, marcadas con la nota 'aplicar solo a archivos de test'."
+   },
+   {
+    "id": "D",
+    "text": "Un skill en .claude/skills/ que los desarrolladores deban invocar manualmente antes de editar tests."
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "TS 3.3: las reglas en .claude/rules/ con paths y patrones glob se cargan solo al editar archivos coincidentes, sin importar su directorio, reduciendo contexto irrelevante.",
+  "distractors": {
+   "A": "Obliga a duplicar y mantener reglas en muchos directorios y es frágil cuando aparecen tests en rutas nuevas.",
+   "C": "El CLAUDE.md raíz se carga siempre, gastando tokens y contexto en tareas que no son de tests, y depende de que el modelo ignore la regla.",
+   "D": "Depende de invocación manual, por lo que no se aplica de forma automática y consistente al editar los archivos."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "You want Claude Code to apply testing conventions (naming, fixture usage) to all *.test.ts files, which are spread across dozens of directories in the monorepo, without loading those rules when editing production code. Which configuration is most appropriate?",
+   "options": {
+    "A": "A CLAUDE.md in every directory that contains tests, copying the same rules.",
+    "B": "A file in .claude/rules/ with YAML frontmatter paths using the glob pattern **/*.test.ts.",
+    "C": "All conventions in the root CLAUDE.md, marked with the note 'apply only to test files'.",
+    "D": "A skill in .claude/skills/ that developers must manually invoke before editing tests."
+   },
+   "explanation": "TS 3.3: rules in .claude/rules/ with paths and glob patterns are loaded only when editing matching files, regardless of their directory, reducing irrelevant context.",
+   "distractors": {
+    "A": "It forces duplicating and maintaining rules across many directories and is fragile when tests appear in new paths.",
+    "C": "The root CLAUDE.md is always loaded, spending tokens and context on non-test tasks, and relies on the model ignoring the rule.",
+    "D": "It depends on manual invocation, so it is not applied automatically and consistently when editing the files."
+   },
+   "topic": "TS 3.3 Path-specific rules for test files"
+  }
+ },
+ {
+  "id": "cca-s5-05",
+  "domain": "claudecode",
+  "scenario": "s5",
+  "topic": "TS 3.2 Skills with context: fork",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un skill de análisis de la base de código para el pipeline produce un volumen enorme de salida exploratoria que contamina la conversación principal y consume contexto antes de la fase de revisión. ¿Cómo debes configurar el SKILL.md?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Reducir allowed-tools a solo lectura para que la salida sea más corta."
+   },
+   {
+    "id": "B",
+    "text": "Mover el contenido del skill al CLAUDE.md del proyecto para que se cargue siempre y de forma ordenada."
+   },
+   {
+    "id": "C",
+    "text": "Declarar context: fork en el frontmatter para ejecutarlo en un contexto de sub-agente aislado y devolver solo el resumen."
+   },
+   {
+    "id": "D",
+    "text": "Añadir argument-hint para que el desarrollador limite el alcance del análisis al invocarlo."
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "TS 3.2: context: fork ejecuta el skill en un sub-agente aislado, evitando que su salida verbosa o exploratoria contamine la conversación principal.",
+  "distractors": {
+   "A": "allowed-tools restringe qué herramientas se usan, no aísla el contexto ni reduce necesariamente la salida acumulada.",
+   "B": "CLAUDE.md es para estándares universales siempre cargados; ponerlo ahí aumenta el contexto en vez de aislarlo.",
+   "D": "argument-hint solo guía qué parámetros pedir al invocar; no separa la salida del contexto principal."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "A codebase analysis skill for the pipeline produces a huge volume of exploratory output that pollutes the main conversation and consumes context before the review phase. How should you configure the SKILL.md?",
+   "options": {
+    "A": "Reduce allowed-tools to read-only so the output is shorter.",
+    "B": "Move the skill content into the project's CLAUDE.md so it is always loaded in an orderly way.",
+    "C": "Declare context: fork in the frontmatter to run it in an isolated sub-agent context and return only the summary.",
+    "D": "Add argument-hint so the developer can limit the scope of the analysis when invoking it."
+   },
+   "explanation": "TS 3.2: context: fork runs the skill in an isolated sub-agent, preventing its verbose or exploratory output from polluting the main conversation.",
+   "distractors": {
+    "A": "allowed-tools restricts which tools are used; it neither isolates context nor necessarily reduces the accumulated output.",
+    "B": "CLAUDE.md is for universal, always-loaded standards; putting it there increases context instead of isolating it.",
+    "D": "argument-hint only guides which parameters to ask for on invocation; it does not separate the output from the main context."
+   },
+   "topic": "TS 3.2 Skills with context: fork"
+  }
+ },
+ {
+  "id": "cca-s5-06",
+  "domain": "claudecode",
+  "scenario": "s5",
+  "topic": "TS 3.6 Improving CI test generation quality",
+  "type": "multi",
+  "choose": 2,
+  "stem": "El job nocturno que genera casos de prueba con Claude Code devuelve tests duplicados de los ya existentes y muchos de bajo valor (getters triviales). ¿Qué DOS acciones mejoran más la calidad de la generación? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Incluir en el contexto los archivos de test existentes para que no sugiera escenarios ya cubiertos."
+   },
+   {
+    "id": "B",
+    "text": "Pedir en el prompt que sea 'muy conservador' y solo genere tests de alta confianza."
+   },
+   {
+    "id": "C",
+    "text": "Documentar en CLAUDE.md los estándares de testing, criterios de un test valioso y fixtures disponibles."
+   },
+   {
+    "id": "D",
+    "text": "Generar los tests en la misma sesión que escribió el código para aprovechar su razonamiento previo."
+   },
+   {
+    "id": "E",
+    "text": "Limitar la salida a un máximo fijo de cinco tests por archivo sin más criterios."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "explanation": "TS 3.6: aportar los tests existentes evita escenarios duplicados y documentar estándares, criterios y fixtures en CLAUDE.md reduce la salida de bajo valor.",
+  "distractors": {
+   "B": "Las instrucciones vagas de ser conservador no definen qué es un test valioso y no mejoran la precisión.",
+   "D": "La sesión que generó el código es menos efectiva cuestionando su propio trabajo y no resuelve duplicados ni criterios de valor.",
+   "E": "Un tope arbitrario no impide duplicados ni tests triviales; solo recorta la cantidad."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "The nightly job that generates test cases with Claude Code returns duplicates of existing tests and many low-value ones (trivial getters). Which TWO actions most improve generation quality? Select TWO.",
+   "options": {
+    "A": "Include the existing test files in the context so it does not suggest scenarios that are already covered.",
+    "B": "Ask in the prompt to be 'very conservative' and generate only high-confidence tests.",
+    "C": "Document in CLAUDE.md the testing standards, the criteria for a valuable test, and the available fixtures.",
+    "D": "Generate the tests in the same session that wrote the code to take advantage of its prior reasoning.",
+    "E": "Limit the output to a fixed maximum of five tests per file with no further criteria."
+   },
+   "explanation": "TS 3.6: providing the existing tests avoids duplicate scenarios, and documenting standards, criteria, and fixtures in CLAUDE.md reduces low-value output.",
+   "distractors": {
+    "B": "Vague instructions to be conservative do not define what a valuable test is and do not improve precision.",
+    "D": "The session that generated the code is less effective at questioning its own work and does not resolve duplicates or value criteria.",
+    "E": "An arbitrary cap does not prevent duplicates or trivial tests; it only trims the quantity."
+   },
+   "topic": "TS 3.6 Improving CI test generation quality"
+  }
+ },
+ {
+  "id": "cca-s5-07",
+  "domain": "prompting",
+  "scenario": "s5",
+  "topic": "TS 4.1 Explicit review criteria",
+  "type": "single",
+  "choose": 1,
+  "stem": "El prompt de revisión dice 'revisa que los comentarios sean precisos'. Los desarrolladores se quejan de que el bot marca comentarios correctos con observaciones de estilo y dejan de confiar en él. ¿Qué cambio mejora más la precisión?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Añadir 'solo reporta hallazgos de los que estés muy seguro'."
+   },
+   {
+    "id": "B",
+    "text": "Reemplazar la instrucción por un criterio explícito: marcar un comentario solo cuando lo que afirma contradice el comportamiento real del código, e ignorar redacción y estilo."
+   },
+   {
+    "id": "C",
+    "text": "Pedir que el bot acompañe cada observación con un porcentaje de confianza y publicar todas."
+   },
+   {
+    "id": "D",
+    "text": "Indicar 'sé estricto con los comentarios' para que no se pase ninguno por alto."
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "TS 4.1: criterios categóricos explícitos (qué reportar y qué omitir) mejoran la precisión y reducen falsos positivos mucho más que instrucciones vagas.",
+  "distractors": {
+   "A": "Las indicaciones generales de alta confianza no mejoran la precisión frente a criterios específicos.",
+   "C": "Publicar todo con un porcentaje no reduce el ruido y el modelo sigue sin saber qué categorías omitir.",
+   "D": "Ser estricto empeora los falsos positivos y sigue siendo una instrucción vaga."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "The review prompt says 'check that comments are accurate'. Developers complain that the bot flags correct comments with style remarks and they have stopped trusting it. Which change most improves precision?",
+   "options": {
+    "A": "Add 'only report findings you are very confident about'.",
+    "B": "Replace the instruction with an explicit criterion: flag a comment only when what it claims contradicts the actual behavior of the code, and ignore wording and style.",
+    "C": "Ask the bot to attach a confidence percentage to each remark and publish them all.",
+    "D": "State 'be strict with comments' so that none is overlooked."
+   },
+   "explanation": "TS 4.1: explicit categorical criteria (what to report and what to skip) improve precision and reduce false positives far more than vague instructions.",
+   "distractors": {
+    "A": "General high-confidence guidance does not improve precision compared with specific criteria.",
+    "C": "Publishing everything with a percentage does not reduce noise, and the model still does not know which categories to skip.",
+    "D": "Being strict worsens false positives and is still a vague instruction."
+   },
+   "topic": "TS 4.1 Explicit review criteria"
+  }
+ },
+ {
+  "id": "cca-s5-08",
+  "domain": "prompting",
+  "scenario": "s5",
+  "topic": "TS 4.2 Few-shot for acceptable patterns",
+  "type": "single",
+  "choose": 1,
+  "stem": "Tu revisor automático marca como bug patrones locales aceptados del equipo (p. ej. un wrapper propio de manejo de errores) y a la vez no generaliza a variantes nuevas de problemas reales. Las instrucciones detalladas no lo corrigen. ¿Qué técnica es más eficaz?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Ampliar la lista de reglas en prosa con cada patrón aceptado que se descubra."
+   },
+   {
+    "id": "B",
+    "text": "Aumentar el tamaño de modelo y repetir la revisión tres veces tomando la mayoría."
+   },
+   {
+    "id": "C",
+    "text": "Prohibir cualquier comentario sobre manejo de errores."
+   },
+   {
+    "id": "D",
+    "text": "Incluir 2-4 ejemplos few-shot que distingan patrones aceptables de problemas genuinos, explicando el razonamiento de cada decisión."
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "TS 4.2: los ejemplos few-shot que contrastan código aceptable con problemas reales y razonan la decisión reducen falsos positivos y permiten generalizar a patrones nuevos.",
+  "distractors": {
+   "A": "Una lista de reglas solo cubre casos pre-especificados y no permite generalizar el juicio.",
+   "B": "Votar entre ejecuciones no corrige el criterio erróneo; repite el mismo sesgo con más costo.",
+   "C": "Desactiva toda una categoría, perdiendo hallazgos reales en vez de mejorar el criterio."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "Your automated reviewer flags accepted local team patterns as bugs (e.g., a custom error-handling wrapper) and also fails to generalize to new variants of real problems. Detailed instructions do not fix it. Which technique is most effective?",
+   "options": {
+    "A": "Expand the prose rule list with each accepted pattern that is discovered.",
+    "B": "Increase the model size and repeat the review three times, taking the majority.",
+    "C": "Prohibit any comment about error handling.",
+    "D": "Include 2-4 few-shot examples that distinguish acceptable patterns from genuine problems, explaining the reasoning behind each decision."
+   },
+   "explanation": "TS 4.2: few-shot examples that contrast acceptable code with real problems and explain the reasoning behind the decision reduce false positives and enable generalization to new patterns.",
+   "distractors": {
+    "A": "A rule list only covers pre-specified cases and does not allow the judgment to generalize.",
+    "B": "Voting across runs does not correct the faulty criterion; it repeats the same bias at higher cost.",
+    "C": "It disables an entire category, losing real findings instead of improving the criteria."
+   },
+   "topic": "TS 4.2 Few-shot for acceptable patterns"
+  }
+ },
+ {
+  "id": "cca-s5-09",
+  "domain": "prompting",
+  "scenario": "s5",
+  "topic": "TS 4.5 Batch API vs synchronous",
+  "type": "single",
+  "choose": 1,
+  "stem": "Tienes dos cargas: (1) un check de revisión obligatorio que bloquea el merge del PR y (2) una auditoría semanal de calidad de todo el repositorio. Quieres minimizar costo sin romper los flujos. ¿Qué asignación es correcta?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Check pre-merge con la API síncrona; auditoría semanal con la Message Batches API."
+   },
+   {
+    "id": "B",
+    "text": "Ambas con la Message Batches API por su 50% de ahorro."
+   },
+   {
+    "id": "C",
+    "text": "Check pre-merge con la Message Batches API y auditoría semanal con la API síncrona."
+   },
+   {
+    "id": "D",
+    "text": "Ambas con la API síncrona para tener latencia predecible."
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "TS 4.5: la Message Batches API ahorra 50% pero puede tardar hasta 24 horas sin SLA de latencia; sirve para cargas no bloqueantes, no para checks pre-merge.",
+  "distractors": {
+   "B": "Un check que bloquea el merge no tolera una ventana de hasta 24 horas sin garantía de latencia.",
+   "C": "Invierte la asignación: bloquea desarrolladores y paga más por una tarea tolerante a latencia.",
+   "D": "Funciona pero desperdicia el 50% de ahorro en la auditoría semanal, que admite procesamiento diferido."
+  },
+  "difficulty": 1,
+  "en": {
+   "stem": "You have two workloads: (1) a mandatory review check that blocks the PR merge and (2) a weekly quality audit of the entire repository. You want to minimize cost without breaking the workflows. Which assignment is correct?",
+   "options": {
+    "A": "Pre-merge check on the synchronous API; weekly audit on the Message Batches API.",
+    "B": "Both on the Message Batches API for its 50% savings.",
+    "C": "Pre-merge check on the Message Batches API and weekly audit on the synchronous API.",
+    "D": "Both on the synchronous API for predictable latency."
+   },
+   "explanation": "TS 4.5: the Message Batches API saves 50% but can take up to 24 hours with no latency SLA; it suits non-blocking workloads, not pre-merge checks.",
+   "distractors": {
+    "B": "A check that blocks the merge cannot tolerate a window of up to 24 hours with no latency guarantee.",
+    "C": "It reverses the assignment: it blocks developers and pays more for a latency-tolerant task.",
+    "D": "It works but wastes the 50% savings on the weekly audit, which allows deferred processing."
+   },
+   "topic": "TS 4.5 Batch API vs synchronous"
+  }
+ },
+ {
+  "id": "cca-s5-10",
+  "domain": "prompting",
+  "scenario": "s5",
+  "topic": "TS 4.4 detected_pattern feedback loop",
+  "type": "single",
+  "choose": 1,
+  "stem": "Los desarrolladores descartan con frecuencia ciertos hallazgos del bot, pero el equipo no sabe qué construcciones de código los disparan y no puede mejorar el prompt de forma sistemática. ¿Qué cambio de diseño ayuda más?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Reducir el número de hallazgos por PR hasta que nadie descarte ninguno."
+   },
+   {
+    "id": "B",
+    "text": "Pedir resúmenes mensuales redactados por Claude sobre por qué cree que fallan sus hallazgos."
+   },
+   {
+    "id": "C",
+    "text": "Añadir un campo detected_pattern a cada hallazgo estructurado y analizar qué patrones acumulan más descartes."
+   },
+   {
+    "id": "D",
+    "text": "Registrar solo el conteo total de descartes por semana."
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "TS 4.4: un campo detected_pattern en los hallazgos permite agrupar los descartes por construcción de código y analizar sistemáticamente los patrones de falsos positivos.",
+  "distractors": {
+   "A": "Recortar sin datos puede ocultar hallazgos válidos y no revela qué patrones fallan.",
+   "B": "El modelo no ve los descartes reales ni su motivo; sus explicaciones serían especulativas.",
+   "D": "Un contador agregado no indica qué patrones causan los falsos positivos."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "Developers frequently dismiss certain bot findings, but the team does not know which code constructs trigger them and cannot improve the prompt systematically. Which design change helps most?",
+   "options": {
+    "A": "Reduce the number of findings per PR until nobody dismisses any.",
+    "B": "Request monthly summaries drafted by the model about why it believes its findings fail.",
+    "C": "Add a detected_pattern field to each structured finding and analyze which patterns accumulate the most dismissals.",
+    "D": "Log only the total count of dismissals per week."
+   },
+   "explanation": "TS 4.4: a detected_pattern field in the findings makes it possible to group dismissals by code construct and systematically analyze false-positive patterns.",
+   "distractors": {
+    "A": "Cutting without data can hide valid findings and does not reveal which patterns fail.",
+    "B": "The model does not see the actual dismissals or their reasons; its explanations would be speculative.",
+    "D": "An aggregate counter does not indicate which patterns cause the false positives."
+   },
+   "topic": "TS 4.4 detected_pattern feedback loop"
+  }
+ },
+ {
+  "id": "cca-s5-11",
+  "domain": "prompting",
+  "scenario": "s5",
+  "topic": "TS 4.6 Multi-pass review for large PRs",
+  "type": "single",
+  "choose": 1,
+  "stem": "En un PR de 14 archivos, una única pasada de revisión produce hallazgos inconsistentes: pasa por alto bugs locales y emite comentarios contradictorios sobre el mismo flujo de datos entre archivos. ¿Qué arquitectura es más adecuada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Pasadas por archivo para problemas locales, más una pasada de integración separada para el flujo de datos entre archivos."
+   },
+   {
+    "id": "B",
+    "text": "Una sola pasada con una ventana de contexto más grande y la instrucción 'revisa con mucho cuidado'."
+   },
+   {
+    "id": "C",
+    "text": "Dividir el PR en partes y pedir a los autores que lo reenvíen como PRs pequeños sin más cambios en el pipeline."
+   },
+   {
+    "id": "D",
+    "text": "Ejecutar la misma pasada completa tres veces y conservar solo los hallazgos que coinciden."
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "TS 4.6: separar el análisis local por archivo de una pasada de integración entre archivos evita la dilución de atención y los hallazgos contradictorios en revisiones grandes.",
+  "distractors": {
+   "B": "Más contexto no resuelve la dilución de atención y la instrucción de ser cuidadoso es vaga.",
+   "C": "Traslada el problema a los autores y no diseña la revisión en pasadas enfocadas.",
+   "D": "Repetir la misma pasada mantiene el mismo sesgo y puede descartar hallazgos reales que aparecen una sola vez."
+  },
+  "difficulty": 3,
+  "en": {
+   "stem": "On a 14-file PR, a single review pass produces inconsistent findings: it misses local bugs and issues contradictory comments about the same cross-file data flow. Which architecture is most appropriate?",
+   "options": {
+    "A": "Per-file passes for local issues, plus a separate integration pass for cross-file data flow.",
+    "B": "A single pass with a larger context window and the instruction 'review very carefully'.",
+    "C": "Split the PR into parts and ask authors to resubmit it as small PRs with no other pipeline changes.",
+    "D": "Run the same full pass three times and keep only the findings that agree."
+   },
+   "explanation": "TS 4.6: separating per-file local analysis from a cross-file integration pass avoids attention dilution and contradictory findings in large reviews.",
+   "distractors": {
+    "B": "More context does not solve attention dilution, and the instruction to be careful is vague.",
+    "C": "It shifts the problem to the authors and does not design the review as focused passes.",
+    "D": "Repeating the same pass keeps the same bias and may discard real findings that appear only once."
+   },
+   "topic": "TS 4.6 Multi-pass review for large PRs"
+  }
+ },
+ {
+  "id": "cca-s5-12",
+  "domain": "prompting",
+  "scenario": "s5",
+  "topic": "TS 4.1 Restoring developer trust",
+  "type": "multi",
+  "choose": 2,
+  "stem": "La categoría 'convenciones de nombres' del revisor genera un alto porcentaje de falsos positivos y los equipos empiezan a ignorar también los hallazgos de seguridad, que son precisos. ¿Qué DOS acciones son las más apropiadas? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Desactivar temporalmente la categoría de nombres mientras se mejora su prompt."
+   },
+   {
+    "id": "B",
+    "text": "Añadir 'solo reporta hallazgos de alta confianza' al prompt global."
+   },
+   {
+    "id": "C",
+    "text": "Definir criterios de severidad explícitos con ejemplos de código concretos para cada nivel."
+   },
+   {
+    "id": "D",
+    "text": "Mantener la categoría activa y pedir a los desarrolladores que ignoren sus falsos positivos."
+   },
+   {
+    "id": "E",
+    "text": "Eliminar todos los hallazgos de seguridad para igualar el volumen de comentarios."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "explanation": "TS 4.1: desactivar temporalmente una categoría con muchos falsos positivos restaura la confianza, y definir severidades con ejemplos de código concretos logra una clasificación consistente.",
+  "distractors": {
+   "B": "Filtrar por confianza general no mejora la precisión frente a criterios categóricos específicos.",
+   "D": "Los falsos positivos de una categoría socavan la confianza en las categorías precisas; pedir que se ignoren agrava el problema.",
+   "E": "Elimina justamente las categorías precisas y de mayor valor sin atacar la causa del ruido."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "The reviewer's 'naming conventions' category generates a high percentage of false positives, and teams start ignoring the security findings too, which are accurate. Which TWO actions are most appropriate? Select TWO.",
+   "options": {
+    "A": "Temporarily disable the naming category while its prompt is improved.",
+    "B": "Add 'only report high-confidence findings' to the global prompt.",
+    "C": "Define explicit severity criteria with concrete code examples for each level.",
+    "D": "Keep the category enabled and ask developers to ignore its false positives.",
+    "E": "Remove all security findings to match the comment volume."
+   },
+   "explanation": "TS 4.1: temporarily disabling a category with many false positives restores trust, and defining severities with concrete code examples achieves consistent classification.",
+   "distractors": {
+    "B": "Filtering by general confidence does not improve precision compared with specific categorical criteria.",
+    "D": "False positives in one category undermine trust in the accurate categories; asking people to ignore them worsens the problem.",
+    "E": "It removes precisely the accurate, highest-value categories without addressing the cause of the noise."
+   },
+   "topic": "TS 4.1 Restoring developer trust"
+  }
+ }
+]

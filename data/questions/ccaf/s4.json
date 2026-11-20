@@ -1,0 +1,650 @@
+[
+ {
+  "id": "cca-s4-01",
+  "domain": "mcp",
+  "scenario": "s4",
+  "topic": "TS 2.5 Grep vs Glob vs Read",
+  "type": "single",
+  "choose": 1,
+  "stem": "Tu agente de productividad debe ayudar a un ingeniero nuevo a encontrar todos los lugares que llaman a la función legacy `calcPenalty()` en un monorepo grande, sin leer todo el código. ¿Cuál es el enfoque más eficiente con las built-in tools?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Usar Glob con el patrón `**/*.ts` y luego Read de cada archivo devuelto para buscar la llamada manualmente."
+   },
+   {
+    "id": "B",
+    "text": "Usar Bash para ejecutar `cat` sobre los directorios principales y dejar que el modelo localice las llamadas."
+   },
+   {
+    "id": "C",
+    "text": "Usar Grep para buscar `calcPenalty` en el contenido del código y luego Read solo de los archivos que coinciden para seguir el flujo."
+   },
+   {
+    "id": "D",
+    "text": "Usar Glob con el patrón `**/calcPenalty*` para encontrar los llamadores por nombre de archivo."
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "TS 2.5: Grep busca contenido (nombres de funciones, mensajes de error, imports) y es el punto de entrada para construir comprensión de forma incremental; después se usa Read solo donde hace falta.",
+  "distractors": {
+   "A": "Glob solo coincide con rutas de archivo, no con contenido, y leer todo por adelantado es el anti-patrón de agotar contexto.",
+   "B": "Volcar directorios completos con cat consume contexto enorme y no es una búsqueda dirigida.",
+   "D": "Glob filtra por nombre de archivo; los llamadores de una función viven en archivos con nombres no relacionados."
+  },
+  "difficulty": 1,
+  "en": {
+   "stem": "Your productivity agent must help a new engineer find every place that calls the legacy function `calcPenalty()` in a large monorepo without reading all of the code. Which is the most efficient approach using the built-in tools?",
+   "options": {
+    "A": "Use Glob with the pattern `**/*.ts` and then Read each returned file to look for the call manually.",
+    "B": "Use Bash to run `cat` on the main directories and let the model locate the calls.",
+    "C": "Use Grep to search for `calcPenalty` in the code contents and then Read only the matching files to follow the flow.",
+    "D": "Use Glob with the pattern `**/calcPenalty*` to find the callers by file name."
+   },
+   "explanation": "TS 2.5: Grep searches content (function names, error messages, imports) and is the entry point for building understanding incrementally; Read is then used only where needed.",
+   "distractors": {
+    "A": "Glob matches only file paths, not content, and reading everything up front is the context-exhaustion anti-pattern.",
+    "B": "Dumping entire directories with cat consumes enormous context and is not a targeted search.",
+    "D": "Glob filters by file name; the callers of a function live in files with unrelated names."
+   },
+   "topic": "TS 2.5 Grep vs Glob vs Read"
+  }
+ },
+ {
+  "id": "cca-s4-02",
+  "domain": "mcp",
+  "scenario": "s4",
+  "topic": "TS 2.4 MCP server scoping and env expansion",
+  "type": "single",
+  "choose": 1,
+  "stem": "Tu equipo quiere que todos los desarrolladores usen el mismo servidor MCP de GitHub en el agente, autenticado con el token personal de cada uno, sin commitear secretos. Además, un dev quiere probar un servidor MCP experimental solo para él. ¿Qué configuración es correcta?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Servidor de GitHub en `.mcp.json` del proyecto con `${GITHUB_TOKEN}` expandido desde el entorno; el servidor experimental en `~/.claude.json` del dev."
+   },
+   {
+    "id": "B",
+    "text": "Ambos servidores en `~/.claude.json` de cada dev, con el token escrito en texto plano."
+   },
+   {
+    "id": "C",
+    "text": "Ambos servidores en `.mcp.json` con el token escrito directamente para que funcione sin pasos extra."
+   },
+   {
+    "id": "D",
+    "text": "Servidor de GitHub en `~/.claude.json` compartido por mensaje al equipo; el experimental en `.mcp.json`."
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "TS 2.4: el scope de proyecto (`.mcp.json`) comparte tooling por version control y la expansión de variables de entorno evita commitear credenciales; el scope de usuario (`~/.claude.json`) es para servidores personales o experimentales.",
+  "distractors": {
+   "B": "El scope de usuario no se comparte por version control, así que el equipo no obtiene configuración común, y el token en texto plano es inseguro.",
+   "C": "Poner el token directamente en un archivo versionado filtra el secreto; debe usarse expansión de variables.",
+   "D": "Invierte los scopes: el tooling compartido debe ir en el proyecto y lo experimental en el scope personal."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "Your team wants all developers to use the same GitHub MCP server in the agent, authenticated with each developer's personal token, without committing secrets. In addition, one developer wants to try an experimental MCP server just for themselves. Which configuration is correct?",
+   "options": {
+    "A": "GitHub server in the project's `.mcp.json` with `${GITHUB_TOKEN}` expanded from the environment; the experimental server in the developer's `~/.claude.json`.",
+    "B": "Both servers in each developer's `~/.claude.json`, with the token written in plain text.",
+    "C": "Both servers in `.mcp.json` with the token written directly so it works without extra steps.",
+    "D": "GitHub server in `~/.claude.json` shared with the team by message; the experimental one in `.mcp.json`."
+   },
+   "explanation": "TS 2.4: project scope (`.mcp.json`) shares tooling through version control and environment variable expansion avoids committing credentials; user scope (`~/.claude.json`) is for personal or experimental servers.",
+   "distractors": {
+    "B": "User scope is not shared through version control, so the team gets no common configuration, and the plain-text token is insecure.",
+    "C": "Putting the token directly in a versioned file leaks the secret; variable expansion must be used.",
+    "D": "This reverses the scopes: shared tooling belongs in the project and experimental servers in personal scope."
+   },
+   "topic": "TS 2.4 MCP server scoping and env expansion"
+  }
+ },
+ {
+  "id": "cca-s4-03",
+  "domain": "mcp",
+  "scenario": "s4",
+  "topic": "TS 2.4 MCP tool descriptions vs built-in tools",
+  "type": "single",
+  "choose": 1,
+  "stem": "Integraste un servidor MCP con una herramienta `search_symbols` que hace búsqueda semántica de símbolos con resultados rankeados, pero el agente sigue usando Grep para casi todo. La descripción actual de la herramienta es \"Search code\". ¿Cuál es la mejora más apropiada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Eliminar Grep del conjunto de tools para forzar el uso de la herramienta MCP en cualquier caso."
+   },
+   {
+    "id": "B",
+    "text": "Agregar al system prompt \"nunca uses Grep\" para sustituir la descripción de la herramienta."
+   },
+   {
+    "id": "C",
+    "text": "Reducir la descripción a una sola palabra para que el modelo la procese más rápido."
+   },
+   {
+    "id": "D",
+    "text": "Enriquecer la descripción de la herramienta MCP con sus capacidades, formato de entrada, salidas y cuándo es mejor que Grep."
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "TS 2.4: las descripciones detalladas de herramientas MCP evitan que el agente prefiera built-in tools como Grep por no entender que la herramienta MCP es más capaz.",
+  "distractors": {
+   "A": "Quitar Grep elimina una herramienta válida para búsquedas literales y no resuelve la causa, que es una descripción pobre.",
+   "B": "Las instrucciones de system prompt con palabras clave pueden crear asociaciones no deseadas; la descripción es el mecanismo primario de selección.",
+   "C": "Una descripción mínima empeora la selección de herramientas similares."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "You integrated an MCP server with a `search_symbols` tool that performs semantic symbol search with ranked results, but the agent still uses Grep for almost everything. The tool's current description is \"Search code\". What is the most appropriate improvement?",
+   "options": {
+    "A": "Remove Grep from the tool set to force use of the MCP tool in every case.",
+    "B": "Add \"never use Grep\" to the system prompt in place of the tool description.",
+    "C": "Shorten the description to a single word so the model processes it faster.",
+    "D": "Enrich the MCP tool's description with its capabilities, input format, outputs, and when it is better than Grep."
+   },
+   "explanation": "TS 2.4: detailed MCP tool descriptions keep the agent from preferring built-in tools such as Grep because it does not understand that the MCP tool is more capable.",
+   "distractors": {
+    "A": "Removing Grep eliminates a valid tool for literal searches and does not address the cause, which is a poor description.",
+    "B": "Keyword-based system prompt instructions can create unintended associations; the description is the primary selection mechanism.",
+    "C": "A minimal description makes selection among similar tools worse."
+   },
+   "topic": "TS 2.4 MCP tool descriptions vs built-in tools"
+  }
+ },
+ {
+  "id": "cca-s4-04",
+  "domain": "mcp",
+  "scenario": "s4",
+  "topic": "TS 2.4 MCP resources as content catalogs",
+  "type": "single",
+  "choose": 1,
+  "stem": "El agente explora un sistema legado con cientos de tablas y gasta muchas llamadas de herramientas solo para descubrir qué esquemas y documentos existen antes de responder. ¿Qué cambio en el servidor MCP reduce más esas llamadas exploratorias?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Agregar más herramientas MCP de listado, una por cada tipo de objeto del sistema."
+   },
+   {
+    "id": "B",
+    "text": "Exponer un catálogo (esquemas de base de datos, jerarquía de documentación) como MCP resources para dar visibilidad previa de lo disponible."
+   },
+   {
+    "id": "C",
+    "text": "Pasar todo el contenido de los esquemas en el system prompt en cada sesión."
+   },
+   {
+    "id": "D",
+    "text": "Pedir al agente que ejecute Bash con `find` al inicio de cada sesión."
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "TS 2.4: los MCP resources exponen catálogos de contenido (esquemas, jerarquías de documentación, resúmenes) para que el agente vea qué hay disponible sin llamadas exploratorias.",
+  "distractors": {
+   "A": "Más herramientas aumenta la complejidad de selección y sigue requiriendo llamadas exploratorias.",
+   "C": "Cargar todo en el prompt desperdicia contexto y no escala con cientos de tablas.",
+   "D": "Un find solo lista archivos locales, no el catálogo del sistema expuesto por el servidor, y repite la exploración."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "The agent explores a legacy system with hundreds of tables and spends many tool calls just discovering which schemas and documents exist before answering. Which change to the MCP server most reduces those exploratory calls?",
+   "options": {
+    "A": "Add more MCP listing tools, one for each object type in the system.",
+    "B": "Expose a catalog (database schemas, documentation hierarchy) as MCP resources to give upfront visibility into what is available.",
+    "C": "Pass all the schema contents in the system prompt in every session.",
+    "D": "Ask the agent to run Bash with `find` at the start of every session."
+   },
+   "explanation": "TS 2.4: MCP resources expose content catalogs (schemas, documentation hierarchies, summaries) so the agent can see what is available without exploratory calls.",
+   "distractors": {
+    "A": "More tools increase selection complexity and still require exploratory calls.",
+    "C": "Loading everything into the prompt wastes context and does not scale to hundreds of tables.",
+    "D": "A find only lists local files, not the system catalog exposed by the server, and repeats the exploration."
+   },
+   "topic": "TS 2.4 MCP resources as content catalogs"
+  }
+ },
+ {
+  "id": "cca-s4-05",
+  "domain": "claudecode",
+  "scenario": "s4",
+  "topic": "TS 3.2 Skills with context fork",
+  "type": "single",
+  "choose": 1,
+  "stem": "Creas un skill `/analyze-legacy` que recorre un módulo legado y produce un informe muy verboso. Los devs se quejan de que el historial de la sesión principal se llena de salida de exploración. ¿Qué configuración resuelve esto?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Mover el contenido del skill a CLAUDE.md para que siempre esté cargado."
+   },
+   {
+    "id": "B",
+    "text": "Definir `context: fork` en el frontmatter de SKILL.md para ejecutarlo en un contexto de sub-agent aislado."
+   },
+   {
+    "id": "C",
+    "text": "Añadir `argument-hint` al frontmatter para limitar el tamaño del informe."
+   },
+   {
+    "id": "D",
+    "text": "Moverlo a `~/.claude/commands/` para que sea personal."
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "TS 3.2: `context: fork` ejecuta el skill en un sub-agent aislado, evitando que salidas verbosas (análisis de código, exploración) contaminen la conversación principal.",
+  "distractors": {
+   "A": "CLAUDE.md se carga siempre y aumentaría el ruido de contexto en vez de aislarlo.",
+   "C": "`argument-hint` solo guía qué parámetros pide el skill, no aísla su salida.",
+   "D": "Cambiar el scope a usuario afecta quién lo ve, no dónde se ejecuta ni el contexto."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "You create a skill `/analyze-legacy` that walks through a legacy module and produces a very verbose report. Developers complain that the main session history fills up with exploration output. Which configuration solves this?",
+   "options": {
+    "A": "Move the skill's content into CLAUDE.md so it is always loaded.",
+    "B": "Set `context: fork` in the SKILL.md frontmatter to run it in an isolated subagent context.",
+    "C": "Add `argument-hint` to the frontmatter to limit the size of the report.",
+    "D": "Move it to `~/.claude/commands/` so it is personal."
+   },
+   "explanation": "TS 3.2: `context: fork` runs the skill in an isolated subagent, preventing verbose output (code analysis, exploration) from polluting the main conversation.",
+   "distractors": {
+    "A": "CLAUDE.md is always loaded and would increase context noise instead of isolating it.",
+    "C": "`argument-hint` only guides which parameters the skill asks for; it does not isolate its output.",
+    "D": "Changing the scope to user level affects who sees it, not where it runs or its context."
+   },
+   "topic": "TS 3.2 Skills with context fork"
+  }
+ },
+ {
+  "id": "cca-s4-06",
+  "domain": "claudecode",
+  "scenario": "s4",
+  "topic": "TS 3.3 Path-specific rules",
+  "type": "single",
+  "choose": 1,
+  "stem": "Los archivos de test (`*.test.tsx`) están dispersos por decenas de directorios y requieren convenciones específicas de testing, que no deben cargarse al editar código de producción. ¿Cuál es la mejor solución?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un CLAUDE.md en cada directorio que contenga tests, copiando las convenciones."
+   },
+   {
+    "id": "B",
+    "text": "Todas las convenciones de testing en el CLAUDE.md raíz, para que siempre se carguen."
+   },
+   {
+    "id": "C",
+    "text": "Un archivo en `.claude/rules/` con frontmatter `paths` y el glob `**/*.test.tsx`, para que se cargue solo al editar archivos coincidentes."
+   },
+   {
+    "id": "D",
+    "text": "Un skill invocado manualmente que el dev deba acordarse de ejecutar antes de editar un test."
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "TS 3.3: las reglas path-scoped en `.claude/rules/` con globs aplican convenciones por tipo de archivo sin importar el directorio y solo se cargan al editar archivos coincidentes, ahorrando tokens.",
+  "distractors": {
+   "A": "Los CLAUDE.md de directorio no cubren convenciones que atraviesan muchos directorios y duplican contenido.",
+   "B": "Cargar siempre las reglas añade contexto irrelevante al editar código de producción.",
+   "D": "Depender de que el dev invoque un skill no garantiza la carga automática y es propenso a olvidos."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "Test files (`*.test.tsx`) are scattered across dozens of directories and require specific testing conventions, which must not be loaded when editing production code. What is the best solution?",
+   "options": {
+    "A": "A CLAUDE.md in every directory that contains tests, copying the conventions.",
+    "B": "All testing conventions in the root CLAUDE.md so they are always loaded.",
+    "C": "A file in `.claude/rules/` with `paths` frontmatter and the glob `**/*.test.tsx`, so it is loaded only when editing matching files.",
+    "D": "A manually invoked skill that the developer must remember to run before editing a test."
+   },
+   "explanation": "TS 3.3: path-scoped rules in `.claude/rules/` with globs apply conventions by file type regardless of directory and are loaded only when editing matching files, saving tokens.",
+   "distractors": {
+    "A": "Directory-level CLAUDE.md files do not cover conventions that cut across many directories and duplicate content.",
+    "B": "Always loading the rules adds irrelevant context when editing production code.",
+    "D": "Relying on the developer to invoke a skill does not guarantee automatic loading and is prone to being forgotten."
+   },
+   "topic": "TS 3.3 Path-specific rules"
+  }
+ },
+ {
+  "id": "cca-s4-07",
+  "domain": "claudecode",
+  "scenario": "s4",
+  "topic": "TS 3.4 Plan mode vs direct execution",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un ingeniero pide dos tareas: (1) migrar una librería de HTTP usada en más de 45 archivos con varias estrategias posibles, y (2) corregir un bug con un stack trace claro en una sola función. ¿Qué modo conviene para cada tarea?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Plan mode para la migración (con exploración vía Explore subagent) y direct execution para el bug."
+   },
+   {
+    "id": "B",
+    "text": "Direct execution para ambas, para ahorrar tiempo de planificación."
+   },
+   {
+    "id": "C",
+    "text": "Direct execution para la migración y plan mode para el bug, por su riesgo."
+   },
+   {
+    "id": "D",
+    "text": "Plan mode para ambas, porque cualquier cambio debe planificarse."
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "TS 3.4: plan mode es para cambios a gran escala, múltiples enfoques y multi-archivo; direct execution para cambios simples y bien delimitados como un bug con stack trace claro. Explore subagent aísla el descubrimiento verboso.",
+  "distractors": {
+   "B": "Ejecutar directamente una migración de 45+ archivos con varios enfoques arriesga retrabajo costoso.",
+   "C": "Invierte la lógica: el bug acotado no necesita plan y la migración sí.",
+   "D": "Planificar un arreglo trivial de un solo archivo añade sobrecarga sin beneficio."
+  },
+  "difficulty": 1,
+  "en": {
+   "stem": "An engineer requests two tasks: (1) migrate an HTTP library used in more than 45 files, with several possible strategies, and (2) fix a bug with a clear stack trace in a single function. Which mode suits each task?",
+   "options": {
+    "A": "Plan mode for the migration (with exploration via an Explore subagent) and direct execution for the bug.",
+    "B": "Direct execution for both, to save planning time.",
+    "C": "Direct execution for the migration and plan mode for the bug, because of its risk.",
+    "D": "Plan mode for both, because any change must be planned."
+   },
+   "explanation": "TS 3.4: plan mode is for large-scale, multi-approach, multi-file changes; direct execution is for simple, well-scoped changes such as a bug with a clear stack trace. An Explore subagent isolates verbose discovery.",
+   "distractors": {
+    "B": "Directly executing a migration of 45+ files with several approaches risks costly rework.",
+    "C": "This reverses the logic: the scoped bug does not need a plan and the migration does.",
+    "D": "Planning a trivial single-file fix adds overhead with no benefit."
+   },
+   "topic": "TS 3.4 Plan mode vs direct execution"
+  }
+ },
+ {
+  "id": "cca-s4-08",
+  "domain": "claudecode",
+  "scenario": "s4",
+  "topic": "TS 3.1 CLAUDE.md hierarchy and modular rules",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Un desarrollador nuevo reporta que su agente no sigue las convenciones de commits del equipo, mientras que sus compañeros sí las siguen. El repo tiene un CLAUDE.md enorme y monolítico. ¿Qué acciones son las más apropiadas? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Verificar con `/memory` qué archivos de memoria están cargados y mover las convenciones de `~/.claude/CLAUDE.md` del veterano al CLAUDE.md de proyecto."
+   },
+   {
+    "id": "B",
+    "text": "Pedir a cada dev que copie las convenciones manualmente en su `~/.claude/CLAUDE.md`."
+   },
+   {
+    "id": "C",
+    "text": "Dividir el CLAUDE.md monolítico en archivos temáticos dentro de `.claude/rules/` (por ejemplo testing.md, api-conventions.md)."
+   },
+   {
+    "id": "D",
+    "text": "Agregar las convenciones solo al system prompt de cada sesión de forma manual."
+   },
+   {
+    "id": "E",
+    "text": "Duplicar el CLAUDE.md en cada subdirectorio para asegurar que se lea."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "explanation": "TS 3.1: las instrucciones en el nivel de usuario no se comparten por version control, por lo que deben ir al nivel de proyecto; `/memory` diagnostica qué se carga, y `.claude/rules/` modulariza un CLAUDE.md grande.",
+  "distractors": {
+   "B": "El nivel de usuario no se comparte, así que repite el problema original y no es mantenible.",
+   "D": "Pegar texto manual en cada sesión no es versionado ni consistente.",
+   "E": "Duplicar el archivo crea deriva y no resuelve el scoping jerárquico."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "A new developer reports that their agent does not follow the team's commit conventions, while their teammates' agents do. The repo has a huge, monolithic CLAUDE.md. Which actions are most appropriate? Select TWO.",
+   "options": {
+    "A": "Check with `/memory` which memory files are loaded and move the conventions from the veteran's `~/.claude/CLAUDE.md` into the project CLAUDE.md.",
+    "B": "Ask each developer to manually copy the conventions into their own `~/.claude/CLAUDE.md`.",
+    "C": "Split the monolithic CLAUDE.md into topic files inside `.claude/rules/` (for example testing.md, api-conventions.md).",
+    "D": "Add the conventions only to each session's system prompt manually.",
+    "E": "Duplicate the CLAUDE.md in every subdirectory to make sure it is read."
+   },
+   "explanation": "TS 3.1: user-level instructions are not shared through version control, so they must go at project level; `/memory` diagnoses what is loaded, and `.claude/rules/` modularizes a large CLAUDE.md.",
+   "distractors": {
+    "B": "User level is not shared, so it repeats the original problem and is not maintainable.",
+    "D": "Manually pasting text into each session is neither versioned nor consistent.",
+    "E": "Duplicating the file creates drift and does not solve hierarchical scoping."
+   },
+   "topic": "TS 3.1 CLAUDE.md hierarchy and modular rules"
+  }
+ },
+ {
+  "id": "cca-s4-09",
+  "domain": "agentic",
+  "scenario": "s4",
+  "topic": "TS 1.1 Agentic loop termination",
+  "type": "single",
+  "choose": 1,
+  "stem": "Implementas el loop de tu agente de exploración de código con el Agent SDK. Un compañero propone terminar el loop cuando la respuesta contenga la frase \"He terminado el análisis\" o tras 10 iteraciones, lo que ocurra primero. ¿Cuál es la mejor práctica?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Terminar cuando el último mensaje del asistente contenga texto, ya que indica que respondió."
+   },
+   {
+    "id": "B",
+    "text": "Mantener el tope de 10 iteraciones como mecanismo principal y descartar la detección de frases."
+   },
+   {
+    "id": "C",
+    "text": "Pedir al modelo que escriba la palabra DONE y buscarla con una expresión regular."
+   },
+   {
+    "id": "D",
+    "text": "Continuar mientras `stop_reason` sea `\"tool_use\"`, agregando los resultados al historial, y terminar con `\"end_turn\"`."
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "TS 1.1: el control de flujo debe basarse en `stop_reason` (continuar con tool_use, terminar con end_turn) y devolver los tool results al contexto; parsear lenguaje natural o usar topes arbitrarios como mecanismo principal son anti-patrones.",
+  "distractors": {
+   "A": "El modelo puede emitir texto junto con una tool call; la presencia de texto no indica finalización.",
+   "B": "Un cap arbitrario como mecanismo primario corta tareas legítimas o permite ciclos innecesarios.",
+   "C": "Buscar una palabra clave en lenguaje natural es frágil y es exactamente el anti-patrón descrito."
+  },
+  "difficulty": 1,
+  "en": {
+   "stem": "You implement the loop of your code-exploration agent with the Agent SDK. A colleague proposes ending the loop when the response contains the phrase \"I have finished the analysis\" or after 10 iterations, whichever comes first. What is the best practice?",
+   "options": {
+    "A": "End when the assistant's last message contains text, since that indicates it has responded.",
+    "B": "Keep the 10-iteration cap as the primary mechanism and drop phrase detection.",
+    "C": "Ask the model to write the word DONE and search for it with a regular expression.",
+    "D": "Continue while `stop_reason` is `\"tool_use\"`, appending the results to the history, and end on `\"end_turn\"`."
+   },
+   "explanation": "TS 1.1: flow control must be based on `stop_reason` (continue on tool_use, terminate on end_turn) and return tool results to the context; parsing natural language or using arbitrary caps as the primary mechanism are anti-patterns.",
+   "distractors": {
+    "A": "The model can emit text alongside a tool call; the presence of text does not indicate completion.",
+    "B": "An arbitrary cap as the primary mechanism cuts off legitimate tasks or allows unnecessary cycles.",
+    "C": "Searching for a keyword in natural language is brittle and is exactly the anti-pattern described."
+   },
+   "topic": "TS 1.1 Agentic loop termination"
+  }
+ },
+ {
+  "id": "cca-s4-10",
+  "domain": "agentic",
+  "scenario": "s4",
+  "topic": "TS 1.6 Adaptive task decomposition",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un usuario pide \"agrega pruebas completas a este sistema legado\" que nadie conoce bien. ¿Qué estrategia de descomposición es la más adecuada para tu agente?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Primero mapear la estructura, identificar áreas de alto impacto y crear un plan priorizado que se adapte a medida que se descubren dependencias."
+   },
+   {
+    "id": "B",
+    "text": "Una cadena fija de pasos predefinidos: generar tests por archivo en orden alfabético sin exploración previa."
+   },
+   {
+    "id": "C",
+    "text": "Pedir al modelo que genere tests para todos los archivos en una sola pasada gigante."
+   },
+   {
+    "id": "D",
+    "text": "Generar tests solo para los archivos más pequeños, porque son los más fáciles."
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "TS 1.6: las tareas abiertas requieren descomposición dinámica y adaptativa: mapear estructura, priorizar por impacto y generar subtareas según lo descubierto, en lugar de un pipeline fijo.",
+  "distractors": {
+   "B": "Un pipeline fijo (prompt chaining) sirve para revisiones predecibles, no para investigación abierta en código desconocido.",
+   "C": "Una sola pasada sobre todo el sistema diluye la atención y satura el contexto.",
+   "D": "Elegir por tamaño ignora el impacto y las dependencias, que son los criterios relevantes."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "A user asks \"add comprehensive tests to this legacy system\" that nobody knows well. Which decomposition strategy is most appropriate for your agent?",
+   "options": {
+    "A": "First map the structure, identify high-impact areas, and create a prioritized plan that adapts as dependencies are discovered.",
+    "B": "A fixed chain of predefined steps: generate tests per file in alphabetical order with no prior exploration.",
+    "C": "Ask the model to generate tests for all files in a single giant pass.",
+    "D": "Generate tests only for the smallest files, because they are the easiest."
+   },
+   "explanation": "TS 1.6: open-ended tasks require dynamic, adaptive decomposition: map the structure, prioritize by impact, and generate subtasks based on what is discovered, rather than a fixed pipeline.",
+   "distractors": {
+    "B": "A fixed pipeline (prompt chaining) suits predictable reviews, not open-ended investigation of unfamiliar code.",
+    "C": "A single pass over the whole system dilutes attention and saturates the context.",
+    "D": "Choosing by size ignores impact and dependencies, which are the relevant criteria."
+   },
+   "topic": "TS 1.6 Adaptive task decomposition"
+  }
+ },
+ {
+  "id": "cca-s4-11",
+  "domain": "agentic",
+  "scenario": "s4",
+  "topic": "TS 1.7 Session resumption vs fresh start",
+  "type": "single",
+  "choose": 1,
+  "stem": "Ayer el agente analizó un módulo y guardó una sesión con nombre. Hoy el equipo refactorizó varios archivos de ese módulo. Si reanudas con `--resume`, los tool results antiguos en el contexto ya no reflejan el código. ¿Qué haces?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Reanudar con `--resume` sin decir nada; el agente detectará los cambios por sí solo."
+   },
+   {
+    "id": "B",
+    "text": "Usar `fork_session` para repetir el análisis idéntico en una rama paralela."
+   },
+   {
+    "id": "C",
+    "text": "Iniciar una sesión nueva con un resumen estructurado de los hallazgos útiles, o al reanudar informar qué archivos específicos cambiaron para re-analizarlos de forma dirigida."
+   },
+   {
+    "id": "D",
+    "text": "Reanudar y pedir que re-explore todo el repositorio desde cero."
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "TS 1.7: con resultados de herramientas obsoletos, es más fiable empezar de cero con un resumen estructurado; si se reanuda, hay que informar los cambios concretos para un re-análisis dirigido.",
+  "distractors": {
+   "A": "El agente no sabe que los archivos cambiaron y razonará con datos obsoletos.",
+   "B": "`fork_session` sirve para explorar enfoques divergentes desde una base común, no para refrescar contexto obsoleto.",
+   "D": "Re-explorar todo es costoso e innecesario cuando se conocen los archivos afectados."
+  },
+  "difficulty": 3,
+  "en": {
+   "stem": "Yesterday the agent analyzed a module and saved a named session. Today the team refactored several files in that module. If you resume with `--resume`, the old tool results in the context no longer reflect the code. What do you do?",
+   "options": {
+    "A": "Resume with `--resume` without saying anything; the agent will detect the changes on its own.",
+    "B": "Use `fork_session` to repeat the identical analysis in a parallel branch.",
+    "C": "Start a new session with a structured summary of the useful findings, or, when resuming, tell the agent which specific files changed so it can re-analyze them in a targeted way.",
+    "D": "Resume and ask it to re-explore the entire repository from scratch."
+   },
+   "explanation": "TS 1.7: with stale tool results, starting fresh with a structured summary is more reliable; if resuming, inform the agent of the specific changes for targeted re-analysis.",
+   "distractors": {
+    "A": "The agent does not know the files changed and will reason with stale data.",
+    "B": "`fork_session` is for exploring divergent approaches from a shared baseline, not for refreshing stale context.",
+    "D": "Re-exploring everything is costly and unnecessary when the affected files are known."
+   },
+   "topic": "TS 1.7 Session resumption vs fresh start"
+  }
+ },
+ {
+  "id": "cca-s4-12",
+  "domain": "agentic",
+  "scenario": "s4",
+  "topic": "TS 1.3 Subagent spawning and context passing",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Un coordinador debe explorar tres módulos independientes de una base de código legada con subagents y luego sintetizar. ¿Qué prácticas aplican correctamente? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Emitir varias llamadas a la tool Task en una sola respuesta del coordinador para ejecutar los subagents en paralelo."
+   },
+   {
+    "id": "B",
+    "text": "Asumir que cada subagent hereda automáticamente el historial del coordinador, así que basta con un prompt corto."
+   },
+   {
+    "id": "C",
+    "text": "Pasar a cada subagent en su prompt el contexto necesario y a la subagent de síntesis los hallazgos completos de los anteriores, con metadatos (archivo, ruta) separados del contenido."
+   },
+   {
+    "id": "D",
+    "text": "Lanzar los subagents en turnos separados, uno por turno, para mayor seguridad."
+   },
+   {
+    "id": "E",
+    "text": "Omitir \"Task\" de allowedTools del coordinador para evitar que los subagents se descontrolen."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "explanation": "TS 1.3: los subagents se lanzan con la tool Task (que debe estar en allowedTools), se paralelizan emitiendo múltiples Task calls en una respuesta, y su contexto debe darse explícitamente, preservando atribución con datos estructurados.",
+  "distractors": {
+   "B": "Los subagents operan con contexto aislado y no heredan el historial del coordinador.",
+   "D": "Separar en turnos elimina el paralelismo sin beneficio.",
+   "E": "Sin \"Task\" en allowedTools el coordinador no puede invocar subagents."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "A coordinator must explore three independent modules of a legacy codebase with subagents and then synthesize. Which practices apply correctly? Select TWO.",
+   "options": {
+    "A": "Emit multiple calls to the Task tool in a single coordinator response to run the subagents in parallel.",
+    "B": "Assume each subagent automatically inherits the coordinator's history, so a short prompt is enough.",
+    "C": "Pass each subagent the necessary context in its prompt, and give the synthesis subagent the full findings of the previous ones, with metadata (file, path) kept separate from the content.",
+    "D": "Launch the subagents in separate turns, one per turn, for added safety.",
+    "E": "Omit \"Task\" from the coordinator's allowedTools to prevent the subagents from getting out of control."
+   },
+   "explanation": "TS 1.3: subagents are spawned with the Task tool (which must be in allowedTools), parallelized by emitting multiple Task calls in one response, and their context must be provided explicitly, preserving attribution with structured data.",
+   "distractors": {
+    "B": "Subagents operate with isolated context and do not inherit the coordinator's history.",
+    "D": "Splitting across turns eliminates parallelism with no benefit.",
+    "E": "Without \"Task\" in allowedTools the coordinator cannot invoke subagents."
+   },
+   "topic": "TS 1.3 Subagent spawning and context passing"
+  }
+ }
+]
