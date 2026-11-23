@@ -1,624 +1,624 @@
 [
-  {
-    "id": "res-01",
-    "domain": "resilient",
-    "topic": "RDS Multi-AZ vs Read Replicas",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una aplicación de facturación usa una instancia Amazon RDS for PostgreSQL en una sola AZ. Una caída de la AZ ha provocado interrupciones y el negocio exige failover automático sin intervención manual ni cambios en la cadena de conexión de la aplicación. ¿Qué solución cumple el requisito con el MENOR esfuerzo operativo?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Habilitar la implementación Multi-AZ de la instancia RDS"
-      },
-      {
-        "id": "B",
-        "text": "Crear una Read Replica en otra AZ y promoverla manualmente"
-      },
-      {
-        "id": "C",
-        "text": "Programar snapshots cada hora y restaurarlos en otra AZ"
-      },
-      {
-        "id": "D",
-        "text": "Migrar la base de datos a una instancia EC2 con replicación manual"
-      }
-    ],
-    "answer": [
-      "A"
-    ],
-    "explanation": "Multi-AZ mantiene una réplica síncrona en otra AZ y hace failover automático actualizando el DNS del endpoint, sin cambios en la aplicación.",
-    "distractors": {
-      "B": "Las Read Replicas usan replicación asíncrona y la promoción es manual, además cambia el endpoint.",
-      "C": "Restaurar snapshots implica un RTO alto y pérdida de datos desde el último snapshot.",
-      "D": "Gestionar replicación en EC2 aumenta el esfuerzo operativo en lugar de reducirlo."
-    },
-    "difficulty": 1
+ {
+  "id": "res-01",
+  "domain": "resilient",
+  "topic": "RDS Multi-AZ vs Read Replicas",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación de facturación usa una instancia Amazon RDS for PostgreSQL en una sola AZ. Una caída de la AZ ha provocado interrupciones y el negocio exige failover automático sin intervención manual ni cambios en la cadena de conexión de la aplicación. ¿Qué solución cumple el requisito con el MENOR esfuerzo operativo?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Habilitar el Multi-AZ deployment de la instancia RDS"
+   },
+   {
+    "id": "B",
+    "text": "Crear una Read Replica en otra AZ y promoverla manualmente"
+   },
+   {
+    "id": "C",
+    "text": "Programar snapshots cada hora y restaurarlos en otra AZ"
+   },
+   {
+    "id": "D",
+    "text": "Migrar la base de datos a una instancia EC2 con replicación manual"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "Multi-AZ mantiene una replica síncrona en otra AZ y hace failover automático actualizando el DNS del endpoint, sin cambios en la aplicación.",
+  "distractors": {
+   "B": "Las Read Replicas usan replicación asíncrona y la promoción es manual, además cambia el endpoint.",
+   "C": "Restaurar snapshots implica un RTO alto y pérdida de datos desde el último snapshot.",
+   "D": "Gestionar replicación en EC2 aumenta el esfuerzo operativo en lugar de reducirlo."
   },
-  {
-    "id": "res-02",
-    "domain": "resilient",
-    "topic": "Aurora failover",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una aplicación crítica usa Amazon Aurora MySQL con una sola instancia writer. La empresa quiere que, ante la caída de la AZ del writer, el failover se complete lo más rápido posible y la aplicación siga usando el mismo cluster endpoint. ¿Qué debe hacer el arquitecto para lograr la MAYOR disponibilidad dentro de una Región?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Aumentar el tamaño de la instancia writer"
-      },
-      {
-        "id": "B",
-        "text": "Agregar Aurora Replicas en otras AZs del mismo cluster"
-      },
-      {
-        "id": "C",
-        "text": "Crear un snapshot manual diario del cluster"
-      },
-      {
-        "id": "D",
-        "text": "Crear una Read Replica entre Regiones y apuntar la aplicación a ella"
-      }
-    ],
-    "answer": [
-      "B"
-    ],
-    "explanation": "Con Aurora Replicas en otras AZs, Aurora promueve una réplica a writer automáticamente en pocos segundos y el cluster endpoint apunta al nuevo writer. Sin réplicas debe crear una instancia nueva, lo que tarda más.",
-    "distractors": {
-      "A": "Una instancia más grande no protege frente a la falla de una AZ.",
-      "C": "Los snapshots sirven para recuperación, no para failover rápido.",
-      "D": "Una réplica entre Regiones es para DR regional y requiere cambiar el endpoint de la aplicación."
-    },
-    "difficulty": 2
+  "difficulty": 1
+ },
+ {
+  "id": "res-02",
+  "domain": "resilient",
+  "topic": "Aurora failover",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación crítica usa Amazon Aurora MySQL con una sola instancia writer. La empresa quiere que, ante la caída de la AZ del writer, el failover se complete lo más rápido posible y la aplicación siga usando el mismo cluster endpoint. ¿Qué debe hacer el arquitecto para lograr la MAYOR disponibilidad dentro de una Region?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Aumentar el tamaño de la instancia writer"
+   },
+   {
+    "id": "B",
+    "text": "Agregar Aurora Replicas en otras AZs del mismo cluster"
+   },
+   {
+    "id": "C",
+    "text": "Crear un snapshot manual diario del cluster"
+   },
+   {
+    "id": "D",
+    "text": "Crear una Read Replica entre Regions y apuntar la aplicación a ella"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "Con Aurora Replicas en otras AZs, Aurora promueve una replica a writer automáticamente en pocos segundos y el cluster endpoint apunta al nuevo writer. Sin réplicas debe crear una instancia nueva, lo que tarda más.",
+  "distractors": {
+   "A": "Una instancia más grande no protege frente a la falla de una AZ.",
+   "C": "Los snapshots sirven para recuperación, no para failover rápido.",
+   "D": "Una cross-Region read replica es para DR regional y requiere cambiar el endpoint de la aplicación."
   },
-  {
-    "id": "res-03",
-    "domain": "resilient",
-    "topic": "Aurora Global Database",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una empresa financiera ejecuta Amazon Aurora en us-east-1 y necesita un plan de DR ante la falla de toda la Región, con RPO de pocos segundos y RTO de pocos minutos. La solución debe replicar los datos de forma continua hacia eu-west-1. ¿Qué opción es la MÁS adecuada?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Copiar snapshots automáticos a eu-west-1 cada 24 horas"
-      },
-      {
-        "id": "B",
-        "text": "Usar AWS DMS con una tarea full load semanal hacia eu-west-1"
-      },
-      {
-        "id": "C",
-        "text": "Configurar una Aurora Global Database con una Región secundaria en eu-west-1"
-      },
-      {
-        "id": "D",
-        "text": "Configurar Multi-AZ en us-east-1 con tres réplicas"
-      }
-    ],
-    "answer": [
-      "C"
-    ],
-    "explanation": "Aurora Global Database replica a nivel de almacenamiento con latencia típica menor a un segundo y permite promover la Región secundaria en minutos.",
-    "distractors": {
-      "A": "Los snapshots cada 24 horas implican un RPO de horas, no de segundos.",
-      "B": "Un full load semanal deja un RPO de días.",
-      "D": "Multi-AZ protege frente a fallas de AZ, no de una Región completa."
-    },
-    "difficulty": 2
+  "difficulty": 2
+ },
+ {
+  "id": "res-03",
+  "domain": "resilient",
+  "topic": "Aurora Global Database",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa financiera ejecuta Amazon Aurora en us-east-1 y necesita un plan de DR ante la falla de toda la Region, con RPO de pocos segundos y RTO de pocos minutos. La solución debe replicar los datos de forma continua hacia eu-west-1. ¿Qué opción es la MÁS adecuada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Copiar snapshots automáticos a eu-west-1 cada 24 horas"
+   },
+   {
+    "id": "B",
+    "text": "Usar AWS DMS con una tarea full load semanal hacia eu-west-1"
+   },
+   {
+    "id": "C",
+    "text": "Configurar una Aurora Global Database con una Region secundaria en eu-west-1"
+   },
+   {
+    "id": "D",
+    "text": "Configurar Multi-AZ en us-east-1 con tres réplicas"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "Aurora Global Database replica a nivel de almacenamiento con latencia típica menor a un segundo y permite promover la Region secundaria en minutos.",
+  "distractors": {
+   "A": "Los snapshots cada 24 horas implican un RPO de horas, no de segundos.",
+   "B": "Un full load semanal deja un RPO de días.",
+   "D": "Multi-AZ protege frente a fallas de AZ, no de una Region completa."
   },
-  {
-    "id": "res-04",
-    "domain": "resilient",
-    "topic": "DynamoDB PITR",
-    "type": "single",
-    "choose": 1,
-    "stem": "Un desarrollador ejecutó por error un script que eliminó y sobrescribió miles de ítems en una tabla de Amazon DynamoDB de producción hace dos horas. La empresa quiere poder restaurar la tabla a un instante anterior al error sin haber programado backups manuales. ¿Qué característica debe haber estado habilitada?",
-    "options": [
-      {
-        "id": "A",
-        "text": "DynamoDB Streams con retención de 24 horas"
-      },
-      {
-        "id": "B",
-        "text": "DynamoDB Accelerator (DAX)"
-      },
-      {
-        "id": "C",
-        "text": "Global Tables con una réplica en otra Región"
-      },
-      {
-        "id": "D",
-        "text": "Point-in-time recovery (PITR)"
-      }
-    ],
-    "answer": [
-      "D"
-    ],
-    "explanation": "PITR permite restaurar la tabla a cualquier segundo dentro de los últimos 35 días, creando una tabla nueva con los datos de ese momento.",
-    "distractors": {
-      "A": "Streams registra cambios pero no restaura una tabla a un instante dado.",
-      "B": "DAX es una caché y no ofrece recuperación de datos.",
-      "C": "Global Tables replica también las eliminaciones y sobrescrituras, por lo que propagaría el error."
-    },
-    "difficulty": 2
+  "difficulty": 2
+ },
+ {
+  "id": "res-04",
+  "domain": "resilient",
+  "topic": "DynamoDB PITR",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un desarrollador ejecutó por error un script que eliminó y sobrescribió miles de ítems en una tabla de Amazon DynamoDB de producción hace dos horas. La empresa quiere poder restaurar la tabla a un instante anterior al error sin haber programado backups manuales. ¿Qué característica debe haber estado habilitada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "DynamoDB Streams con retención de 24 horas"
+   },
+   {
+    "id": "B",
+    "text": "DynamoDB Accelerator (DAX)"
+   },
+   {
+    "id": "C",
+    "text": "Global Tables con una réplica en otra Region"
+   },
+   {
+    "id": "D",
+    "text": "Point-in-time recovery (PITR)"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "PITR permite restaurar la tabla a cualquier segundo dentro de los últimos 35 días, creando una tabla nueva con los datos de ese momento.",
+  "distractors": {
+   "A": "Streams registra cambios pero no restaura una tabla a un instante dado.",
+   "B": "DAX es una caché y no ofrece recuperación de datos.",
+   "C": "Global Tables replica también las eliminaciones y sobrescrituras, por lo que propagaría el error."
   },
-  {
-    "id": "res-05",
-    "domain": "resilient",
-    "topic": "DynamoDB Global Tables",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una aplicación de juegos tiene usuarios en Norteamérica y Europa y almacena perfiles en DynamoDB. La empresa necesita lecturas y escrituras locales de baja latencia en ambas Regiones y que la aplicación siga funcionando si una Región falla. ¿Qué solución cumple los requisitos?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Crear una Global Table de DynamoDB con réplicas en ambas Regiones"
-      },
-      {
-        "id": "B",
-        "text": "Usar una tabla única en una Región con DAX en la otra"
-      },
-      {
-        "id": "C",
-        "text": "Usar una tabla por Región y sincronizarlas con un cron en EC2"
-      },
-      {
-        "id": "D",
-        "text": "Habilitar PITR en la tabla y restaurar en la otra Región si hay falla"
-      }
-    ],
-    "answer": [
-      "A"
-    ],
-    "explanation": "Las Global Tables son multi-Region y multi-active: cada réplica acepta escrituras locales y se replican entre sí automáticamente.",
-    "distractors": {
-      "B": "DAX es caché de una sola Región y no da escrituras locales ni resiliencia regional.",
-      "C": "Una sincronización manual es frágil, tiene alto esfuerzo operativo y no resuelve conflictos.",
-      "D": "Restaurar con PITR es un proceso lento y no ofrece escrituras activas en ambas Regiones."
-    },
-    "difficulty": 2
+  "difficulty": 2
+ },
+ {
+  "id": "res-05",
+  "domain": "resilient",
+  "topic": "DynamoDB Global Tables",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación de juegos tiene usuarios en Norteamérica y Europa y almacena perfiles en DynamoDB. La empresa necesita lecturas y escrituras locales de baja latencia en ambas Regions y que la aplicación siga funcionando si una Region falla. ¿Qué solución cumple los requisitos?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Crear una Global Table de DynamoDB con réplicas en ambas Regions"
+   },
+   {
+    "id": "B",
+    "text": "Usar una tabla única en una Region con DAX en la otra"
+   },
+   {
+    "id": "C",
+    "text": "Usar una tabla por Region y sincronizarlas con un cron en EC2"
+   },
+   {
+    "id": "D",
+    "text": "Habilitar PITR en la tabla y restaurar en la otra Region si hay falla"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "Las Global Tables son multi-Region y multi-active: cada réplica acepta escrituras locales y se replican entre sí automáticamente.",
+  "distractors": {
+   "B": "DAX es caché de una sola Region y no da escrituras locales ni resiliencia regional.",
+   "C": "Una sincronización manual es frágil, tiene alto esfuerzo operativo y no resuelve conflictos.",
+   "D": "Restaurar con PITR es un proceso lento y no ofrece escrituras activas en ambas Regions."
   },
-  {
-    "id": "res-06",
-    "domain": "resilient",
-    "topic": "DR backup and restore",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una empresa tiene una aplicación interna no crítica. Acepta un RPO de 24 horas y un RTO de varias horas en caso de desastre regional, y el objetivo principal es minimizar el costo de DR. ¿Qué estrategia de recuperación debe usar?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Active-active en dos Regiones"
-      },
-      {
-        "id": "B",
-        "text": "Backup and restore con copias de los backups en otra Región"
-      },
-      {
-        "id": "C",
-        "text": "Warm standby con el entorno escalado a la mitad"
-      },
-      {
-        "id": "D",
-        "text": "Pilot light con las instancias de aplicación siempre en ejecución"
-      }
-    ],
-    "answer": [
-      "B"
-    ],
-    "explanation": "Backup and restore es la estrategia más barata: solo se pagan backups y, al ocurrir el desastre, se reconstruye la infraestructura, lo que encaja con RPO/RTO de horas.",
-    "distractors": {
-      "A": "Active-active es la opción más costosa y se justifica con RTO/RPO casi cero.",
-      "C": "Warm standby mantiene un entorno funcional corriendo, con un costo continuo innecesario aquí.",
-      "D": "Pilot light mantiene datos replicados y componentes mínimos, con un costo mayor que solo backups."
-    },
-    "difficulty": 1
+  "difficulty": 2
+ },
+ {
+  "id": "res-06",
+  "domain": "resilient",
+  "topic": "DR backup and restore",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa tiene una aplicación interna no crítica. Acepta un RPO de 24 horas y un RTO de varias horas en caso de desastre regional, y el objetivo principal es minimizar el costo de DR. ¿Qué estrategia de recuperación debe usar?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Active-active en dos Regions"
+   },
+   {
+    "id": "B",
+    "text": "Backup and restore con copias de los backups en otra Region"
+   },
+   {
+    "id": "C",
+    "text": "Warm standby con el entorno escalado a la mitad"
+   },
+   {
+    "id": "D",
+    "text": "Pilot light con las instancias de aplicación siempre en ejecución"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "Backup and restore es la estrategia más barata: solo se pagan backups y, al ocurrir el desastre, se reconstruye la infraestructura, lo que encaja con RPO/RTO de horas.",
+  "distractors": {
+   "A": "Active-active es la opción más costosa y se justifica con RTO/RPO casi cero.",
+   "C": "Warm standby mantiene un entorno funcional corriendo, con un costo continuo innecesario aquí.",
+   "D": "Pilot light mantiene datos replicados y componentes mínimos, con un costo mayor que solo backups."
   },
-  {
-    "id": "res-07",
-    "domain": "resilient",
-    "topic": "DR warm standby",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una plataforma de comercio electrónico requiere un RTO de pocos minutos y un RPO de segundos ante la falla de una Región. El presupuesto no permite duplicar al 100% la capacidad de producción en la Región de DR. ¿Qué estrategia de DR es la MÁS adecuada?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Backup and restore con snapshots diarios"
-      },
-      {
-        "id": "B",
-        "text": "Pilot light con solo la base de datos replicada y sin servidores de aplicación"
-      },
-      {
-        "id": "C",
-        "text": "Warm standby con un entorno completo a escala reducida que se escala al hacer failover"
-      },
-      {
-        "id": "D",
-        "text": "Multi-site active-active con capacidad completa en ambas Regiones"
-      }
-    ],
-    "answer": [
-      "C"
-    ],
-    "explanation": "Warm standby mantiene una versión funcional a escala reducida, por lo que solo hay que escalar y redirigir el tráfico, logrando RTO de minutos a menor costo que active-active.",
-    "distractors": {
-      "A": "Con snapshots diarios el RPO y el RTO serían de horas.",
-      "B": "En pilot light hay que aprovisionar y arrancar la capa de aplicación, lo que alarga el RTO.",
-      "D": "Active-active cumple el RTO, pero implica duplicar capacidad, lo que el presupuesto no permite."
-    },
-    "difficulty": 3
+  "difficulty": 1
+ },
+ {
+  "id": "res-07",
+  "domain": "resilient",
+  "topic": "DR warm standby",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una plataforma de comercio electrónico requiere un RTO de pocos minutos y un RPO de segundos ante la falla de una Region. El presupuesto no permite duplicar al 100% la capacidad de producción en la Region de DR. ¿Qué estrategia de DR es la MÁS adecuada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Backup and restore con snapshots diarios"
+   },
+   {
+    "id": "B",
+    "text": "Pilot light con solo la base de datos replicada y servidores de aplicación"
+   },
+   {
+    "id": "C",
+    "text": "Warm standby con un entorno completo a escala reducida que se escala al hacer failover"
+   },
+   {
+    "id": "D",
+    "text": "Multi-site active-active con capacidad completa en ambas Regions"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "Warm standby mantiene una versión funcional a escala reducida, por lo que solo hay que escalar y redirigir el tráfico, logrando RTO de minutos a menor costo que active-active.",
+  "distractors": {
+   "A": "Con snapshots diarios el RPO y el RTO serían de horas.",
+   "B": "En pilot light hay que aprovisionar y arrancar la capa de aplicación, lo que alarga el RTO.",
+   "D": "Active-active cumple el RTO, pero implica duplicar capacidad, lo que el presupuesto no permite."
   },
-  {
-    "id": "res-08",
-    "domain": "resilient",
-    "topic": "ALB health checks",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una aplicación web se ejecuta en instancias EC2 en tres AZs detrás de un Application Load Balancer. Cuando una instancia deja de responder, el negocio quiere que el tráfico deje de enviarse a ella automáticamente sin intervención. ¿Qué configuración logra esto?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Asignar una Elastic IP a cada instancia"
-      },
-      {
-        "id": "B",
-        "text": "Habilitar sticky sessions en el target group"
-      },
-      {
-        "id": "C",
-        "text": "Aumentar el deregistration delay a 3600 segundos"
-      },
-      {
-        "id": "D",
-        "text": "Configurar health checks en el target group del ALB"
-      }
-    ],
-    "answer": [
-      "D"
-    ],
-    "explanation": "El ALB realiza health checks periódicos sobre los targets y deja de enrutar tráfico a los que fallan, reanudándolo cuando vuelven a estar healthy.",
-    "distractors": {
-      "A": "Las Elastic IP no detectan fallas ni redirigen tráfico.",
-      "B": "Sticky sessions fijan clientes a instancias y pueden empeorar el problema.",
-      "C": "El deregistration delay solo controla cuánto se espera al retirar un target, no detecta fallas."
-    },
-    "difficulty": 1
+  "difficulty": 3
+ },
+ {
+  "id": "res-08",
+  "domain": "resilient",
+  "topic": "ALB health checks",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación web se ejecuta en instancias EC2 en tres AZs detrás de un Application Load Balancer. Cuando una instancia deja de responder, el negocio quiere que el tráfico deje de enviarse a ella automáticamente sin intervención. ¿Qué configuración logra esto?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Asignar una Elastic IP a cada instancia"
+   },
+   {
+    "id": "B",
+    "text": "Habilitar sticky sessions en el target group"
+   },
+   {
+    "id": "C",
+    "text": "Aumentar el deregistration delay a 3600 segundos"
+   },
+   {
+    "id": "D",
+    "text": "Configurar health checks en el target group del ALB"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "El ALB realiza health checks periódicos sobre los targets y deja de enrutar tráfico a los que fallan, reanudándolo cuando vuelven a estar healthy.",
+  "distractors": {
+   "A": "Las Elastic IP no detectan fallas ni redirigen tráfico.",
+   "B": "Sticky sessions fijan clientes a instancias y pueden empeorar el problema.",
+   "C": "El deregistration delay solo controla cuánto se espera al retirar un target, no detecta fallas."
   },
-  {
-    "id": "res-09",
-    "domain": "resilient",
-    "topic": "Auto Scaling health checks",
-    "type": "single",
-    "choose": 1,
-    "stem": "Un Auto Scaling group registra sus instancias en un Application Load Balancer. Una instancia tiene el proceso de la aplicación colgado, pero el sistema operativo responde, por lo que EC2 la considera sana y el grupo no la reemplaza. ¿Qué cambio resuelve el problema?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Habilitar los ELB health checks en el Auto Scaling group"
-      },
-      {
-        "id": "B",
-        "text": "Reducir el cooldown del scaling policy"
-      },
-      {
-        "id": "C",
-        "text": "Cambiar el tipo de instancia a una más grande"
-      },
-      {
-        "id": "D",
-        "text": "Desactivar el balanceo entre AZs"
-      }
-    ],
-    "answer": [
-      "A"
-    ],
-    "explanation": "Por defecto el ASG usa solo health checks de EC2. Al activar los de ELB, las instancias que fallan el health check del load balancer se marcan unhealthy y se reemplazan.",
-    "distractors": {
-      "B": "El cooldown regula la frecuencia de escalado, no detecta instancias defectuosas.",
-      "C": "Una instancia mayor no corrige un proceso colgado.",
-      "D": "Desactivar el balanceo entre AZs reduciría la resiliencia sin resolver el problema."
-    },
-    "difficulty": 2
+  "difficulty": 1
+ },
+ {
+  "id": "res-09",
+  "domain": "resilient",
+  "topic": "Auto Scaling health checks",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un Auto Scaling group registra sus instancias en un Application Load Balancer. Una instancia tiene el proceso de la aplicación colgado, pero el sistema operativo responde, por lo que EC2 la considera sana y el grupo no la reemplaza. ¿Qué cambio resuelve el problema?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Habilitar los ELB health checks en el Auto Scaling group"
+   },
+   {
+    "id": "B",
+    "text": "Reducir el cooldown del scaling policy"
+   },
+   {
+    "id": "C",
+    "text": "Cambiar el tipo de instancia a una más grande"
+   },
+   {
+    "id": "D",
+    "text": "Desactivar el cross-zone load balancing"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "Por defecto el ASG usa solo health checks de EC2. Al activar los de ELB, las instancias que fallan el health check del load balancer se marcan unhealthy y se reemplazan.",
+  "distractors": {
+   "B": "El cooldown regula la frecuencia de escalado, no detecta instancias defectuosas.",
+   "C": "Una instancia mayor no corrige un proceso colgado.",
+   "D": "Desactivar el cross-zone load balancing reduciría la resiliencia sin resolver el problema."
   },
-  {
-    "id": "res-10",
-    "domain": "resilient",
-    "topic": "Route 53 failover",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una aplicación se despliega en una Región principal y en una Región secundaria en modo standby. Los usuarios deben ir siempre a la principal y ser redirigidos automáticamente a la secundaria solo si la principal falla. ¿Qué configuración de Amazon Route 53 es la adecuada?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Weighted routing con 50% y 50%"
-      },
-      {
-        "id": "B",
-        "text": "Failover routing con un health check asociado al registro primario"
-      },
-      {
-        "id": "C",
-        "text": "Latency-based routing sin health checks"
-      },
-      {
-        "id": "D",
-        "text": "Geolocation routing con un registro por continente"
-      }
-    ],
-    "answer": [
-      "B"
-    ],
-    "explanation": "El failover routing activo-pasivo responde con el registro primario mientras su health check esté healthy y cambia al secundario cuando falla.",
-    "distractors": {
-      "A": "Weighted 50/50 enviaría tráfico también a la Región standby en condiciones normales.",
-      "C": "Latency routing envía al usuario a la Región más cercana y, sin health checks, no detecta fallas.",
-      "D": "Geolocation enruta por ubicación del usuario y no implementa failover activo-pasivo."
-    },
-    "difficulty": 1
+  "difficulty": 2
+ },
+ {
+  "id": "res-10",
+  "domain": "resilient",
+  "topic": "Route 53 failover",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación se despliega en una Region principal y en una Region secundaria en modo standby. Los usuarios deben ir siempre a la principal y ser redirigidos automáticamente a la secundaria solo si la principal falla. ¿Qué configuración de Amazon Route 53 es la adecuada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Weighted routing con 50% y 50%"
+   },
+   {
+    "id": "B",
+    "text": "Failover routing con un health check asociado al primary record"
+   },
+   {
+    "id": "C",
+    "text": "Latency-based routing sin health checks"
+   },
+   {
+    "id": "D",
+    "text": "Geolocation routing con un record por continente"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "El failover routing activo-pasivo responde con el primary record mientras su health check esté healthy y cambia al secundario cuando falla.",
+  "distractors": {
+   "A": "Weighted 50/50 enviaría tráfico también a la Region standby en condiciones normales.",
+   "C": "Latency routing envía al usuario a la Region más cercana y, sin health checks, no detecta fallas.",
+   "D": "Geolocation enruta por ubicación del usuario y no implementa failover activo-pasivo."
   },
-  {
-    "id": "res-11",
-    "domain": "resilient",
-    "topic": "SQS Dead-letter queue",
-    "type": "single",
-    "choose": 1,
-    "stem": "Un consumidor procesa mensajes de una cola Amazon SQS. Algunos mensajes malformados hacen fallar al consumidor una y otra vez, bloqueando recursos y ocultando otros problemas. La empresa quiere aislar esos mensajes para analizarlos después sin perder datos. ¿Qué debe configurar?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Reducir el retention period a 1 minuto"
-      },
-      {
-        "id": "B",
-        "text": "Cambiar la cola a long polling"
-      },
-      {
-        "id": "C",
-        "text": "Una dead-letter queue con un maxReceiveCount en la redrive policy"
-      },
-      {
-        "id": "D",
-        "text": "Aumentar el delay seconds de la cola"
-      }
-    ],
-    "answer": [
-      "C"
-    ],
-    "explanation": "Una DLQ recibe los mensajes que superan el maxReceiveCount, de modo que los mensajes problemáticos quedan aislados y conservados para su análisis.",
-    "distractors": {
-      "A": "Con un retention de 1 minuto los mensajes se perderían sin análisis.",
-      "B": "El long polling reduce llamadas vacías, pero no aísla mensajes fallidos.",
-      "D": "El delay seconds solo retrasa la entrega inicial y no resuelve los reintentos infinitos."
-    },
-    "difficulty": 1
+  "difficulty": 1
+ },
+ {
+  "id": "res-11",
+  "domain": "resilient",
+  "topic": "SQS Dead-letter queue",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un consumidor procesa mensajes de una cola Amazon SQS. Algunos mensajes malformados hacen fallar al consumidor una y otra vez, bloqueando recursos y ocultando otros problemas. La empresa quiere aislar esos mensajes para analizarlos después sin perder datos. ¿Qué debe configurar?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Reducir el retention period a 1 minuto"
+   },
+   {
+    "id": "B",
+    "text": "Cambiar la cola a long polling"
+   },
+   {
+    "id": "C",
+    "text": "Una dead-letter queue con un maxReceiveCount en la redrive policy"
+   },
+   {
+    "id": "D",
+    "text": "Aumentar el delay seconds de la cola"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "Una DLQ recibe los mensajes que superan el maxReceiveCount, de modo que los mensajes problemáticos quedan aislados y conservados para su análisis.",
+  "distractors": {
+   "A": "Con un retention de 1 minuto los mensajes se perderían sin análisis.",
+   "B": "El long polling reduce llamadas vacías, pero no aísla mensajes fallidos.",
+   "D": "El delay seconds solo retrasa la entrega inicial y no resuelve los reintentos infinitos."
   },
-  {
-    "id": "res-12",
-    "domain": "resilient",
-    "topic": "SQS visibility timeout",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una función procesa mensajes de SQS y cada mensaje tarda hasta 2 minutos en procesarse. El visibility timeout de la cola es de 30 segundos y se observan mensajes procesados dos veces por consumidores distintos. ¿Cuál es la corrección más adecuada?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Cambiar a una cola FIFO"
-      },
-      {
-        "id": "B",
-        "text": "Habilitar long polling con 20 segundos"
-      },
-      {
-        "id": "C",
-        "text": "Reducir el número de consumidores a uno"
-      },
-      {
-        "id": "D",
-        "text": "Aumentar el visibility timeout a un valor mayor al tiempo máximo de procesamiento"
-      }
-    ],
-    "answer": [
-      "D"
-    ],
-    "explanation": "Si el visibility timeout vence antes de terminar, el mensaje vuelve a ser visible y otro consumidor lo toma. El timeout debe superar el tiempo máximo de procesamiento.",
-    "distractors": {
-      "A": "FIFO garantiza orden y deduplicación, pero no evita reentregas por timeout vencido.",
-      "B": "El long polling no modifica la visibilidad de los mensajes en proceso.",
-      "C": "Reducir consumidores no corrige que el mensaje reaparezca antes de terminar."
-    },
-    "difficulty": 2
+  "difficulty": 1
+ },
+ {
+  "id": "res-12",
+  "domain": "resilient",
+  "topic": "SQS visibility timeout",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una función procesa mensajes de SQS y cada mensaje tarda hasta 2 minutos en procesarse. El visibility timeout de la cola es de 30 segundos y se observan mensajes procesados dos veces por consumidores distintos. ¿Cuál es la corrección más adecuada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Cambiar a una cola FIFO"
+   },
+   {
+    "id": "B",
+    "text": "Habilitar long polling con 20 segundos"
+   },
+   {
+    "id": "C",
+    "text": "Reducir el número de consumidores a uno"
+   },
+   {
+    "id": "D",
+    "text": "Aumentar el visibility timeout a un valor mayor al tiempo máximo de procesamiento"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "Si el visibility timeout vence antes de terminar, el mensaje vuelve a ser visible y otro consumidor lo toma. El timeout debe superar el tiempo máximo de procesamiento.",
+  "distractors": {
+   "A": "FIFO garantiza orden y deduplicación, pero no evita reentregas por timeout vencido.",
+   "B": "El long polling no modifica la visibilidad de los mensajes en proceso.",
+   "C": "Reducir consumidores no corrige que el mensaje reaparezca antes de terminar."
   },
-  {
-    "id": "res-13",
-    "domain": "resilient",
-    "topic": "S3 Cross-Region Replication",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una empresa guarda documentos legales en un bucket de Amazon S3 en eu-west-1 y necesita una copia automática y asíncrona en otra Región para cumplir con un requisito de DR. ¿Qué requisito previo es obligatorio para usar Cross-Region Replication?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Habilitar el versionado en los buckets de origen y destino"
-      },
-      {
-        "id": "B",
-        "text": "Habilitar S3 Transfer Acceleration en el bucket de destino"
-      },
-      {
-        "id": "C",
-        "text": "Usar la clase de almacenamiento S3 Glacier Deep Archive en el origen"
-      },
-      {
-        "id": "D",
-        "text": "Hacer público el bucket de destino"
-      }
-    ],
-    "answer": [
-      "A"
-    ],
-    "explanation": "S3 Replication requiere que el versionado esté habilitado en ambos buckets, además de un rol IAM con permisos de replicación.",
-    "distractors": {
-      "B": "Transfer Acceleration acelera cargas, pero no es requisito de la replicación.",
-      "C": "La replicación funciona con varias clases de almacenamiento y no exige Deep Archive.",
-      "D": "Hacer público el destino no es necesario y supone un riesgo de seguridad."
-    },
-    "difficulty": 1
+  "difficulty": 2
+ },
+ {
+  "id": "res-13",
+  "domain": "resilient",
+  "topic": "S3 Cross-Region Replication",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa guarda documentos legales en un bucket de Amazon S3 en eu-west-1 y necesita una copia automática y asíncrona en otra Region para cumplir con un requisito de DR. ¿Qué requisito previo es obligatorio para usar Cross-Region Replication?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Habilitar el versionado en los buckets de origen y destino"
+   },
+   {
+    "id": "B",
+    "text": "Habilitar S3 Transfer Acceleration en el bucket de destino"
+   },
+   {
+    "id": "C",
+    "text": "Usar la storage class S3 Glacier Deep Archive en el origen"
+   },
+   {
+    "id": "D",
+    "text": "Hacer público el bucket de destino"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "S3 Replication requiere que el versionado esté habilitado en ambos buckets, además de un rol IAM con permisos de replicación.",
+  "distractors": {
+   "B": "Transfer Acceleration acelera cargas, pero no es requisito de la replicación.",
+   "C": "La replicación funciona con varias storage classes y no exige Deep Archive.",
+   "D": "Hacer público el destino no es necesario y supone un riesgo de seguridad."
   },
-  {
-    "id": "res-14",
-    "domain": "resilient",
-    "topic": "RDS Proxy",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una aplicación serverless con funciones AWS Lambda se conecta a una base de datos Amazon RDS Multi-AZ. Ante picos de tráfico se agotan las conexiones y, durante un failover, la aplicación tarda en recuperarse. ¿Qué servicio mejora ambos problemas con el MENOR cambio de código?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Amazon ElastiCache for Redis delante de la base de datos"
-      },
-      {
-        "id": "B",
-        "text": "Amazon RDS Proxy entre las funciones Lambda y la base de datos"
-      },
-      {
-        "id": "C",
-        "text": "Amazon SQS entre los usuarios y las funciones Lambda"
-      },
-      {
-        "id": "D",
-        "text": "Una Read Replica adicional por cada función Lambda"
-      }
-    ],
-    "answer": [
-      "B"
-    ],
-    "explanation": "RDS Proxy agrupa y reutiliza conexiones y reduce el tiempo de recuperación en failovers al mantener las conexiones de la aplicación y redirigirlas a la nueva instancia primaria.",
-    "distractors": {
-      "A": "La caché reduce lecturas, pero no administra las conexiones ni acelera el failover.",
-      "C": "SQS desacopla la entrada, pero exige rediseñar la aplicación y no gestiona conexiones.",
-      "D": "Las Read Replicas no resuelven el agotamiento de conexiones y no son escalables por función."
-    },
-    "difficulty": 2
+  "difficulty": 1
+ },
+ {
+  "id": "res-14",
+  "domain": "resilient",
+  "topic": "RDS Proxy",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación serverless con funciones AWS Lambda se conecta a una base de datos Amazon RDS Multi-AZ. Ante picos de tráfico se agotan las conexiones y, durante un failover, la aplicación tarda en recuperarse. ¿Qué servicio mejora ambos problemas con el MENOR cambio de código?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Amazon ElastiCache (Redis OSS o Valkey) delante de la base de datos"
+   },
+   {
+    "id": "B",
+    "text": "Amazon RDS Proxy entre las funciones Lambda y la base de datos"
+   },
+   {
+    "id": "C",
+    "text": "Amazon SQS entre los usuarios y las funciones Lambda"
+   },
+   {
+    "id": "D",
+    "text": "Una Read Replica adicional por cada función Lambda"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "RDS Proxy agrupa y reutiliza conexiones y reduce el tiempo de recuperación en failovers al mantener las conexiones de la aplicación y redirigirlas a la nueva instancia primaria.",
+  "distractors": {
+   "A": "La caché reduce lecturas, pero no administra las conexiones ni acelera el failover.",
+   "C": "SQS desacopla la entrada, pero exige rediseñar la aplicación y no gestiona conexiones.",
+   "D": "Las Read Replicas no resuelven el agotamiento de conexiones y no son escalables por función."
   },
-  {
-    "id": "res-15",
-    "domain": "resilient",
-    "topic": "Direct Connect with VPN backup",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una empresa conecta su centro de datos a una VPC mediante una conexión AWS Direct Connect. Necesita una conectividad de respaldo en caso de falla del enlace, con el MENOR costo y rápida de aprovisionar. ¿Qué debe hacer?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Contratar un segundo proveedor de internet y usar NAT Gateway"
-      },
-      {
-        "id": "B",
-        "text": "Crear una VPC peering con otra Región"
-      },
-      {
-        "id": "C",
-        "text": "Configurar una Site-to-Site VPN sobre internet como ruta de respaldo"
-      },
-      {
-        "id": "D",
-        "text": "Cambiar a una conexión Direct Connect de menor velocidad"
-      }
-    ],
-    "answer": [
-      "C"
-    ],
-    "explanation": "Una Site-to-Site VPN es económica y se crea en minutos; con BGP, el tráfico conmuta a la VPN si el Direct Connect falla, ya que éste se prefiere en condiciones normales.",
-    "distractors": {
-      "A": "Un NAT Gateway sirve para salida a internet de subredes privadas, no para conectar el centro de datos.",
-      "B": "El VPC peering conecta VPCs y no provee conectividad con el centro de datos.",
-      "D": "Reducir la velocidad no aporta redundancia y no protege contra la falla del enlace."
-    },
-    "difficulty": 1
+  "difficulty": 2
+ },
+ {
+  "id": "res-15",
+  "domain": "resilient",
+  "topic": "Direct Connect with VPN backup",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa conecta su centro de datos a una VPC mediante una conexión AWS Direct Connect. Necesita una conectividad de respaldo en caso de falla del enlace, con el MENOR costo y rápida de aprovisionar. ¿Qué debe hacer?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Contratar un segundo proveedor de internet y usar NAT Gateway"
+   },
+   {
+    "id": "B",
+    "text": "Crear una VPC peering con otra Region"
+   },
+   {
+    "id": "C",
+    "text": "Configurar una Site-to-Site VPN sobre internet como ruta de respaldo"
+   },
+   {
+    "id": "D",
+    "text": "Cambiar a una conexión Direct Connect de menor velocidad"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "Una Site-to-Site VPN es económica y se crea en minutos; con BGP, el tráfico conmuta a la VPN si el Direct Connect falla, ya que éste se prefiere en condiciones normales.",
+  "distractors": {
+   "A": "Un NAT Gateway sirve para salida a internet de private subnets, no para conectar el centro de datos.",
+   "B": "El VPC peering conecta VPCs y no provee conectividad con el centro de datos.",
+   "D": "Reducir la velocidad no aporta redundancia y no protege contra la falla del enlace."
   },
-  {
-    "id": "res-16",
-    "domain": "resilient",
-    "topic": "AWS Backup cross-Region and cross-account",
-    "type": "multi",
-    "choose": 2,
-    "stem": "Una empresa usa AWS Backup para proteger instancias RDS y volúmenes EBS. Para cumplir una política de resiliencia, los backups deben sobrevivir a la pérdida de una Región y a la eliminación maliciosa desde la cuenta de origen. ¿Qué DOS acciones cumplen el requisito? Elige DOS.",
-    "options": [
-      {
-        "id": "A",
-        "text": "Configurar copias de backup hacia un vault en otra Región"
-      },
-      {
-        "id": "B",
-        "text": "Configurar copias hacia un vault en una cuenta AWS distinta y dedicada"
-      },
-      {
-        "id": "C",
-        "text": "Aumentar el periodo de retención en el vault de origen"
-      },
-      {
-        "id": "D",
-        "text": "Habilitar Multi-AZ en las instancias RDS"
-      },
-      {
-        "id": "E",
-        "text": "Crear un snapshot manual mensual en la misma cuenta y Región"
-      }
-    ],
-    "answer": [
-      "A",
-      "B"
-    ],
-    "explanation": "Las copias entre Regiones protegen frente a la pérdida regional y las copias a una cuenta aislada protegen frente a eliminación o compromiso de la cuenta de origen.",
-    "distractors": {
-      "C": "Más retención no protege contra la pérdida de la Región ni contra el borrado desde la cuenta origen.",
-      "D": "Multi-AZ mejora la disponibilidad pero no crea backups independientes.",
-      "E": "Un snapshot en la misma cuenta y Región comparte ambos puntos de falla."
-    },
-    "difficulty": 3
+  "difficulty": 1
+ },
+ {
+  "id": "res-16",
+  "domain": "resilient",
+  "topic": "AWS Backup cross-Region and cross-account",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una empresa usa AWS Backup para proteger instancias RDS y volúmenes EBS. Para cumplir una política de resiliencia, los backups deben sobrevivir a la pérdida de una Region y a la eliminación maliciosa desde la cuenta de origen. ¿Qué DOS acciones cumplen el requisito? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Configurar copias de backup hacia un vault en otra Region"
+   },
+   {
+    "id": "B",
+    "text": "Configurar copias hacia un vault en una cuenta AWS distinta y dedicada"
+   },
+   {
+    "id": "C",
+    "text": "Aumentar el retention period en el vault de origen"
+   },
+   {
+    "id": "D",
+    "text": "Habilitar Multi-AZ en las instancias RDS"
+   },
+   {
+    "id": "E",
+    "text": "Crear un snapshot manual mensual en la misma cuenta y Region"
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "explanation": "Las copias entre Regions protegen frente a la pérdida regional y las copias a una cuenta aislada protegen frente a eliminación o compromiso de la cuenta de origen.",
+  "distractors": {
+   "C": "Más retención no protege contra la pérdida de la Region ni contra el borrado desde la cuenta origen.",
+   "D": "Multi-AZ mejora la disponibilidad pero no crea backups independientes.",
+   "E": "Un snapshot en la misma cuenta y Region comparte ambos puntos de falla."
   },
-  {
-    "id": "res-17",
-    "domain": "resilient",
-    "topic": "Stateless architectures",
-    "type": "multi",
-    "choose": 2,
-    "stem": "Una aplicación web guarda la sesión del usuario en la memoria de cada instancia EC2 de un Auto Scaling group. Cuando una instancia se termina por escalado, los usuarios pierden su sesión. La empresa quiere una arquitectura stateless que tolere la pérdida de instancias. ¿Qué DOS acciones deben aplicarse? Elige DOS.",
-    "options": [
-      {
-        "id": "A",
-        "text": "Externalizar el estado de sesión a Amazon ElastiCache o Amazon DynamoDB"
-      },
-      {
-        "id": "B",
-        "text": "Almacenar los archivos subidos por usuarios en Amazon S3 en lugar del disco local"
-      },
-      {
-        "id": "C",
-        "text": "Habilitar sticky sessions en el load balancer"
-      },
-      {
-        "id": "D",
-        "text": "Usar instancias con mayor memoria RAM"
-      },
-      {
-        "id": "E",
-        "text": "Desactivar el scale-in del Auto Scaling group"
-      }
-    ],
-    "answer": [
-      "A",
-      "B"
-    ],
-    "explanation": "Una arquitectura stateless mantiene sesión y archivos fuera de las instancias (almacén de sesión compartido y S3), de modo que cualquier instancia puede atender cualquier petición y reemplazarse sin pérdida.",
-    "distractors": {
-      "C": "Las sticky sessions siguen atando el estado a una instancia, que se pierde si se termina.",
-      "D": "Más RAM no elimina la pérdida de estado al terminar la instancia.",
-      "E": "Desactivar el scale-in evita la elasticidad y no resuelve el diseño con estado."
-    },
-    "difficulty": 2
-  }
+  "difficulty": 3
+ },
+ {
+  "id": "res-17",
+  "domain": "resilient",
+  "topic": "Stateless architectures",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una aplicación web guarda la sesión del usuario en la memoria de cada instancia EC2 de un Auto Scaling group. Cuando una instancia se termina por escalado, los usuarios pierden su sesión. La empresa quiere una arquitectura stateless que tolere la pérdida de instancias. ¿Qué DOS acciones deben aplicarse? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Externalizar el estado de sesión a Amazon ElastiCache o Amazon DynamoDB"
+   },
+   {
+    "id": "B",
+    "text": "Almacenar los archivos subidos por usuarios en Amazon S3 en lugar del disco local"
+   },
+   {
+    "id": "C",
+    "text": "Habilitar sticky sessions en el load balancer"
+   },
+   {
+    "id": "D",
+    "text": "Usar instancias con mayor memoria RAM"
+   },
+   {
+    "id": "E",
+    "text": "Desactivar el scale-in del Auto Scaling group"
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "explanation": "Una arquitectura stateless mantiene sesión y archivos fuera de las instancias (almacén de sesión compartido y S3), de modo que cualquier instancia puede atender cualquier petición y reemplazarse sin pérdida.",
+  "distractors": {
+   "C": "Las sticky sessions siguen atando el estado a una instancia, que se pierde si se termina.",
+   "D": "Más RAM no elimina la pérdida de estado al terminar la instancia.",
+   "E": "Desactivar el scale-in evita la elasticidad y no resuelve el diseño con estado."
+  },
+  "difficulty": 2
+ }
 ]
