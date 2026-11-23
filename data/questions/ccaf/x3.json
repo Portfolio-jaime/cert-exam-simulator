@@ -1,0 +1,326 @@
+[
+ {
+  "id": "cca-s2-40",
+  "domain": "claudecode",
+  "scenario": "s2",
+  "topic": "TS 3.5 Interview pattern before implementing",
+  "type": "single",
+  "choose": 1,
+  "stem": "Debes añadir una capa de caché a un servicio de pricing en un dominio que tu equipo no conoce bien. Pides a Claude Code que la implemente directamente y obtienes una solución que ignora la invalidación y qué pasa cuando el origen de datos falla. ¿Qué enfoque habría evitado el problema?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Pedir a Claude Code que te haga preguntas sobre estrategia de invalidación, modos de fallo y consistencia antes de implementar, y luego codificar con tus respuestas."
+   },
+   {
+    "id": "B",
+    "text": "Repetir el mismo prompt varias veces y quedarte con la implementación que más líneas de manejo de errores incluya."
+   },
+   {
+    "id": "C",
+    "text": "Escribir un prompt más largo que describa la caché en prosa lo más detalladamente posible, sin interacción previa."
+   },
+   {
+    "id": "D",
+    "text": "Implementar primero una versión mínima sin caché y pedir a Claude Code que 'la mejore' en iteraciones sucesivas."
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "TS 3.5: en dominios desconocidos, el interview pattern hace que Claude haga preguntas que revelan consideraciones que el desarrollador no anticipó (invalidación, modos de fallo) antes de escribir código.",
+  "distractors": {
+   "B": "Regenerar al azar no descubre requisitos faltantes; solo produce variantes con los mismos puntos ciegos.",
+   "C": "Un prompt largo solo recoge lo que ya sabes; no surfacea lo que no anticipaste, que es el problema real.",
+   "D": "Iterar sobre 'mejorar' sin criterios no expone las decisiones de diseño y deja los modos de fallo sin revisar."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "You must add a caching layer to a pricing service in a domain your team knows poorly. You ask Claude Code to implement it directly and get a solution that ignores invalidation and what happens when the data source fails. Which approach would have prevented this?",
+   "options": {
+    "A": "Ask Claude Code to question you about invalidation strategy, failure modes and consistency before implementing, then code with your answers.",
+    "B": "Repeat the same prompt several times and keep the implementation with the most error-handling lines.",
+    "C": "Write a longer prompt describing the cache in prose in as much detail as possible, with no prior interaction.",
+    "D": "First implement a minimal version without caching and ask Claude Code to 'improve it' in successive iterations."
+   },
+   "explanation": "TS 3.5: in unfamiliar domains, the interview pattern has Claude ask questions that surface considerations the developer did not anticipate (invalidation, failure modes) before writing code.",
+   "distractors": {
+    "B": "Random regeneration does not uncover missing requirements; it only yields variants with the same blind spots.",
+    "C": "A long prompt only captures what you already know; it does not surface what you did not anticipate, which is the real problem.",
+    "D": "Iterating on 'improve' without criteria does not expose design decisions and leaves failure modes unreviewed."
+   },
+   "topic": "TS 3.5 Interview pattern before implementing"
+  }
+ },
+ {
+  "id": "cca-s2-41",
+  "domain": "claudecode",
+  "scenario": "s2",
+  "topic": "TS 3.5 Test-driven iteration",
+  "type": "single",
+  "choose": 1,
+  "stem": "Pides a Claude Code un parser de fechas con requisitos de casos límite (zonas horarias, años bisiestos) y rendimiento. Las descripciones en prosa producen resultados inconsistentes entre intentos. ¿Qué flujo da una mejora progresiva más fiable?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Pedir que implemente y luego decir en cada ronda 'sigue sin funcionar, revísalo' hasta que parezca correcto."
+   },
+   {
+    "id": "B",
+    "text": "Escribir primero una suite de tests que cubra comportamiento esperado, casos límite y rendimiento, y luego iterar compartiendo los fallos con Claude Code."
+   },
+   {
+    "id": "C",
+    "text": "Pedir a Claude Code que escriba la implementación y los tests en el mismo paso para que sean coherentes entre sí."
+   },
+   {
+    "id": "D",
+    "text": "Añadir a CLAUDE.md una lista de reglas de fechas y pedir la implementación una sola vez sin tests."
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "TS 3.5: escribir primero la suite de tests (comportamiento, casos límite, rendimiento) y compartir los fallos concretos guía la mejora progresiva con criterios verificables.",
+  "distractors": {
+   "A": "Feedback vago sin fallos concretos no da a Claude información accionable y no hay criterio objetivo de terminado.",
+   "C": "Tests escritos junto con la implementación tienden a validar lo que ya se hizo en lugar de definir el comportamiento esperado de antemano.",
+   "D": "Reglas en prosa vuelven al problema original de interpretación inconsistente y sin tests no hay verificación."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "You ask Claude Code for a date parser with edge-case requirements (time zones, leap years) and performance goals. Prose descriptions produce inconsistent results between attempts. Which workflow gives more reliable progressive improvement?",
+   "options": {
+    "A": "Ask it to implement, then say 'it still doesn't work, check it' each round until it seems right.",
+    "B": "First write a test suite covering expected behavior, edge cases and performance, then iterate by sharing the failures with Claude Code.",
+    "C": "Ask Claude Code to write the implementation and the tests in the same step so they are consistent with each other.",
+    "D": "Add a list of date rules to CLAUDE.md and request the implementation once without tests."
+   },
+   "explanation": "TS 3.5: writing the test suite first (behavior, edge cases, performance) and sharing concrete failures drives progressive improvement with verifiable criteria.",
+   "distractors": {
+    "A": "Vague feedback without concrete failures gives Claude nothing actionable and there is no objective definition of done.",
+    "C": "Tests written alongside the implementation tend to validate what was already built instead of defining expected behavior up front.",
+    "D": "Prose rules return to the original inconsistent-interpretation problem, and without tests there is no verification."
+   },
+   "topic": "TS 3.5 Test-driven iteration"
+  }
+ },
+ {
+  "id": "cca-s2-42",
+  "domain": "claudecode",
+  "scenario": "s2",
+  "topic": "TS 3.5 Single message vs sequential fixes",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Tras una refactorización, Claude Code deja varios problemas abiertos. Debes decidir cómo comunicarlos. ¿Cuáles DOS situaciones justifican correcciones en un solo mensaje detallado en lugar de iteración secuencial? (Elige dos.)",
+  "options": [
+   {
+    "id": "A",
+    "text": "Dos bugs en la misma función de validación cuya corrección de uno cambia el comportamiento esperado del otro."
+   },
+   {
+    "id": "B",
+    "text": "Un typo en un README, un linter que se queja de un import sin usar y un nombre de variable poco claro en módulos distintos."
+   },
+   {
+    "id": "C",
+    "text": "Un cambio de esquema de base de datos y el cambio del endpoint que lo consume, que deben ser coherentes entre sí."
+   },
+   {
+    "id": "D",
+    "text": "Tres tests de módulos sin relación que fallan por causas independientes."
+   },
+   {
+    "id": "E",
+    "text": "Una petición de renombrar una constante en un archivo aislado."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "explanation": "TS 3.5: los problemas que interactúan (fixes que se afectan entre sí) deben darse en un solo mensaje detallado para que Claude los resuelva de forma coherente; los independientes pueden tratarse secuencialmente.",
+  "distractors": {
+   "B": "Son problemas independientes sin interacción; tratarlos uno a uno es más simple y fácil de verificar.",
+   "D": "Fallos con causas independientes se corrigen secuencialmente; mezclarlos solo añade ruido.",
+   "E": "Es un cambio aislado sin interacciones; no requiere un mensaje combinado."
+  },
+  "difficulty": 3,
+  "en": {
+   "stem": "After a refactor, Claude Code leaves several open issues. You must decide how to communicate them. Which TWO situations justify fixes in a single detailed message instead of sequential iteration? (Choose two.)",
+   "options": {
+    "A": "Two bugs in the same validation function where fixing one changes the expected behavior of the other.",
+    "B": "A README typo, a linter complaint about an unused import and an unclear variable name in different modules.",
+    "C": "A database schema change and the change to the endpoint that consumes it, which must be consistent with each other.",
+    "D": "Three unrelated module tests failing for independent causes.",
+    "E": "A request to rename a constant in an isolated file."
+   },
+   "explanation": "TS 3.5: interacting problems (fixes that affect each other) should be given in one detailed message so Claude resolves them coherently; independent ones can be handled sequentially.",
+   "distractors": {
+    "B": "These are independent issues with no interaction; handling them one by one is simpler and easier to verify.",
+    "D": "Failures with independent causes are fixed sequentially; mixing them only adds noise.",
+    "E": "It is an isolated change with no interactions; it does not need a combined message."
+   },
+   "topic": "TS 3.5 Single message vs sequential fixes"
+  }
+ },
+ {
+  "id": "cca-s5-40",
+  "domain": "prompting",
+  "scenario": "s5",
+  "topic": "TS 4.6 Independent review instance",
+  "type": "single",
+  "choose": 1,
+  "stem": "En tu pipeline CI/CD, la misma sesión de Claude Code que generó un cambio se reutiliza para revisarlo con la instrucción 'revisa críticamente tu trabajo'. Los problemas sutiles siguen llegando a producción. ¿Qué cambio es más efectivo?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Activar extended thinking en la sesión de generación para que la revisión sea más profunda."
+   },
+   {
+    "id": "B",
+    "text": "Añadir al prompt la frase 'sé extremadamente estricto' y pedir una segunda revisión en la misma sesión."
+   },
+   {
+    "id": "C",
+    "text": "Ejecutar la revisión en una instancia independiente de Claude, sin el contexto de razonamiento de la generación."
+   },
+   {
+    "id": "D",
+    "text": "Pedir a la sesión de generación que liste primero por qué su código podría estar mal y luego lo verifique."
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "TS 4.6: el modelo conserva el contexto de razonamiento de la generación y cuestiona menos sus decisiones; una instancia independiente sin ese contexto detecta mejor los problemas sutiles que las instrucciones de autorrevisión o el extended thinking.",
+  "distractors": {
+   "A": "Más razonamiento en la misma sesión no elimina el sesgo del contexto previo.",
+   "B": "Una instrucción más estricta no quita el contexto retenido; la sesión sigue defendiendo sus decisiones.",
+   "D": "Sigue siendo autorrevisión dentro del mismo contexto de razonamiento."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "In your CI/CD pipeline, the same Claude Code session that generated a change is reused to review it with the instruction 'critically review your work'. Subtle issues still reach production. Which change is most effective?",
+   "options": {
+    "A": "Enable extended thinking in the generation session so the review is deeper.",
+    "B": "Add 'be extremely strict' to the prompt and ask for a second review in the same session.",
+    "C": "Run the review in an independent Claude instance, without the generation's reasoning context.",
+    "D": "Ask the generation session to first list why its code might be wrong and then verify it."
+   },
+   "explanation": "TS 4.6: the model retains reasoning context from generation and is less likely to question its own decisions; an independent instance without that context catches subtle issues better than self-review instructions or extended thinking.",
+   "distractors": {
+    "A": "More reasoning in the same session does not remove the bias from prior context.",
+    "B": "A stricter instruction does not remove the retained context; the session keeps defending its decisions.",
+    "D": "It is still self-review within the same reasoning context."
+   },
+   "topic": "TS 4.6 Independent review instance"
+  }
+ },
+ {
+  "id": "cca-s5-41",
+  "domain": "prompting",
+  "scenario": "s5",
+  "topic": "TS 4.6 Multi-pass review for large PRs",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un PR toca 18 archivos. Una única pasada de revisión produce hallazgos que se contradicen entre archivos y omite problemas de profundidad en varios de ellos. ¿Cuál es la mejor rediseño?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Subir el límite de tokens de salida y pedir una revisión más extensa en la misma pasada."
+   },
+   {
+    "id": "B",
+    "text": "Revisar cada archivo en su propia pasada para problemas locales y añadir una pasada de integración aparte para el flujo de datos entre archivos."
+   },
+   {
+    "id": "C",
+    "text": "Revisar solo los 5 archivos con más líneas cambiadas y asumir que el resto es de bajo riesgo."
+   },
+   {
+    "id": "D",
+    "text": "Dividir el PR en revisiones por directorio sin ninguna pasada que mire las interacciones entre ellos."
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "TS 4.6: separar pasadas locales por archivo de una pasada de integración entre archivos evita la dilución de atención y los hallazgos contradictorios.",
+  "distractors": {
+   "A": "Más salida no corrige la dilución de atención ni las contradicciones de una sola pasada.",
+   "C": "Omitir archivos deja problemas sin revisar; el tamaño del diff no mide el riesgo.",
+   "D": "Sin pasada de integración se pierden los problemas de flujo de datos entre archivos."
+  },
+  "difficulty": 2,
+  "en": {
+   "stem": "A PR touches 18 files. A single review pass produces findings that contradict each other across files and misses deep issues in several. What is the best redesign?",
+   "options": {
+    "A": "Raise the output token limit and ask for a longer review in the same pass.",
+    "B": "Review each file in its own pass for local issues and add a separate integration pass for cross-file data flow.",
+    "C": "Review only the 5 files with the most changed lines and assume the rest is low risk.",
+    "D": "Split the review by directory with no pass that looks at the interactions between them."
+   },
+   "explanation": "TS 4.6: separating per-file local passes from a cross-file integration pass avoids attention dilution and contradictory findings.",
+   "distractors": {
+    "A": "More output does not fix the attention dilution or contradictions of a single pass.",
+    "C": "Skipping files leaves issues unreviewed; diff size does not measure risk.",
+    "D": "Without an integration pass, cross-file data flow issues are missed."
+   },
+   "topic": "TS 4.6 Multi-pass review for large PRs"
+  }
+ },
+ {
+  "id": "cca-s5-42",
+  "domain": "prompting",
+  "scenario": "s5",
+  "topic": "TS 4.6 Confidence-calibrated review routing",
+  "type": "single",
+  "choose": 1,
+  "stem": "Tu equipo recibe demasiados falsos positivos de la revisión automática y los revisores humanos no pueden leer todos los hallazgos. Quieres priorizar qué revisan las personas. ¿Qué diseño es mejor?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Eliminar automáticamente todos los hallazgos de severidad baja sin ninguna verificación adicional."
+   },
+   {
+    "id": "B",
+    "text": "Pedir al modelo que genere menos hallazgos añadiendo 'solo problemas importantes' al prompt."
+   },
+   {
+    "id": "C",
+    "text": "Enviar todos los hallazgos a los humanos ordenados alfabéticamente por archivo."
+   },
+   {
+    "id": "D",
+    "text": "Ejecutar una pasada de verificación en la que el modelo reporte su nivel de confianza junto a cada hallazgo, y enrutar la revisión según esa confianza."
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "TS 4.6: una pasada de verificación con confianza autoinformada por hallazgo permite un enrutamiento calibrado de la revisión.",
+  "distractors": {
+   "A": "Descartar por severidad ignora hallazgos reales y no mide la fiabilidad de cada uno.",
+   "B": "Una instrucción vaga reduce cantidad sin calibrar fiabilidad y puede suprimir problemas reales.",
+   "C": "No prioriza nada: la carga humana sigue igual y se ignora el riesgo de cada hallazgo."
+  },
+  "difficulty": 3,
+  "en": {
+   "stem": "Your team gets too many false positives from automated review and human reviewers cannot read every finding. You want to prioritize what people review. Which design is better?",
+   "options": {
+    "A": "Automatically drop all low-severity findings with no additional verification.",
+    "B": "Ask the model to produce fewer findings by adding 'only important issues' to the prompt.",
+    "C": "Send all findings to humans sorted alphabetically by file.",
+    "D": "Run a verification pass where the model self-reports its confidence next to each finding, and route review based on that confidence."
+   },
+   "explanation": "TS 4.6: a verification pass with self-reported confidence per finding enables calibrated review routing.",
+   "distractors": {
+    "A": "Dropping by severity ignores real findings and does not measure each one's reliability.",
+    "B": "A vague instruction reduces volume without calibrating reliability and may suppress real issues.",
+    "C": "It prioritizes nothing: the human load stays the same and each finding's risk is ignored."
+   },
+   "topic": "TS 4.6 Confidence-calibrated review routing"
+  }
+ }
+]

@@ -1,0 +1,357 @@
+[
+  {
+    "id": "cca-s1-20",
+    "domain": "mcp",
+    "scenario": "s1",
+    "topic": "TS 2.1 Tool descriptions and misrouting",
+    "type": "single",
+    "choose": 1,
+    "stem": "En tu agente de soporte, `get_customer` se describe como \"Obtiene información del cliente\" y `lookup_order` como \"Obtiene información del pedido\". En producción, el agente llama con frecuencia a `get_customer` cuando el usuario solo da un número de pedido como `ORD-48213`. ¿Cuál es la corrección más efectiva?",
+    "options": [
+      { "id": "A", "text": "Agregar al system prompt una lista larga de ejemplos de conversaciones y dejar las tool descriptions como están." },
+      { "id": "B", "text": "Ampliar cada tool description con el formato de entrada esperado (email o ID de cliente frente a `ORD-#####`), consultas de ejemplo y cuándo usarla en lugar de la otra herramienta." },
+      { "id": "C", "text": "Fusionar ambas en una sola herramienta `lookup` que acepte cualquier identificador en un campo de texto libre." },
+      { "id": "D", "text": "Subir la temperature del modelo para que explore ambas herramientas y se autocorrija con el tiempo." }
+    ],
+    "answer": ["B"],
+    "explanation": "TS 2.1: las tool descriptions son el mecanismo principal con el que el modelo elige herramientas. Las descripciones mínimas y casi idénticas causan misrouting; hay que incluir formatos de entrada, ejemplos, casos límite y límites frente a herramientas similares.",
+    "distractors": {
+      "A": "El system prompt no sustituye a las descripciones: la selección depende sobre todo de ellas, y los ejemplos largos solo añaden ruido sin resolver la ambigüedad.",
+      "C": "Fusionar elimina el contrato claro de entrada/salida y traslada la ambigüedad al interior de una herramienta genérica; lo correcto es diferenciar, no mezclar.",
+      "D": "Cambiar la temperature no aporta información para distinguir las herramientas y hace el comportamiento menos predecible."
+    },
+    "difficulty": 1,
+    "en": {
+      "stem": "In your support agent, `get_customer` is described as \"Gets customer information\" and `lookup_order` as \"Gets order information\". In production, the agent often calls `get_customer` when the user only provides an order number such as `ORD-48213`. What is the most effective fix?",
+      "options": {
+        "A": "Add a long list of example conversations to the system prompt and leave the tool descriptions as they are.",
+        "B": "Expand each tool description with the expected input format (email or customer ID versus `ORD-#####`), example queries, and when to use it instead of the other tool.",
+        "C": "Merge both into a single `lookup` tool that accepts any identifier in a free-text field.",
+        "D": "Raise the model temperature so it explores both tools and corrects itself over time."
+      },
+      "explanation": "TS 2.1: tool descriptions are the primary mechanism the model uses to select tools. Minimal, near-identical descriptions cause misrouting; include input formats, examples, edge cases and boundaries versus similar tools.",
+      "distractors": {
+        "A": "The system prompt does not replace the descriptions: selection relies mainly on them, and long examples only add noise without resolving the ambiguity.",
+        "C": "Merging removes the clear input/output contract and moves the ambiguity inside a generic tool; the right move is to differentiate, not blend.",
+        "D": "Changing the temperature gives no information to tell the tools apart and makes behavior less predictable."
+      },
+      "topic": "TS 2.1 Tool descriptions and misrouting"
+    }
+  },
+  {
+    "id": "cca-s3-20",
+    "domain": "mcp",
+    "scenario": "s3",
+    "topic": "TS 2.1 Split generic tools into purpose-specific tools",
+    "type": "single",
+    "choose": 1,
+    "stem": "El subagent de análisis de documentos tiene una sola herramienta `analyze_document`. Según el prompt, a veces extrae cifras, a veces resume y a veces comprueba una afirmación contra la fuente, y el modelo elige el modo de forma inconsistente entre ejecuciones. ¿Qué rediseño resuelve mejor el problema?",
+    "options": [
+      { "id": "A", "text": "Mantener `analyze_document` y alargar su descripción explicando los tres comportamientos posibles." },
+      { "id": "B", "text": "Añadir un parámetro `mode` de texto libre y confiar en que el modelo escriba el valor correcto." },
+      { "id": "C", "text": "Poner en el system prompt palabras clave como \"si ves la palabra cifra, extrae\" para dirigir el comportamiento." },
+      { "id": "D", "text": "Dividirla en `extract_data_points`, `summarize_content` y `verify_claim_against_source`, cada una con su descripción y su contrato de entrada/salida." }
+    ],
+    "answer": ["D"],
+    "explanation": "TS 2.1: dividir una herramienta genérica en herramientas con propósito específico y contratos definidos hace que el modelo elija por nombre y descripción, en lugar de adivinar un modo interno.",
+    "distractors": {
+      "A": "Una descripción más larga sigue describiendo una herramienta con tres propósitos solapados; el modelo seguirá sin un límite claro entre ellos.",
+      "B": "Un parámetro de texto libre mueve la ambigüedad a un valor sin validar y no define salidas distintas por propósito.",
+      "C": "Las instrucciones por palabra clave en el system prompt crean asociaciones frágiles y pueden anular las descripciones; no sustituyen un diseño de herramientas claro."
+    },
+    "difficulty": 2,
+    "en": {
+      "stem": "The document analysis subagent has a single tool, `analyze_document`. Depending on the prompt, it sometimes extracts figures, sometimes summarizes and sometimes checks a claim against the source, and the model picks the mode inconsistently across runs. Which redesign best solves the problem?",
+      "options": {
+        "A": "Keep `analyze_document` and lengthen its description to explain the three possible behaviors.",
+        "B": "Add a free-text `mode` parameter and trust the model to write the right value.",
+        "C": "Put keywords in the system prompt such as \"if you see the word figure, extract\" to steer the behavior.",
+        "D": "Split it into `extract_data_points`, `summarize_content` and `verify_claim_against_source`, each with its own description and input/output contract."
+      },
+      "explanation": "TS 2.1: splitting a generic tool into purpose-specific tools with defined contracts lets the model choose by name and description instead of guessing an internal mode.",
+      "distractors": {
+        "A": "A longer description still describes one tool with three overlapping purposes; the model still has no clear boundary between them.",
+        "B": "A free-text parameter moves the ambiguity into an unvalidated value and defines no distinct outputs per purpose.",
+        "C": "Keyword instructions in the system prompt create fragile associations and can override the descriptions; they do not replace a clear tool design."
+      },
+      "topic": "TS 2.1 Split generic tools into purpose-specific tools"
+    }
+  },
+  {
+    "id": "cca-s1-21",
+    "domain": "mcp",
+    "scenario": "s1",
+    "topic": "TS 2.1 Keyword-sensitive system prompt wording",
+    "type": "single",
+    "choose": 1,
+    "stem": "Las tool descriptions de tu agente de soporte son claras, pero las trazas muestran que llama a `get_customer` incluso cuando el cliente solo pregunta por el estado de un envío. Revisas el system prompt y encuentras la línea: \"Ante cualquier consulta sobre una compra, primero comprueba la cuenta del cliente\". ¿Qué haces?",
+    "options": [
+      { "id": "A", "text": "Reescribir esa instrucción para que no asocie el término \"compra\" con `get_customer` y deje la elección a las descripciones de cada herramienta." },
+      { "id": "B", "text": "Renombrar las herramientas con nombres más largos y dejar el system prompt intacto." },
+      { "id": "C", "text": "Eliminar las tool descriptions para que el modelo dependa solo del system prompt." },
+      { "id": "D", "text": "Configurar `tool_choice: \"any\"` para obligar al modelo a elegir una herramienta en cada turno." }
+    ],
+    "answer": ["A"],
+    "explanation": "TS 2.1: el wording del system prompt puede crear asociaciones no deseadas entre palabras clave y herramientas que anulan buenas descripciones. Hay que revisar y reformular esas instrucciones.",
+    "distractors": {
+      "B": "Cambiar nombres no elimina la instrucción del prompt que fuerza la asociación con `get_customer`.",
+      "C": "Quitar las descripciones empeora la selección, porque son el mecanismo principal del modelo para elegir herramientas.",
+      "D": "`tool_choice: \"any\"` solo garantiza que se llame a alguna herramienta; no corrige cuál se elige."
+    },
+    "difficulty": 2,
+    "en": {
+      "stem": "The tool descriptions of your support agent are clear, but traces show it calls `get_customer` even when the customer only asks about the status of a shipment. You review the system prompt and find the line: \"For any question about a purchase, first check the customer's account\". What do you do?",
+      "options": {
+        "A": "Rewrite that instruction so it no longer ties the term \"purchase\" to `get_customer`, leaving the choice to each tool's description.",
+        "B": "Rename the tools with longer names and leave the system prompt untouched.",
+        "C": "Remove the tool descriptions so the model relies only on the system prompt.",
+        "D": "Set `tool_choice: \"any\"` to force the model to pick a tool on every turn."
+      },
+      "explanation": "TS 2.1: system prompt wording can create unintended keyword-to-tool associations that override good descriptions. Such instructions must be reviewed and rephrased.",
+      "distractors": {
+        "B": "Renaming does not remove the prompt instruction that forces the association with `get_customer`.",
+        "C": "Removing descriptions makes selection worse, because they are the model's primary mechanism for choosing tools.",
+        "D": "`tool_choice: \"any\"` only guarantees that some tool is called; it does not fix which one is chosen."
+      },
+      "topic": "TS 2.1 Keyword-sensitive system prompt wording"
+    }
+  },
+  {
+    "id": "cca-s1-22",
+    "domain": "mcp",
+    "scenario": "s1",
+    "topic": "TS 2.2 Business errors with isError and retriable false",
+    "type": "single",
+    "choose": 1,
+    "stem": "`process_refund` rechaza un reembolso porque el pedido supera la ventana de 30 días de la política. Actualmente el tool devuelve el texto \"Operation failed\" y el agente reintenta tres veces antes de escalar sin explicar nada al cliente. ¿Qué respuesta del tool corrige esto?",
+    "options": [
+      { "id": "A", "text": "Mantener \"Operation failed\" pero añadir un retry con backoff exponencial dentro del agente." },
+      { "id": "B", "text": "Devolver una respuesta exitosa (sin isError) con el texto \"No se pudo procesar\" para evitar que el agente entre en un bucle." },
+      { "id": "C", "text": "Devolver `isError: true` con `errorCategory: \"business\"`, `isRetryable: false` y una explicación apta para el cliente sobre la ventana de 30 días." },
+      { "id": "D", "text": "Devolver `isError: true` con `errorCategory: \"transient\"` para que el agente reintente más tarde cuando la política cambie." }
+    ],
+    "answer": ["C"],
+    "explanation": "TS 2.2: una violación de regla de negocio no es reintentable. Se debe señalar con isError, categoría de error, retriable false y una explicación amigable para que el agente pueda comunicar la decisión o escalar.",
+    "distractors": {
+      "A": "Un mensaje genérico impide distinguir el tipo de fallo, y reintentar una violación de política desperdicia llamadas sin cambiar el resultado.",
+      "B": "Marcar un fallo como éxito oculta el error y el agente no puede razonar sobre la causa ni recuperarse apropiadamente.",
+      "D": "Etiquetarlo como transient es falso: la política no cambiará entre reintentos, así que provoca reintentos inútiles."
+    },
+    "difficulty": 2,
+    "en": {
+      "stem": "`process_refund` rejects a refund because the order exceeds the policy's 30-day window. Currently the tool returns the text \"Operation failed\" and the agent retries three times before escalating without telling the customer anything. Which tool response fixes this?",
+      "options": {
+        "A": "Keep \"Operation failed\" but add an exponential backoff retry inside the agent.",
+        "B": "Return a successful response (no isError) with the text \"Could not process\" so the agent does not loop.",
+        "C": "Return `isError: true` with `errorCategory: \"business\"`, `isRetryable: false` and a customer-friendly explanation of the 30-day window.",
+        "D": "Return `isError: true` with `errorCategory: \"transient\"` so the agent retries later when the policy changes."
+      },
+      "explanation": "TS 2.2: a business rule violation is not retryable. It should be signaled with isError, an error category, retriable false and a friendly explanation so the agent can communicate the decision or escalate.",
+      "distractors": {
+        "A": "A generic message prevents telling the kind of failure apart, and retrying a policy violation wastes calls without changing the outcome.",
+        "B": "Marking a failure as success hides the error and the agent cannot reason about the cause or recover appropriately.",
+        "D": "Labeling it transient is false: the policy will not change between retries, so it triggers useless retries."
+      },
+      "topic": "TS 2.2 Business errors with isError and retriable false"
+    }
+  },
+  {
+    "id": "cca-s3-21",
+    "domain": "mcp",
+    "scenario": "s3",
+    "topic": "TS 2.2 Local recovery in subagents and error propagation",
+    "type": "single",
+    "choose": 1,
+    "stem": "El subagent de búsqueda web recibe un timeout al consultar una de cinco fuentes; las otras cuatro devolvieron resultados. El coordinator debe poder decidir cómo continuar. ¿Cuál es el manejo correcto?",
+    "options": [
+      { "id": "A", "text": "Propagar el timeout al coordinator de inmediato y descartar los resultados de las otras cuatro fuentes." },
+      { "id": "B", "text": "Reintentar localmente la fuente con timeout; si sigue fallando, devolver al coordinator los resultados parciales, el error estructurado y qué se intentó." },
+      { "id": "C", "text": "Devolver los cuatro resultados como una respuesta exitosa completa sin mencionar la fuente que falló." },
+      { "id": "D", "text": "Abortar toda la investigación y devolver un error genérico \"Search failed\"." }
+    ],
+    "answer": ["B"],
+    "explanation": "TS 2.2: los errores transitorios se recuperan localmente en el subagent; al coordinator solo se propagan los que no se pueden resolver, junto con resultados parciales y lo intentado, para que decida con contexto.",
+    "distractors": {
+      "A": "Propagar de inmediato sin intentar recuperación local sobrecarga al coordinator y pierde resultados parciales útiles.",
+      "C": "Ocultar el fallo hace pasar un resultado incompleto por completo y el informe final tendrá una laguna silenciosa.",
+      "D": "Abortar todo por un fallo en una fuente desperdicia el trabajo hecho y un error genérico no permite una decisión informada."
+    },
+    "difficulty": 2,
+    "en": {
+      "stem": "The web search subagent gets a timeout when querying one of five sources; the other four returned results. The coordinator must be able to decide how to proceed. What is the correct handling?",
+      "options": {
+        "A": "Propagate the timeout to the coordinator immediately and discard the results from the other four sources.",
+        "B": "Retry the timed-out source locally; if it keeps failing, return to the coordinator the partial results, the structured error and what was attempted.",
+        "C": "Return the four results as a complete successful response without mentioning the source that failed.",
+        "D": "Abort the whole research and return a generic \"Search failed\" error."
+      },
+      "explanation": "TS 2.2: transient errors are recovered locally in the subagent; only errors that cannot be resolved are propagated to the coordinator, together with partial results and what was attempted, so it can decide with context.",
+      "distractors": {
+        "A": "Propagating immediately without local recovery overloads the coordinator and loses useful partial results.",
+        "C": "Hiding the failure passes an incomplete result off as complete, and the final report gets a silent gap.",
+        "D": "Aborting everything over one source's failure wastes the work done, and a generic error does not allow an informed decision."
+      },
+      "topic": "TS 2.2 Local recovery in subagents and error propagation"
+    }
+  },
+  {
+    "id": "cca-s1-23",
+    "domain": "mcp",
+    "scenario": "s1",
+    "topic": "TS 2.2 Access failure vs valid empty result",
+    "type": "multi",
+    "choose": 2,
+    "stem": "`lookup_order` puede fallar de dos formas: la base de pedidos agota el tiempo de espera, o la consulta funciona pero el cliente no tiene pedidos en los últimos 90 días. El agente debe actuar distinto en cada caso. Selecciona las DOS prácticas correctas.",
+    "options": [
+      { "id": "A", "text": "Para la consulta sin coincidencias, devolver una respuesta exitosa con una lista vacía, porque es un resultado válido de una consulta que se ejecutó bien." },
+      { "id": "B", "text": "Para el timeout, devolver una lista vacía exitosa y así evitar reintentos innecesarios." },
+      { "id": "C", "text": "Para la consulta sin coincidencias, devolver `isError: true` para que el agente reintente hasta encontrar algún pedido." },
+      { "id": "D", "text": "Para el timeout, devolver `isError: true` con `errorCategory: \"transient\"` e `isRetryable: true` para que el agente decida reintentar." },
+      { "id": "E", "text": "Devolver \"Operation failed\" en ambos casos para mantener un formato uniforme." }
+    ],
+    "answer": ["A", "D"],
+    "explanation": "TS 2.2: hay que distinguir fallos de acceso (que requieren decisiones de retry) de resultados vacíos válidos (consultas exitosas sin coincidencias). El timeout es un error transitorio retriable; la lista vacía es un éxito.",
+    "distractors": {
+      "B": "Presentar un timeout como lista vacía oculta un fallo de acceso: el agente concluiría que el cliente no tiene pedidos cuando en realidad no se sabe.",
+      "C": "Una consulta sin coincidencias no es un error; marcarla con isError provoca reintentos inútiles sobre un resultado correcto.",
+      "E": "Un mensaje uniforme impide que el agente distinga entre reintentar y informar al cliente, que es justo lo que debe diferenciar."
+    },
+    "difficulty": 3,
+    "en": {
+      "stem": "`lookup_order` can fail in two ways: the orders database times out, or the query works but the customer has no orders in the last 90 days. The agent must act differently in each case. Select the TWO correct practices.",
+      "options": {
+        "A": "For the query with no matches, return a successful response with an empty list, because it is a valid result of a query that ran correctly.",
+        "B": "For the timeout, return a successful empty list so unnecessary retries are avoided.",
+        "C": "For the query with no matches, return `isError: true` so the agent retries until it finds some order.",
+        "D": "For the timeout, return `isError: true` with `errorCategory: \"transient\"` and `isRetryable: true` so the agent can decide to retry.",
+        "E": "Return \"Operation failed\" in both cases to keep a uniform format."
+      },
+      "explanation": "TS 2.2: access failures (which need retry decisions) must be distinguished from valid empty results (successful queries with no matches). The timeout is a retryable transient error; the empty list is a success.",
+      "distractors": {
+        "B": "Presenting a timeout as an empty list hides an access failure: the agent would conclude the customer has no orders when it actually does not know.",
+        "C": "A query with no matches is not an error; flagging it with isError triggers useless retries on a correct result.",
+        "E": "A uniform message prevents the agent from telling whether to retry or inform the customer, which is exactly what it must differentiate."
+      },
+      "topic": "TS 2.2 Access failure vs valid empty result"
+    }
+  },
+  {
+    "id": "cca-s4-20",
+    "domain": "mcp",
+    "scenario": "s4",
+    "topic": "TS 2.5 Edit non-unique match, Read + Write fallback",
+    "type": "single",
+    "choose": 1,
+    "stem": "Tu agente debe cambiar `return null;` por `return defaultConfig();` en una sola función de un archivo de 300 líneas, pero `return null;` aparece en doce lugares y la herramienta Edit falla porque el texto no es único. ¿Cuál es el siguiente paso más fiable?",
+    "options": [
+      { "id": "A", "text": "Usar Read para cargar el archivo completo, aplicar el cambio en la función correcta y reescribir el archivo con Write." },
+      { "id": "B", "text": "Repetir el mismo Edit varias veces hasta que tenga éxito." },
+      { "id": "C", "text": "Ejecutar `sed` global con Bash para sustituir todas las ocurrencias de `return null;`." },
+      { "id": "D", "text": "Usar Glob para localizar la función por su nombre y editarla con ese resultado." }
+    ],
+    "answer": ["A"],
+    "explanation": "TS 2.5: Edit requiere texto ancla único. Cuando falla por coincidencias no únicas, el fallback fiable es Read del archivo completo y Write con el contenido modificado (o ampliar el contexto del Edit para hacerlo único).",
+    "distractors": {
+      "B": "Repetir un Edit con el mismo texto no único volverá a fallar; el problema es la ambigüedad del ancla, no un fallo transitorio.",
+      "C": "Un reemplazo global cambiaría las doce ocurrencias y rompería el comportamiento de las otras once funciones.",
+      "D": "Glob coincide con rutas de archivo, no con contenido ni con funciones dentro de un archivo."
+    },
+    "difficulty": 2,
+    "en": {
+      "stem": "Your agent must change `return null;` to `return defaultConfig();` in a single function of a 300-line file, but `return null;` appears in twelve places and the Edit tool fails because the text is not unique. What is the most reliable next step?",
+      "options": {
+        "A": "Use Read to load the entire file, apply the change in the right function and rewrite the file with Write.",
+        "B": "Repeat the same Edit several times until it succeeds.",
+        "C": "Run a global `sed` with Bash to replace all occurrences of `return null;`.",
+        "D": "Use Glob to locate the function by name and edit it with that result."
+      },
+      "explanation": "TS 2.5: Edit requires unique anchor text. When it fails due to non-unique matches, the reliable fallback is Read of the full file and Write with the modified content (or widening the Edit context to make it unique).",
+      "distractors": {
+        "B": "Repeating an Edit with the same non-unique text will fail again; the problem is anchor ambiguity, not a transient failure.",
+        "C": "A global replacement would change all twelve occurrences and break the behavior of the other eleven functions.",
+        "D": "Glob matches file paths, not content or functions inside a file."
+      },
+      "topic": "TS 2.5 Edit non-unique match, Read + Write fallback"
+    }
+  },
+  {
+    "id": "cca-s4-21",
+    "domain": "mcp",
+    "scenario": "s4",
+    "topic": "TS 2.5 Glob for file name patterns",
+    "type": "single",
+    "choose": 1,
+    "stem": "Un ingeniero nuevo pide al agente listar todos los archivos de prueba de los componentes React del monorepo para entender la cobertura. Las pruebas siguen la convención `*.test.tsx` y están repartidas en muchos directorios. ¿Qué herramienta y enfoque usas primero?",
+    "options": [
+      { "id": "A", "text": "Grep con el patrón `test` sobre todo el repositorio para buscar el contenido de las pruebas." },
+      { "id": "B", "text": "Read del directorio raíz del monorepo y recorrer cada subcarpeta manualmente." },
+      { "id": "C", "text": "Bash con `cat` sobre `src/` para que el modelo identifique las pruebas por su contenido." },
+      { "id": "D", "text": "Glob con el patrón `**/*.test.tsx` para obtener las rutas que siguen la convención de nombre." }
+    ],
+    "answer": ["D"],
+    "explanation": "TS 2.5: Glob es la herramienta para encontrar archivos por patrones de nombre o extensión, como `**/*.test.tsx`, sin necesidad de leer contenido.",
+    "distractors": {
+      "A": "Grep busca contenido y la palabra `test` aparecería en archivos que no son pruebas, generando mucho ruido.",
+      "B": "Recorrer carpetas a mano con Read es lento y consume contexto; Glob resuelve la búsqueda por patrón en una llamada.",
+      "C": "Volcar el código fuente con cat consume contexto enorme y no es una búsqueda dirigida por nombre de archivo."
+    },
+    "difficulty": 1,
+    "en": {
+      "stem": "A new engineer asks the agent to list all the test files of the monorepo's React components to understand coverage. Tests follow the `*.test.tsx` convention and are spread across many directories. Which tool and approach do you use first?",
+      "options": {
+        "A": "Grep with the pattern `test` across the whole repository to search the contents of the tests.",
+        "B": "Read the monorepo root directory and walk through each subfolder manually.",
+        "C": "Bash with `cat` over `src/` so the model identifies the tests by their content.",
+        "D": "Glob with the pattern `**/*.test.tsx` to get the paths that follow the naming convention."
+      },
+      "explanation": "TS 2.5: Glob is the tool for finding files by name or extension patterns, such as `**/*.test.tsx`, with no need to read content.",
+      "distractors": {
+        "A": "Grep searches content and the word `test` would show up in files that are not tests, generating a lot of noise.",
+        "B": "Walking folders by hand with Read is slow and consumes context; Glob resolves the pattern search in one call.",
+        "C": "Dumping source code with cat consumes enormous context and is not a search targeted by file name."
+      },
+      "topic": "TS 2.5 Glob for file name patterns"
+    }
+  },
+  {
+    "id": "cca-s2-20",
+    "domain": "mcp",
+    "scenario": "s2",
+    "topic": "TS 2.5 Tracing usage through wrapper modules",
+    "type": "multi",
+    "choose": 2,
+    "stem": "Con Claude Code debes refactorizar `chargeCard()`, pero el código solo la consume a través de `payments/index.ts`, que la re-exporta con alias y funciones envoltorio como `pay()` y `quickCharge()`. Quieres encontrar todos los usos reales sin leer el repositorio completo. Selecciona las DOS acciones correctas.",
+    "options": [
+      { "id": "A", "text": "Hacer Grep solo de `chargeCard` y asumir que esas coincidencias cubren todos los usos." },
+      { "id": "B", "text": "Hacer Read de `payments/index.ts` para identificar todos los nombres exportados (alias y wrappers) que apuntan a `chargeCard`." },
+      { "id": "C", "text": "Hacer Grep de cada nombre exportado encontrado (`pay`, `quickCharge`, etc.) a lo largo del código para localizar a los llamadores." },
+      { "id": "D", "text": "Usar Glob con `**/*payment*` y leer con Read cada archivo devuelto de principio a fin." },
+      { "id": "E", "text": "Ejecutar `cat` con Bash sobre todos los archivos `.ts` y pedir al modelo que encuentre las referencias." }
+    ],
+    "answer": ["B", "C"],
+    "explanation": "TS 2.5: para rastrear usos a través de módulos wrapper, primero se identifican los nombres exportados (Read del módulo) y luego se busca cada nombre con Grep, construyendo comprensión de forma incremental.",
+    "distractors": {
+      "A": "Buscar solo el nombre original omite los llamadores que usan alias o wrappers, así que el análisis queda incompleto.",
+      "D": "Glob filtra por nombre de ruta, no por uso; leer cada archivo completo gasta contexto y puede dejar fuera llamadores en archivos sin `payment` en el nombre.",
+      "E": "Volcar todo el código con cat agota el contexto y reemplaza la búsqueda dirigida por una lectura masiva."
+    },
+    "difficulty": 3,
+    "en": {
+      "stem": "With Claude Code you must refactor `chargeCard()`, but the code only consumes it through `payments/index.ts`, which re-exports it with aliases and wrapper functions such as `pay()` and `quickCharge()`. You want to find all real usages without reading the entire repository. Select the TWO correct actions.",
+      "options": {
+        "A": "Grep only for `chargeCard` and assume those matches cover all usages.",
+        "B": "Read `payments/index.ts` to identify all exported names (aliases and wrappers) that point to `chargeCard`.",
+        "C": "Grep for each exported name found (`pay`, `quickCharge`, etc.) across the code to locate the callers.",
+        "D": "Use Glob with `**/*payment*` and Read each returned file from start to finish.",
+        "E": "Run `cat` with Bash over all `.ts` files and ask the model to find the references."
+      },
+      "explanation": "TS 2.5: to trace usage through wrapper modules, first identify the exported names (Read the module) and then search for each name with Grep, building understanding incrementally.",
+      "distractors": {
+        "A": "Searching only the original name misses callers that use aliases or wrappers, so the analysis is incomplete.",
+        "D": "Glob filters by path name, not by usage; reading every file in full spends context and can miss callers in files without `payment` in the name.",
+        "E": "Dumping all the code with cat exhausts context and replaces targeted search with bulk reading."
+      },
+      "topic": "TS 2.5 Tracing usage through wrapper modules"
+    }
+  }
+]
