@@ -215,7 +215,7 @@ function renderExam(): void {
 
   const navigator = () => h('div', { class: 'nav' }, ...s.state.items.map((it, i) =>
     h('button', {
-      class: [s.isAnswered(i) ? 'answered' : '', s.state.flags.includes(it.id) ? 'flagged' : '', sub === 'q' && i === s.state.index ? 'current' : ''].join(' '),
+      class: [s.isAnswered(i) ? 'answered' : '', s.isRevealed(i) ? 'revealed' : '', s.state.flags.includes(it.id) ? 'flagged' : '', sub === 'q' && i === s.state.index ? 'current' : ''].join(' '),
       onclick: () => { s.goto(i); sub = 'q'; persist(); renderExam(); },
     }, String(i + 1))));
 
@@ -240,18 +240,23 @@ function renderExam(): void {
   const sel = new Set(s.state.answers[q.id] ?? []);
   const flagged = s.state.flags.includes(q.id);
   const multi = q.type === 'multi';
+  const shown = s.isRevealed();
   const words = lang() === 'en' ? NUM_EN : NUM_ES;
   mount(root, top(`${modeLabel(s.state.mode)} · ${T('Pregunta', 'Question')} ${s.state.index + 1}/${s.length}`),
     ...questionBody(q, exam),
     h('div', { class: 'card' },
-      h('div', { class: 'row' }, multi && h('span', { class: 'tag multi' }, T(`ELIGE ${words[q.choose] ?? q.choose}`, `SELECT ${words[q.choose] ?? q.choose}`)), flagged && h('span', { class: 'tag' }, T('Marcada', 'Flagged'))),
+      h('div', { class: 'row' }, multi && h('span', { class: 'tag multi' }, T(`ELIGE ${words[q.choose] ?? q.choose}`, `SELECT ${words[q.choose] ?? q.choose}`)), flagged && h('span', { class: 'tag' }, T('Marcada', 'Flagged')), shown && h('span', { class: 'tag multi' }, T('Respuesta vista', 'Answer shown'))),
       h('div', { class: 'stem' }, v.stem),
-      ...v.options.map((o) => h('label', { class: `opt${sel.has(o.id) ? ' sel' : ''}` },
+      ...v.options.map((o) => h('label', { class: `opt${shown && q.answer.includes(o.id) ? ' right' : sel.has(o.id) ? ' sel' : ''}` },
         h('input', { type: multi ? 'checkbox' : 'radio', name: 'opt', checked: sel.has(o.id), onchange: () => { s.select(o.id); persist(); renderExam(); } }),
-        h('span', {}, `${o.id}. ${o.text}`))),
+        h('span', {}, `${o.id}. ${o.text}${shown && q.answer.includes(o.id) ? '  ✓' : ''}`))),
+      shown && h('div', { class: 'card banner', style: 'margin:10px 0' },
+        h('p', { class: 'small' }, h('strong', {}, `${T('Respuesta correcta', 'Correct answer')}: ${q.answer.join(', ')}. `), v.explanation),
+        h('p', { class: 'small muted' }, T('Esta pregunta cuenta como incorrecta porque viste la respuesta.', 'This question counts as incorrect because you viewed the answer.'))),
       h('div', { class: 'row spread', style: 'margin-top:12px' },
         h('button', { disabled: s.state.index === 0, onclick: () => { s.goto(s.state.index - 1); persist(); renderExam(); } }, T('← Anterior', '← Previous')),
         h('button', { onclick: () => { s.toggleFlag(); persist(); renderExam(); } }, flagged ? T('Quitar marca', 'Unflag') : T('Marcar para revisar', 'Flag for review')),
+        h('button', { disabled: shown, title: T('Cuenta como incorrecta', 'Counts as incorrect'), onclick: () => { s.reveal(); persist(); renderExam(); } }, shown ? T('Respuesta vista', 'Answer shown') : T('Ver respuesta', 'Show answer')),
         s.state.index === s.length - 1
           ? h('button', { class: 'primary', onclick: () => { sub = 'summary'; renderExam(); } }, T('Revisar y entregar', 'Review and submit'))
           : h('button', { onclick: () => { s.goto(s.state.index + 1); persist(); renderExam(); } }, T('Siguiente →', 'Next →')))),
@@ -281,6 +286,7 @@ function renderResults(id: string): void {
       h('p', {}, r.passed ? T(`Aprobado (estimado, umbral ${exam.passScaled}).`, `Pass (estimated, threshold ${exam.passScaled}).`) : T(`Por debajo del umbral de ${exam.passScaled} (estimado).`, `Below the ${exam.passScaled} threshold (estimated).`)),
       h('p', { class: 'muted small' }, T(`${r.correct} de ${r.total} correctas (${r.pct} %) · ${r.unanswered} sin responder · duración ${fmtClock(a.durationSec)}${a.autoSubmitted ? ' · entrega automática por tiempo' : ''}. `, `${r.correct} of ${r.total} correct (${r.pct}%) · ${r.unanswered} unanswered · duration ${fmtClock(a.durationSec)}${a.autoSubmitted ? ' · auto-submitted on time-out' : ''}. `)
         + (a.mode === 'full' && exam.full.unscored ? T('Las preguntas sin puntuar no cuentan, como en el examen real. ', 'Unscored questions do not count, as in the real exam. ') : '')
+        + ((a.revealed?.length ?? 0) > 0 ? T(`${a.revealed!.length} pregunta(s) con respuesta vista cuentan como incorrectas. `, `${a.revealed!.length} question(s) with the answer shown count as incorrect. `) : '')
         + T('El puntaje escalado es una estimación; el examen real no publica su fórmula.', 'The scaled score is an estimate; the real exam does not publish its formula.'))),
     h('div', { class: 'card' }, h('h3', {}, T('Por dominio', 'By domain')),
       ...exam.domains.map((d) => { const x = r.byDomain[d.id] ?? { correct: 0, total: 0, pct: 0 }; return h('div', { style: 'margin:10px 0' },
@@ -306,9 +312,9 @@ function renderReview(id: string): void {
       const q = BANK_MAP.get(it.id);
       if (!q) return;
       const picked = a.answers[q.id] ?? [];
-      const ok = isCorrect(q, picked);
+      const ok = isCorrect(q, picked) && !(a.revealed ?? []).includes(q.id);
       if (onlyWrong.checked && ok) return;
-      nodes.push(reviewCard(q, exam, idx + 1, picked, ok, it.scored));
+      nodes.push(reviewCard(q, exam, idx + 1, picked, ok, it.scored, (a.revealed ?? []).includes(q.id)));
     });
     list.replaceChildren(...(nodes.length ? nodes : [h('p', { class: 'muted' }, T('Nada que mostrar.', 'Nothing to show.'))]));
   };
@@ -318,7 +324,7 @@ function renderReview(id: string): void {
     h('label', { class: 'row' }, onlyWrong, T('Solo incorrectas / sin responder', 'Only incorrect / unanswered')), list);
 }
 
-function reviewCard(q: Question, exam: ExamDef, n: number, picked: string[], ok: boolean, scored: boolean): HTMLElement {
+function reviewCard(q: Question, exam: ExamDef, n: number, picked: string[], ok: boolean, scored: boolean, revealed = false): HTMLElement {
   const v = view(q, lang());
   const dom = exam.domains.find((d) => d.id === q.domain)?.label ?? q.domain;
   const sc = scenarioView(exam, q.scenario, lang());
@@ -326,7 +332,7 @@ function reviewCard(q: Question, exam: ExamDef, n: number, picked: string[], ok:
     h('div', { class: 'row' },
       h('span', { class: `tag ${ok ? 'pass' : 'fail'}` }, ok ? T('Correcta', 'Correct') : picked.length ? T('Incorrecta', 'Incorrect') : T('Sin responder', 'Unanswered')),
       h('span', { class: 'tag' }, dom), h('span', { class: 'tag' }, v.topic), sc && h('span', { class: 'tag' }, sc.title),
-      q.type === 'multi' && h('span', { class: 'tag multi' }, T(`Elige ${q.choose}`, `Select ${q.choose}`)), !scored && h('span', { class: 'tag' }, T('Sin puntuar', 'Unscored'))),
+      q.type === 'multi' && h('span', { class: 'tag multi' }, T(`Elige ${q.choose}`, `Select ${q.choose}`)), !scored && h('span', { class: 'tag' }, T('Sin puntuar', 'Unscored')), revealed && h('span', { class: 'tag multi' }, T('Respuesta vista', 'Answer shown'))),
     h('div', { class: 'stem' }, `${n}. ${v.stem}`),
     ...v.options.map((o) => {
       const right = q.answer.includes(o.id);

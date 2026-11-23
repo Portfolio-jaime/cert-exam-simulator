@@ -76,5 +76,7 @@ export interface Attempt {
   items: ExamItem[];
   answers: Record<string, string[]>;
   flags: string[];
+  /** Questions whose correct answer was shown during the attempt; they score as incorrect. */
+  revealed?: string[];
   result: Result;
 }

@@ -19,6 +19,7 @@ export function scoreAttempt(
   bank: Map<string, Question>,
   answers: Record<string, string[]>,
   exam: ExamDef,
+  revealed: string[] = [],
 ): Result {
   const by: Record<string, { correct: number; total: number }> = {};
   for (const d of exam.domains) by[d.id] = { correct: 0, total: 0 };
@@ -34,7 +35,7 @@ export function scoreAttempt(
     total++;
     const slot = (by[q.domain] ??= { correct: 0, total: 0 });
     slot.total++;
-    if (isCorrect(q, answers[item.id])) {
+    if (!revealed.includes(item.id) && isCorrect(q, answers[item.id])) {
       correct++;
       slot.correct++;
     }

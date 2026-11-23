@@ -45,3 +45,4 @@ table { width: 100%; border-collapse: collapse; } th, td { text-align: left; pad
 .scenario { background: color-mix(in srgb, var(--accent) 8%, var(--card)); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 10px; padding: 12px 16px; margin: 12px 0; }
 .scenario p { margin: 6px 0 0; }
 button.primary:hover { filter: brightness(1.08); }
+.nav button.revealed { text-decoration: underline wavy var(--warn); }

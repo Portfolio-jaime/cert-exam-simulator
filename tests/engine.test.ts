@@ -56,4 +56,16 @@ describe('ExamSession', () => {
     const s = ExamSession.create(SAA, 'full', items, new Map(makeBank(30).map((q) => [q.id, q])), 0);
     expect(s.state.limitSec).toBe(130 * 60);
   });
+
+  it('revealing an answer is recorded and scored as incorrect', () => {
+    const s = session();
+    const i = s.state.items.findIndex((it) => map.get(it.id)!.type === 'single');
+    s.select('B', i);
+    expect(s.isRevealed(i)).toBe(false);
+    s.reveal(i);
+    expect(s.isRevealed(i)).toBe(true);
+    const a = s.finish(s.state.startedAt + 1000, false);
+    expect(a.revealed).toContain(s.question(i).id);
+    expect(a.result.correct).toBe(0);
+  });
 });
