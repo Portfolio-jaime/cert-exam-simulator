@@ -116,11 +116,11 @@
   "options": [
    {
     "id": "A",
-    "text": "Un hook que intercepta la llamada saliente a process_refund, bloquea montos mayores a $500 y redirige al flujo de escalamiento a un humano."
+    "text": "Un hook que intercepta la tool call saliente a process_refund, bloquea montos mayores a $500 y redirige al flujo de escalamiento a un humano."
    },
    {
     "id": "B",
-    "text": "Un hook PostToolUse que revisa el resultado de process_refund y, si el monto fue mayor a $500, lo anula con otra llamada."
+    "text": "Un hook PostToolUse que revisa el resultado de process_refund y, si el monto fue mayor a $500, lo anula con otra tool call."
    },
    {
     "id": "C",
@@ -134,11 +134,11 @@
   "answer": [
    "A"
   ],
-  "explanation": "TS 1.5: los hooks que interceptan llamadas salientes aplican reglas de cumplimiento de forma determinista y pueden redirigir a un flujo alternativo, como el escalamiento humano, antes de que ocurra el efecto.",
+  "explanation": "TS 1.5: los hooks que interceptan tool calls salientes aplican reglas de cumplimiento de forma determinista y pueden redirigir a un flujo alternativo, como el escalamiento humano, antes de que ocurra el efecto.",
   "distractors": {
    "B": "PostToolUse actúa después de que el reembolso ya se ejecutó; sirve para normalizar resultados, no para prevenir la operación.",
    "C": "El prompt es cumplimiento probabilístico; la regla de negocio exige garantía.",
-   "D": "La descripción de la herramienta orienta la selección pero no impide una llamada con montos fuera de política."
+   "D": "La descripción de la herramienta orienta la selección pero no impide una tool call con montos fuera de política."
   },
   "difficulty": 2,
   "en": {
@@ -234,7 +234,7 @@
    },
    {
     "id": "D",
-    "text": "Emitir las llamadas Task en turnos separados para que el modelo pueda revisar cada resultado antes de lanzar la siguiente."
+    "text": "Emitir las Task calls en turnos separados para que el modelo pueda revisar cada resultado antes de lanzar la siguiente."
    },
    {
     "id": "E",
@@ -330,11 +330,11 @@
   "topic": "TS 2.2 Structured error responses",
   "type": "single",
   "choose": 1,
-  "stem": "process_refund devuelve a veces el mensaje 'Operation failed' en todos los casos de fallo. El agente reintenta indefinidamente incluso cuando el pedido está fuera de la ventana de devolución de 30 días. ¿Qué rediseño de la respuesta de error es el mejor?",
+  "stem": "process_refund devuelve a veces el mensaje 'Operation failed' en todos los casos de fallo. El agente hace retry indefinidamente incluso cuando el pedido está fuera de la ventana de devolución de 30 días. ¿Qué rediseño de la respuesta de error es el mejor?",
   "options": [
    {
     "id": "A",
-    "text": "Devolver siempre HTTP 500 y dejar que el agente decida por su cuenta cuántas veces reintentar."
+    "text": "Devolver siempre HTTP 500 y dejar que el agente decida por su cuenta cuántos retries hacer."
    },
    {
     "id": "B",
@@ -352,9 +352,9 @@
   "answer": [
    "B"
   ],
-  "explanation": "TS 2.2: los errores estructurados (errorCategory, isRetryable, descripción) permiten distinguir errores transitorios de errores de negocio y evitar reintentos inútiles, con explicaciones aptas para el cliente.",
+  "explanation": "TS 2.2: los errores estructurados (errorCategory, isRetryable, descripción) permiten distinguir errores transitorios de errores de negocio y evitar retries inútiles, con explicaciones aptas para el cliente.",
   "distractors": {
-   "A": "Un error uniforme no da al agente metadatos para distinguir transitorios de no reintentables.",
+   "A": "Un error uniforme no da al agente metadatos para distinguir errores transitorios de errores non-retryable.",
    "C": "Devolver un vacío exitoso suprime el error y oculta que la operación no se realizó.",
    "D": "Terminar todo ante cada fallo es desproporcionado; los errores transitorios o de validación pueden resolverse localmente."
   },
@@ -383,7 +383,7 @@
   "topic": "TS 2.3 Scoped tools and tool_choice",
   "type": "single",
   "choose": 1,
-  "stem": "Al evaluar identificación del cliente, quieres que la primera acción del agente en cada conversación sea siempre una llamada a get_customer, y que los pasos posteriores los decida el modelo. ¿Qué configuración de tool_choice usas?",
+  "stem": "Al evaluar identificación del cliente, quieres que la primera acción del agente en cada conversación sea siempre una tool call a get_customer, y que los pasos posteriores los decida el modelo. ¿Qué configuración de tool_choice usas?",
   "options": [
    {
     "id": "A",
@@ -495,11 +495,11 @@
   "topic": "TS 5.1 Case facts and tool output trimming",
   "type": "single",
   "choose": 1,
-  "stem": "En sesiones largas con varias incidencias, el agente resume el historial y luego cita montos y fechas de manera imprecisa ('un reembolso de unos 80 dólares hace un tiempo'). Además, cada lookup_order devuelve más de 40 campos y solo 5 son relevantes. ¿Qué estrategia aborda ambos problemas?",
+  "stem": "En sessions largas con varias incidencias, el agente resume el historial y luego cita montos y fechas de manera imprecisa ('un reembolso de unos 80 dólares hace un tiempo'). Además, cada lookup_order devuelve más de 40 campos y solo 5 son relevantes. ¿Qué estrategia aborda ambos problemas?",
   "options": [
    {
     "id": "A",
-    "text": "Duplicar el tamaño de la ventana de contexto y mantener todos los campos de cada pedido."
+    "text": "Duplicar el tamaño de la context window y mantener todos los campos de cada pedido."
    },
    {
     "id": "B",
@@ -511,7 +511,7 @@
    },
    {
     "id": "D",
-    "text": "Mantener un bloque persistente de 'case facts' (montos, fechas, números de pedido, estados) fuera del historial resumido y recortar las salidas de herramientas a los campos relevantes."
+    "text": "Mantener un bloque persistente de 'case facts' (montos, fechas, números de pedido, estados) fuera del historial resumido y recortar los tool outputs a los campos relevantes."
    }
   ],
   "answer": [
@@ -623,7 +623,7 @@
   "answer": [
    "A"
   ],
-  "explanation": "TS 5.3: hay que distinguir fallos de acceso (que requieren decisiones de reintento, con contexto estructurado) de resultados vacíos válidos; los subagents recuperan localmente lo transitorio y propagan solo lo irresoluble.",
+  "explanation": "TS 5.3: hay que distinguir fallos de acceso (que requieren decisiones de retry, con contexto estructurado) de resultados vacíos válidos; los subagents recuperan localmente lo transitorio y propagan solo lo irresoluble.",
   "distractors": {
    "B": "Reportar un timeout como vacío exitoso suprime el error y hace creer que el cliente no tiene pedidos.",
    "C": "Un estado genérico oculta al coordinator el tipo de fallo y qué se intentó, y confunde el vacío válido con un fallo.",

@@ -67,7 +67,7 @@
    },
    {
     "id": "B",
-    "text": "Reanudar la misma sesión del web-search subagent y pedirle que ejecute también la síntesis."
+    "text": "Reanudar la misma session del web-search subagent y pedirle que ejecute también la síntesis."
    },
    {
     "id": "C",
@@ -128,18 +128,18 @@
    },
    {
     "id": "D",
-    "text": "Hacer que el coordinator emita múltiples llamadas Task en una sola respuesta."
+    "text": "Hacer que el coordinator emita múltiples Task calls en una sola respuesta."
    },
    {
     "id": "E",
-    "text": "Compartir una única sesión entre los tres subagents para que vean el trabajo de los demás."
+    "text": "Compartir una única session entre los tres subagents para que vean el trabajo de los demás."
    }
   ],
   "answer": [
    "A",
    "D"
   ],
-  "explanation": "TS 1.3: el coordinator necesita \"Task\" en allowedTools para spawnear subagents, y el paralelismo se logra emitiendo varias llamadas Task en una misma respuesta en lugar de en turnos separados.",
+  "explanation": "TS 1.3: el coordinator necesita \"Task\" en allowedTools para spawnear subagents, y el paralelismo se logra emitiendo varias Task calls en una misma respuesta en lugar de en turnos separados.",
   "distractors": {
    "B": "Lanzar las llamadas en turnos separados serializa la ejecución y anula el beneficio del paralelismo.",
    "C": "Los prompts del coordinator deben fijar objetivos y criterios de calidad, no pasos procedimentales rígidos, para permitir la adaptación de los subagents.",
@@ -383,7 +383,7 @@
   "topic": "TS 5.3 Error propagation across subagents",
   "type": "single",
   "choose": 1,
-  "stem": "El web-search subagent agota el timeout al consultar una fuente tras reintentar localmente dos veces, pero ya había obtenido resultados de otras tres fuentes. ¿Qué debe devolver al coordinator?",
+  "stem": "El web-search subagent agota el timeout al consultar una fuente tras hacer retry local dos veces, pero ya había obtenido resultados de otras tres fuentes. ¿Qué debe devolver al coordinator?",
   "options": [
    {
     "id": "A",
@@ -408,7 +408,7 @@
   "explanation": "TS 5.3: los subagents resuelven localmente los fallos transitorios y propagan solo lo que no pueden resolver, con contexto estructurado (tipo, intento, resultados parciales, alternativas) que permite una recuperación inteligente del coordinator.",
   "distractors": {
    "A": "Suprimir el error como éxito oculta que faltan datos y produce un informe aparentemente completo pero incorrecto.",
-   "B": "Un estado genérico oculta el contexto que el coordinator necesita para decidir entre reintentar, usar otra fuente o continuar.",
+   "B": "Un estado genérico oculta el contexto que el coordinator necesita para decidir entre hacer retry, usar otra fuente o continuar.",
    "C": "Terminar todo por un fallo único descarta los resultados parciales válidos y es un anti-patrón."
   },
   "difficulty": 2,
@@ -448,7 +448,7 @@
    },
    {
     "id": "C",
-    "text": "Incluir ambos valores con su atribución y su fecha de publicación o recolección, anotando el conflicto para que no se interprete como contradicción temporal."
+    "text": "Incluir ambos valores con su atribución y su fecha de publicación o recolección, anotando que las fuentes difieren para que el lector entienda el conflicto."
    },
    {
     "id": "D",
@@ -460,7 +460,7 @@
   ],
   "explanation": "TS 5.6: ante estadísticas en conflicto se anotan ambos valores con su fuente, y las fechas obligatorias en los outputs estructurados evitan malinterpretar diferencias temporales como contradicciones.",
   "distractors": {
-   "A": "Elegir arbitrariamente un valor y ocultar el otro pierde provenance y puede ser incorrecto si no se verificó la fecha.",
+   "A": "Asumir que la cifra más alta es la más reciente (el enunciado no lo dice) y ocultar la otra pierde provenance y puede ser incorrecto si no se verificó la fecha.",
    "B": "Un promedio fabrica una cifra que ninguna fuente respalda.",
    "D": "Omitir un dato relevante empobrece el informe cuando el conflicto puede anotarse con atribución y contexto."
   },
@@ -470,12 +470,12 @@
    "options": {
     "A": "Keep the higher figure because it is the most recent and discard the other without mentioning it.",
     "B": "Average both figures to present a single intermediate value.",
-    "C": "Include both values with their attribution and their publication or collection date, noting the conflict so it is not interpreted as a temporal contradiction.",
+    "C": "Include both values with their attribution and publication or collection date, noting that the sources differ so the reader understands the conflict.",
     "D": "Exclude the data from the report because the sources do not agree."
    },
    "explanation": "TS 5.6: when statistics conflict, both values are annotated with their source, and mandatory dates in structured outputs prevent temporal differences from being misread as contradictions.",
    "distractors": {
-    "A": "Arbitrarily choosing one value and hiding the other loses provenance and may be incorrect if the date was not verified.",
+    "A": "Assuming the higher figure is the most recent (the stem does not say so) and hiding the other loses provenance and may be wrong if the date was not verified.",
     "B": "An average fabricates a figure that no source supports.",
     "D": "Omitting relevant data weakens the report when the conflict can be annotated with attribution and context."
    },
@@ -617,7 +617,7 @@
    },
    {
     "id": "D",
-    "text": "Ejecutar la síntesis en la misma sesión del coordinator para compartir su ventana de contexto."
+    "text": "Ejecutar la síntesis en la misma session del coordinator para compartir su context window."
    }
   ],
   "answer": [

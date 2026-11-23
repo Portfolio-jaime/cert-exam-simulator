@@ -83,7 +83,7 @@
   ],
   "explanation": "TS 3.6: --output-format json junto con --json-schema produce hallazgos estructurados y legibles por máquina, ideales para publicarlos automáticamente como comentarios inline en el PR.",
   "distractors": {
-   "B": "Una instrucción en el prompt no garantiza el cumplimiento del esquema; el JSON puede venir malformado o con campos distintos.",
+   "B": "Una instrucción en el prompt no garantiza el cumplimiento del schema; el JSON puede venir malformado o con campos distintos.",
    "C": "Una plantilla en markdown sigue siendo texto libre y las regex continúan siendo frágiles ante variaciones.",
    "D": "Elimina la validación y el control del pipeline, y no resuelve la necesidad de un formato estable y verificable de hallazgos."
   },
@@ -124,7 +124,7 @@
    },
    {
     "id": "C",
-    "text": "Bajar la temperatura para que Claude produzca hallazgos idénticos y deduplicar por hash del texto."
+    "text": "Bajar la temperature para que Claude produzca hallazgos idénticos y deduplicar por hash del texto."
    },
    {
     "id": "D",
@@ -230,7 +230,7 @@
    },
    {
     "id": "C",
-    "text": "Declarar context: fork en el frontmatter para ejecutarlo en un contexto de sub-agente aislado y devolver solo el resumen."
+    "text": "Declarar context: fork en el frontmatter para ejecutarlo en un contexto de subagent aislado y devolver solo el resumen."
    },
    {
     "id": "D",
@@ -240,9 +240,9 @@
   "answer": [
    "C"
   ],
-  "explanation": "TS 3.2: context: fork ejecuta el skill en un sub-agente aislado, evitando que su salida verbosa o exploratoria contamine la conversación principal.",
+  "explanation": "TS 3.2: context: fork ejecuta el skill en un subagent aislado, evitando que su salida verbosa o exploratoria contamine la conversación principal.",
   "distractors": {
-   "A": "allowed-tools restringe qué herramientas se usan, no aísla el contexto ni reduce necesariamente la salida acumulada.",
+   "A": "allowed-tools restringe qué tools se usan, no aísla el contexto ni reduce necesariamente la salida acumulada.",
    "B": "CLAUDE.md es para estándares universales siempre cargados; ponerlo ahí aumenta el contexto en vez de aislarlo.",
    "D": "argument-hint solo guía qué parámetros pedir al invocar; no separa la salida del contexto principal."
   },
@@ -352,11 +352,11 @@
   "answer": [
    "B"
   ],
-  "explanation": "TS 4.1: criterios categóricos explícitos (qué reportar y qué omitir) mejoran la precisión y reducen falsos positivos mucho más que instrucciones vagas.",
+  "explanation": "TS 4.1: criterios categóricos explícitos (qué reportar y qué omitir) mejoran la precisión y reducen false positives mucho más que instrucciones vagas.",
   "distractors": {
    "A": "Las indicaciones generales de alta confianza no mejoran la precisión frente a criterios específicos.",
    "C": "Publicar todo con un porcentaje no reduce el ruido y el modelo sigue sin saber qué categorías omitir.",
-   "D": "Ser estricto empeora los falsos positivos y sigue siendo una instrucción vaga."
+   "D": "Ser estricto empeora los false positives y sigue siendo una instrucción vaga."
   },
   "difficulty": 2,
   "en": {
@@ -405,7 +405,7 @@
   "answer": [
    "D"
   ],
-  "explanation": "TS 4.2: los ejemplos few-shot que contrastan código aceptable con problemas reales y razonan la decisión reducen falsos positivos y permiten generalizar a patrones nuevos.",
+  "explanation": "TS 4.2: los ejemplos few-shot que contrastan código aceptable con problemas reales y razonan la decisión reducen false positives y permiten generalizar a patrones nuevos.",
   "distractors": {
    "A": "Una lista de reglas solo cubre casos pre-especificados y no permite generalizar el juicio.",
    "B": "Votar entre ejecuciones no corrige el criterio erróneo; repite el mismo sesgo con más costo.",
@@ -511,11 +511,11 @@
   "answer": [
    "C"
   ],
-  "explanation": "TS 4.4: un campo detected_pattern en los hallazgos permite agrupar los descartes por construcción de código y analizar sistemáticamente los patrones de falsos positivos.",
+  "explanation": "TS 4.4: un campo detected_pattern en los hallazgos permite agrupar los descartes por construcción de código y analizar sistemáticamente los patrones de false positives.",
   "distractors": {
    "A": "Recortar sin datos puede ocultar hallazgos válidos y no revela qué patrones fallan.",
    "B": "El modelo no ve los descartes reales ni su motivo; sus explicaciones serían especulativas.",
-   "D": "Un contador agregado no indica qué patrones causan los falsos positivos."
+   "D": "Un contador agregado no indica qué patrones causan los false positives."
   },
   "difficulty": 2,
   "en": {
@@ -550,7 +550,7 @@
    },
    {
     "id": "B",
-    "text": "Una sola pasada con una ventana de contexto más grande y la instrucción 'revisa con mucho cuidado'."
+    "text": "Una sola pasada con una context window más grande y la instrucción 'revisa con mucho cuidado'."
    },
    {
     "id": "C",
@@ -595,7 +595,7 @@
   "topic": "TS 4.1 Restoring developer trust",
   "type": "multi",
   "choose": 2,
-  "stem": "La categoría 'convenciones de nombres' del revisor genera un alto porcentaje de falsos positivos y los equipos empiezan a ignorar también los hallazgos de seguridad, que son precisos. ¿Qué DOS acciones son las más apropiadas? Elige DOS.",
+  "stem": "La categoría 'convenciones de nombres' del revisor genera un alto porcentaje de false positives y los equipos empiezan a ignorar también los hallazgos de seguridad, que son precisos. ¿Qué DOS acciones son las más apropiadas? Elige DOS.",
   "options": [
    {
     "id": "A",
@@ -611,7 +611,7 @@
    },
    {
     "id": "D",
-    "text": "Mantener la categoría activa y pedir a los desarrolladores que ignoren sus falsos positivos."
+    "text": "Mantener la categoría activa y pedir a los desarrolladores que ignoren sus false positives."
    },
    {
     "id": "E",
@@ -622,10 +622,10 @@
    "A",
    "C"
   ],
-  "explanation": "TS 4.1: desactivar temporalmente una categoría con muchos falsos positivos restaura la confianza, y definir severidades con ejemplos de código concretos logra una clasificación consistente.",
+  "explanation": "TS 4.1: desactivar temporalmente una categoría con muchos false positives restaura la confianza, y definir severidades con ejemplos de código concretos logra una clasificación consistente.",
   "distractors": {
    "B": "Filtrar por confianza general no mejora la precisión frente a criterios categóricos específicos.",
-   "D": "Los falsos positivos de una categoría socavan la confianza en las categorías precisas; pedir que se ignoren agrava el problema.",
+   "D": "Los false positives de una categoría socavan la confianza en las categorías precisas; pedir que se ignoren agrava el problema.",
    "E": "Elimina justamente las categorías precisas y de mayor valor sin atacar la causa del ruido."
   },
   "difficulty": 2,
