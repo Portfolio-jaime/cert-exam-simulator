@@ -169,19 +169,19 @@
   "options": [
    {
     "id": "A",
-    "text": "Reintentar ambos grupos hasta 3 veces con el mismo prompt original."
+    "text": "Hacer retry de ambos grupos hasta 3 veces con el mismo prompt original."
    },
    {
     "id": "B",
-    "text": "Reintentar ambos grupos añadiendo la instrucción genérica 'sé más cuidadoso'."
+    "text": "Hacer retry de ambos grupos añadiendo la instrucción genérica 'sé más cuidadoso'."
    },
    {
     "id": "C",
-    "text": "Reintentar ambos grupos con un max_tokens mayor para que el modelo encuentre el dato."
+    "text": "Hacer retry de ambos grupos con un max_tokens mayor para que el modelo encuentre el dato."
    },
    {
     "id": "D",
-    "text": "Reintentar el grupo 1 enviando el documento, la extracción fallida y el error de validación específico; para el grupo 2 no reintentar y dejar el campo en null para revisión o enriquecimiento externo."
+    "text": "Hacer retry del grupo 1 enviando el documento, la extracción fallida y el error de validación específico; para el grupo 2 no hacer retry y dejar el campo en null para revisión o enriquecimiento externo."
    }
   ],
   "answer": [
@@ -550,7 +550,7 @@
    },
    {
     "id": "B",
-    "text": "Confiar en una ventana de contexto más grande, que elimina el efecto de posición."
+    "text": "Confiar en una context window más grande, que elimina el efecto de posición."
    },
    {
     "id": "C",

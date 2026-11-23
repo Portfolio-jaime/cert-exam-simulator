@@ -10,6 +10,10 @@
 > [!TIP]
 > The UI caps selections at `choose` options, like the real exam, so you cannot over-select by accident.
 
+## Show answer
+
+During an attempt the **Show answer** button highlights the correct option(s) and shows the explanation. To keep the score honest, a question whose answer was shown **counts as incorrect**, is tagged *Answer shown* in the review, and the results screen tells you how many were affected. Use it for study sessions; skip it in real-conditions simulations.
+
 ## Scaled score
 
 ```

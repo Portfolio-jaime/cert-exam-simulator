@@ -1,737 +1,737 @@
 [
-  {
-    "id": "sec-01",
-    "domain": "secure",
-    "topic": "Cross-account IAM role",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una aplicación en la cuenta A (producción) debe leer objetos de un bucket S3 de la cuenta B. La empresa prohíbe crear usuarios IAM con claves de acceso de larga duración. ¿Qué solución cumple el requisito con la MAYOR seguridad?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Crear un rol IAM en la cuenta B con una trust policy que confíe en el rol de la aplicación de la cuenta A, y que la aplicación llame a sts:AssumeRole"
-      },
-      {
-        "id": "B",
-        "text": "Crear un usuario IAM en la cuenta B y guardar sus claves en el código de la aplicación"
-      },
-      {
-        "id": "C",
-        "text": "Hacer público el bucket y restringir por la dirección IP de salida de la cuenta A"
-      },
-      {
-        "id": "D",
-        "text": "Compartir el bucket mediante una ACL a nivel de objeto con el ID de la cuenta root de A y usar el usuario root"
-      }
-    ],
-    "answer": [
-      "A"
-    ],
-    "explanation": "Un rol en la cuenta B con trust policy hacia el rol de la cuenta A permite obtener credenciales temporales vía STS sin claves de larga duración. El rol de la aplicación también necesita permiso sts:AssumeRole en su identity policy.",
-    "distractors": {
-      "B": "Las claves de larga duración embebidas en el código violan el requisito y son un riesgo de fuga.",
-      "C": "Un bucket público expone los datos a internet; filtrar por IP no es un control de identidad fiable.",
-      "D": "Usar el usuario root es una mala práctica grave y las ACL de objeto no escalan ni usan credenciales temporales."
-    },
-    "difficulty": 2
+ {
+  "id": "sec-01",
+  "domain": "secure",
+  "topic": "Cross-account IAM role",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación en la cuenta A (producción) debe leer objetos de un bucket S3 de la cuenta B. La empresa prohíbe crear usuarios IAM con access keys de larga duración. ¿Qué solución cumple el requisito con la MAYOR seguridad?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Crear un rol IAM en la cuenta B con una trust policy que confíe en el rol de la aplicación de la cuenta A, y que la aplicación llame a sts:AssumeRole"
+   },
+   {
+    "id": "B",
+    "text": "Crear un usuario IAM en la cuenta B y guardar sus claves en el código de la aplicación"
+   },
+   {
+    "id": "C",
+    "text": "Hacer público el bucket y restringir por la dirección IP de salida de la cuenta A"
+   },
+   {
+    "id": "D",
+    "text": "Compartir el bucket mediante una ACL a nivel de objeto con el ID de la cuenta root de A y usar el usuario root"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "Un rol en la cuenta B con trust policy hacia el rol de la cuenta A permite obtener credenciales temporales vía STS sin claves de larga duración. El rol de la aplicación también necesita permiso sts:AssumeRole en su identity policy.",
+  "distractors": {
+   "B": "Las claves de larga duración embebidas en el código violan el requisito y son un riesgo de fuga.",
+   "C": "Un bucket público expone los datos a internet; filtrar por IP no es un control de identidad fiable.",
+   "D": "Usar el usuario root es una mala práctica grave y las ACL de objeto no escalan ni usan credenciales temporales."
   },
-  {
-    "id": "sec-02",
-    "domain": "secure",
-    "topic": "Service control policies",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una organización con AWS Organizations quiere garantizar que ninguna cuenta de miembro de la unidad organizativa (OU) 'Workloads' pueda desactivar AWS CloudTrail, incluso si un administrador local tiene la política AdministratorAccess. ¿Qué debe hacer el equipo de seguridad?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Adjuntar una identity policy con Deny en cada usuario administrador de cada cuenta"
-      },
-      {
-        "id": "B",
-        "text": "Adjuntar a la OU una service control policy (SCP) que deniegue cloudtrail:StopLogging y cloudtrail:DeleteTrail"
-      },
-      {
-        "id": "C",
-        "text": "Crear una permissions boundary en el rol de la cuenta de administración de la organización"
-      },
-      {
-        "id": "D",
-        "text": "Activar AWS Config con una regla gestionada que notifique cuando CloudTrail se detenga"
-      }
-    ],
-    "answer": [
-      "B"
-    ],
-    "explanation": "Las SCP definen el máximo de permisos de las cuentas de miembro y prevalecen sobre las políticas locales, incluido AdministratorAccess. Un Deny explícito en la SCP bloquea esas acciones en toda la OU.",
-    "distractors": {
-      "A": "Es difícil de mantener y un administrador local podría quitar o modificar esas políticas.",
-      "C": "Una permissions boundary se asocia a un usuario o rol concreto y no controla todas las identidades de las cuentas de miembro.",
-      "D": "Config solo detecta y notifica después del hecho; no impide la acción."
-    },
-    "difficulty": 2
+  "difficulty": 2
+ },
+ {
+  "id": "sec-02",
+  "domain": "secure",
+  "topic": "Service control policies",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una organización con AWS Organizations quiere garantizar que ninguna member account de la organizational unit (OU) 'Workloads' pueda desactivar AWS CloudTrail, incluso si un administrador local tiene la política AdministratorAccess. ¿Qué debe hacer el equipo de seguridad?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Adjuntar una identity policy con Deny en cada usuario administrador de cada cuenta"
+   },
+   {
+    "id": "B",
+    "text": "Adjuntar a la OU una service control policy (SCP) que deniegue cloudtrail:StopLogging y cloudtrail:DeleteTrail"
+   },
+   {
+    "id": "C",
+    "text": "Crear una permissions boundary en el rol de la management account de la organización"
+   },
+   {
+    "id": "D",
+    "text": "Activar AWS Config con una managed rule que notifique cuando CloudTrail se detenga"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "Las SCP definen el máximo de permisos de las member accounts y prevalecen sobre las políticas locales, incluido AdministratorAccess. Un Deny explícito en la SCP bloquea esas acciones en toda la OU.",
+  "distractors": {
+   "A": "Es difícil de mantener y un administrador local podría quitar o modificar esas políticas.",
+   "C": "Una permissions boundary se asocia a un usuario o rol concreto y no controla todas las identidades de las member accounts.",
+   "D": "Config solo detecta y notifica después del hecho; no impide la acción."
   },
-  {
-    "id": "sec-03",
-    "domain": "secure",
-    "topic": "KMS envelope encryption",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una aplicación debe cifrar archivos de 2 GB en el cliente antes de subirlos. El equipo quiere usar una KMS key de AWS KMS sin enviar los archivos a KMS. ¿Qué enfoque se debe usar?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Llamar a kms:Encrypt directamente con el archivo completo"
-      },
-      {
-        "id": "B",
-        "text": "Generar una clave AES local y guardarla junto al archivo sin cifrar"
-      },
-      {
-        "id": "C",
-        "text": "Llamar a kms:GenerateDataKey, cifrar el archivo localmente con la clave de datos en texto plano y almacenar la clave de datos cifrada junto al archivo"
-      },
-      {
-        "id": "D",
-        "text": "Crear una KMS key nueva por cada archivo y usarla para cifrar el contenido"
-      }
-    ],
-    "answer": [
-      "C"
-    ],
-    "explanation": "El cifrado envolvente usa GenerateDataKey: se cifra el dato localmente con la clave de datos y se guarda la versión cifrada por la KMS key. Para descifrar se llama a kms:Decrypt sobre la clave de datos.",
-    "distractors": {
-      "A": "La operación Encrypt de KMS admite como máximo 4 KB de datos, por lo que no sirve para archivos de 2 GB.",
-      "B": "Guardar la clave sin cifrar junto al dato anula la protección: quien obtenga el archivo obtiene la clave.",
-      "D": "Crear una KMS key por archivo es costoso, no escala y sigue sin resolver el límite de tamaño de Encrypt."
-    },
-    "difficulty": 2
+  "difficulty": 2
+ },
+ {
+  "id": "sec-03",
+  "domain": "secure",
+  "topic": "KMS envelope encryption",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación debe cifrar archivos de 2 GB en el cliente antes de subirlos. El equipo quiere usar una KMS key de AWS KMS sin enviar los archivos a KMS. ¿Qué enfoque se debe usar?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Llamar a kms:Encrypt directamente con el archivo completo"
+   },
+   {
+    "id": "B",
+    "text": "Generar una clave AES local y guardarla junto al archivo sin cifrar"
+   },
+   {
+    "id": "C",
+    "text": "Llamar a kms:GenerateDataKey, cifrar el archivo localmente con la data key en texto plano y almacenar la data key cifrada junto al archivo"
+   },
+   {
+    "id": "D",
+    "text": "Crear una KMS key nueva por cada archivo y usarla para cifrar el contenido"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "El envelope encryption usa GenerateDataKey: se cifra el dato localmente con la data key y se guarda la versión cifrada por la KMS key. Para descifrar se llama a kms:Decrypt sobre la data key.",
+  "distractors": {
+   "A": "La operación Encrypt de KMS admite como máximo 4 KB de datos, por lo que no sirve para archivos de 2 GB.",
+   "B": "Guardar la clave sin cifrar junto al dato anula la protección: quien obtenga el archivo obtiene la clave.",
+   "D": "Crear una KMS key por archivo es costoso, no escala y sigue sin resolver el límite de tamaño de Encrypt."
   },
-  {
-    "id": "sec-04",
-    "domain": "secure",
-    "topic": "Cognito identity pools",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una aplicación móvil autentica a usuarios con Amazon Cognito user pools. Después de iniciar sesión, la aplicación debe subir fotos directamente a un bucket S3 usando credenciales de AWS temporales con permisos limitados por usuario. ¿Qué componente se necesita?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Un user pool con un app client que emita access tokens para escribir en S3"
-      },
-      {
-        "id": "B",
-        "text": "Un AWS Directory Service Simple AD vinculado al bucket"
-      },
-      {
-        "id": "C",
-        "text": "Un rol IAM con claves de acceso de larga duración incluidas en la aplicación"
-      },
-      {
-        "id": "D",
-        "text": "Un Cognito identity pool que intercambie el token del user pool por credenciales temporales de un rol IAM"
-      }
-    ],
-    "answer": [
-      "D"
-    ],
-    "explanation": "Los user pools autentican y emiten tokens JWT; los identity pools federan esas identidades y entregan credenciales temporales de AWS mediante roles IAM. Así la aplicación accede a S3 con permisos mínimos.",
-    "distractors": {
-      "A": "Un access token del user pool es un JWT de autenticación; no concede credenciales para llamar a la API de S3.",
-      "B": "Simple AD es un directorio, no un mecanismo para vincular usuarios móviles con permisos S3.",
-      "C": "Las claves de larga duración dentro de una app móvil son extraíbles y violan el principio de credenciales temporales."
-    },
-    "difficulty": 2
+  "difficulty": 2
+ },
+ {
+  "id": "sec-04",
+  "domain": "secure",
+  "topic": "Cognito identity pools",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación móvil autentica a usuarios con Amazon Cognito user pools. Después de iniciar sesión, la aplicación debe subir fotos directamente a un bucket S3 usando credenciales de AWS temporales con permisos limitados por usuario. ¿Qué componente se necesita?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un user pool con un app client que emita access tokens para escribir en S3"
+   },
+   {
+    "id": "B",
+    "text": "Un AWS Directory Service Simple AD vinculado al bucket"
+   },
+   {
+    "id": "C",
+    "text": "Un rol IAM con access keys de larga duración incluidas en la aplicación"
+   },
+   {
+    "id": "D",
+    "text": "Un Cognito identity pool que intercambie el token del user pool por credenciales temporales de un rol IAM"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "Los user pools autentican y emiten tokens JWT; los identity pools federan esas identidades y entregan credenciales temporales de AWS mediante roles IAM. Así la aplicación accede a S3 con permisos mínimos.",
+  "distractors": {
+   "A": "Un access token del user pool es un JWT de autenticación; no concede credenciales para llamar a la API de S3.",
+   "B": "Simple AD es un directorio, no un mecanismo para vincular usuarios móviles con permisos S3.",
+   "C": "Las claves de larga duración dentro de una app móvil son extraíbles y violan el principio de credenciales temporales."
   },
-  {
-    "id": "sec-05",
-    "domain": "secure",
-    "topic": "Security groups vs NACL",
-    "type": "single",
-    "choose": 1,
-    "stem": "Un equipo detecta tráfico malicioso desde un rango de IP concreto hacia instancias en una subred pública. Necesitan bloquear explícitamente ese rango CIDR para todas las instancias de la subred. ¿Qué control es el adecuado?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Añadir una regla Deny para ese CIDR en la network ACL de la subred"
-      },
-      {
-        "id": "B",
-        "text": "Añadir una regla Deny para ese CIDR en el security group de las instancias"
-      },
-      {
-        "id": "C",
-        "text": "Quitar la ruta a internet gateway de la tabla de rutas de la subred"
-      },
-      {
-        "id": "D",
-        "text": "Asociar un rol IAM a las instancias que bloquee ese rango"
-      }
-    ],
-    "answer": [
-      "A"
-    ],
-    "explanation": "Las network ACL operan a nivel de subred, son stateless y admiten reglas Allow y Deny, por lo que permiten bloquear un CIDR concreto. Los security groups solo admiten reglas Allow.",
-    "distractors": {
-      "B": "Los security groups no admiten reglas Deny; solo permiten tráfico.",
-      "C": "Quitar la ruta a internet elimina todo el acceso público, no solo el del rango malicioso.",
-      "D": "Los roles IAM controlan llamadas a la API de AWS, no el tráfico de red."
-    },
-    "difficulty": 1
+  "difficulty": 2
+ },
+ {
+  "id": "sec-05",
+  "domain": "secure",
+  "topic": "Security groups vs NACL",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un equipo detecta tráfico malicioso desde un rango de IP concreto hacia instancias en una public subnet. Necesitan bloquear explícitamente ese rango CIDR para todas las instancias de la subnet. ¿Qué control es el adecuado?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Añadir una regla Deny para ese CIDR en la network ACL de la subnet"
+   },
+   {
+    "id": "B",
+    "text": "Añadir una regla Deny para ese CIDR en el security group de las instancias"
+   },
+   {
+    "id": "C",
+    "text": "Quitar la ruta a internet gateway de la route table de la subnet"
+   },
+   {
+    "id": "D",
+    "text": "Asociar un rol IAM a las instancias que bloquee ese rango"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "Las network ACL operan a nivel de subnet, son stateless y admiten reglas Allow y Deny, por lo que permiten bloquear un CIDR concreto. Los security groups solo admiten reglas Allow.",
+  "distractors": {
+   "B": "Los security groups no admiten reglas Deny; solo permiten tráfico.",
+   "C": "Quitar la ruta a internet elimina todo el acceso público, no solo el del rango malicioso.",
+   "D": "Los roles IAM controlan llamadas a la API de AWS, no el tráfico de red."
   },
-  {
-    "id": "sec-06",
-    "domain": "secure",
-    "topic": "VPC endpoints",
-    "type": "single",
-    "choose": 1,
-    "stem": "Instancias EC2 en subredes privadas sin NAT gateway deben acceder a Amazon S3 sin que el tráfico salga a internet. Se busca la solución sin coste adicional por hora ni por GB procesado. ¿Qué se debe crear?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Un interface endpoint (AWS PrivateLink) para S3 en cada subred"
-      },
-      {
-        "id": "B",
-        "text": "Un gateway endpoint para S3 y la ruta correspondiente en las tablas de rutas"
-      },
-      {
-        "id": "C",
-        "text": "Un NAT gateway en una subred pública"
-      },
-      {
-        "id": "D",
-        "text": "Un VPC peering con la VPC administrada por S3"
-      }
-    ],
-    "answer": [
-      "B"
-    ],
-    "explanation": "Los gateway endpoints para S3 (y DynamoDB) no tienen cargo y se añaden como destino en las tablas de rutas. Mantienen el tráfico dentro de la red de AWS.",
-    "distractors": {
-      "A": "Un interface endpoint funciona para S3 pero genera cargos por hora y por GB, incumpliendo el requisito de coste.",
-      "C": "Un NAT gateway enruta por internet y tiene coste por hora y por datos procesados.",
-      "D": "S3 no se ofrece como una VPC a la que se pueda hacer peering."
-    },
-    "difficulty": 2
+  "difficulty": 1
+ },
+ {
+  "id": "sec-06",
+  "domain": "secure",
+  "topic": "VPC endpoints",
+  "type": "single",
+  "choose": 1,
+  "stem": "Instancias EC2 en private subnets sin NAT gateway deben acceder a Amazon S3 sin que el tráfico salga a internet. Se busca la solución sin costo adicional por hora ni por GB procesado. ¿Qué se debe crear?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un interface endpoint (AWS PrivateLink) para S3 en cada subnet"
+   },
+   {
+    "id": "B",
+    "text": "Un gateway endpoint para S3 y la ruta correspondiente en las route tables"
+   },
+   {
+    "id": "C",
+    "text": "Un NAT gateway en una public subnet"
+   },
+   {
+    "id": "D",
+    "text": "Un VPC peering con la VPC administrada por S3"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "Los gateway endpoints para S3 (y DynamoDB) no tienen cargo y se añaden como destino en las route tables. Mantienen el tráfico dentro de la red de AWS.",
+  "distractors": {
+   "A": "Un interface endpoint funciona para S3 pero genera cargos por hora y por GB, incumpliendo el requisito de costo.",
+   "C": "Un NAT gateway enruta por internet y tiene costo por hora y por datos procesados.",
+   "D": "S3 no se ofrece como una VPC a la que se pueda hacer peering."
   },
-  {
-    "id": "sec-07",
-    "domain": "secure",
-    "topic": "AWS WAF",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una API pública detrás de un Application Load Balancer sufre miles de solicitudes por minuto desde unas pocas direcciones IP que degradan el servicio. Se necesita limitar automáticamente a las IP abusivas con el MENOR esfuerzo operativo. ¿Qué se debe configurar?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Una regla en el security group del ALB para cada IP abusiva"
-      },
-      {
-        "id": "B",
-        "text": "AWS Shield Standard con una regla de rate limiting"
-      },
-      {
-        "id": "C",
-        "text": "Una regla rate-based en una web ACL de AWS WAF asociada al ALB"
-      },
-      {
-        "id": "D",
-        "text": "Una network ACL con una regla Deny por cada IP detectada"
-      }
-    ],
-    "answer": [
-      "C"
-    ],
-    "explanation": "Las reglas rate-based de AWS WAF cuentan solicitudes por IP en una ventana de tiempo y bloquean automáticamente a las que superan el umbral. Se pueden asociar directamente a un ALB.",
-    "distractors": {
-      "A": "Los security groups no admiten Deny y mantener la lista a mano supone mucho trabajo operativo.",
-      "B": "Shield Standard protege contra ataques de capas 3 y 4 y no ofrece reglas de limitación a nivel de aplicación.",
-      "D": "Las NACL tienen límite de reglas y exigen mantener manualmente las IP; no es automático."
-    },
-    "difficulty": 2
+  "difficulty": 2
+ },
+ {
+  "id": "sec-07",
+  "domain": "secure",
+  "topic": "AWS WAF",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una API pública detrás de un Application Load Balancer sufre miles de solicitudes por minuto desde unas pocas direcciones IP que degradan el servicio. Se necesita limitar automáticamente a las IP abusivas con el MENOR esfuerzo operativo. ¿Qué se debe configurar?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Una regla en el security group del ALB para cada IP abusiva"
+   },
+   {
+    "id": "B",
+    "text": "AWS Shield Standard con una regla de rate limiting"
+   },
+   {
+    "id": "C",
+    "text": "Una regla rate-based en una web ACL de AWS WAF asociada al ALB"
+   },
+   {
+    "id": "D",
+    "text": "Una network ACL con una regla Deny por cada IP detectada"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "Las reglas rate-based de AWS WAF cuentan solicitudes por IP en una ventana de tiempo y bloquean automáticamente a las que superan el umbral. Se pueden asociar directamente a un ALB.",
+  "distractors": {
+   "A": "Los security groups no admiten Deny y mantener la lista a mano supone mucho trabajo operativo.",
+   "B": "Shield Standard protege contra ataques de capas 3 y 4 y no ofrece reglas de limitación a nivel de aplicación.",
+   "D": "Las NACL tienen límite de reglas y exigen mantener manualmente las IP; no es automático."
   },
-  {
-    "id": "sec-08",
-    "domain": "secure",
-    "topic": "Amazon Macie",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una empresa guarda millones de objetos en varios buckets de Amazon S3 y necesita descubrir cuáles contienen datos personales (PII) como números de documento y tarjetas, recibiendo hallazgos automáticos. ¿Qué servicio se debe usar?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Amazon GuardDuty con S3 Protection"
-      },
-      {
-        "id": "B",
-        "text": "Amazon Inspector"
-      },
-      {
-        "id": "C",
-        "text": "AWS Config con una regla de cifrado"
-      },
-      {
-        "id": "D",
-        "text": "Amazon Macie"
-      }
-    ],
-    "answer": [
-      "D"
-    ],
-    "explanation": "Amazon Macie usa machine learning y coincidencia de patrones para detectar y clasificar datos sensibles en S3 y genera hallazgos. Es el servicio específico para descubrimiento de PII.",
-    "distractors": {
-      "A": "GuardDuty detecta actividad sospechosa en accesos a S3, no clasifica el contenido de los objetos.",
-      "B": "Inspector evalúa vulnerabilidades en EC2, imágenes de contenedor y funciones Lambda, no el contenido de S3.",
-      "C": "Una regla de Config verifica configuración como el cifrado, no si hay PII dentro de los objetos."
-    },
-    "difficulty": 1
+  "difficulty": 2
+ },
+ {
+  "id": "sec-08",
+  "domain": "secure",
+  "topic": "Amazon Macie",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa guarda millones de objetos en varios buckets de Amazon S3 y necesita descubrir cuáles contienen datos personales (PII) como números de documento y tarjetas, recibiendo findings automáticos. ¿Qué servicio se debe usar?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Amazon GuardDuty con S3 Protection"
+   },
+   {
+    "id": "B",
+    "text": "Amazon Inspector"
+   },
+   {
+    "id": "C",
+    "text": "AWS Config con una regla de cifrado"
+   },
+   {
+    "id": "D",
+    "text": "Amazon Macie"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "Amazon Macie usa machine learning y coincidencia de patrones para detectar y clasificar datos sensibles en S3 y genera findings. Es el servicio específico para descubrimiento de PII.",
+  "distractors": {
+   "A": "GuardDuty detecta actividad sospechosa en accesos a S3, no clasifica el contenido de los objetos.",
+   "B": "Inspector evalúa vulnerabilidades en EC2, imágenes de contenedor y funciones Lambda, no el contenido de S3.",
+   "C": "Una regla de Config verifica configuración como el cifrado, no si hay PII dentro de los objetos."
   },
-  {
-    "id": "sec-09",
-    "domain": "secure",
-    "topic": "Secrets Manager",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una aplicación usa credenciales de una base de datos Amazon RDS que, por política de cumplimiento, deben rotarse automáticamente cada 30 días sin cambiar el código de la aplicación más allá de leer el secreto. ¿Cuál es la solución con el MENOR esfuerzo operativo?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Guardar las credenciales en AWS Secrets Manager y habilitar la rotación automática"
-      },
-      {
-        "id": "B",
-        "text": "Guardarlas en Parameter Store como String y rotarlas con un script cron en EC2"
-      },
-      {
-        "id": "C",
-        "text": "Guardarlas en variables de entorno cifradas de la aplicación"
-      },
-      {
-        "id": "D",
-        "text": "Guardarlas en un archivo en S3 cifrado con SSE-S3"
-      }
-    ],
-    "answer": [
-      "A"
-    ],
-    "explanation": "Secrets Manager incluye rotación automática nativa para RDS mediante funciones Lambda gestionadas. La aplicación solo recupera el secreto vigente.",
-    "distractors": {
-      "B": "Parameter Store no ofrece rotación nativa; habría que construir y mantener el script.",
-      "C": "Las variables de entorno requieren redeploy para cambiar y no rotan automáticamente.",
-      "D": "Un archivo en S3 no rota credenciales ni integra el cambio en la base de datos."
-    },
-    "difficulty": 1
+  "difficulty": 1
+ },
+ {
+  "id": "sec-09",
+  "domain": "secure",
+  "topic": "Secrets Manager",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación usa credenciales de una base de datos Amazon RDS que, por política de cumplimiento, deben rotarse automáticamente cada 30 días sin cambiar el código de la aplicación más allá de leer el secreto. ¿Cuál es la solución con el MENOR esfuerzo operativo?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Guardar las credenciales en AWS Secrets Manager y habilitar la rotación automática"
+   },
+   {
+    "id": "B",
+    "text": "Guardarlas en Parameter Store como String y rotarlas con un script cron en EC2"
+   },
+   {
+    "id": "C",
+    "text": "Guardarlas en variables de entorno cifradas de la aplicación"
+   },
+   {
+    "id": "D",
+    "text": "Guardarlas en un archivo en S3 cifrado con SSE-S3"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "Secrets Manager incluye rotación automática nativa para RDS mediante funciones Lambda gestionadas. La aplicación solo recupera el secreto vigente.",
+  "distractors": {
+   "B": "Parameter Store no ofrece rotación nativa; habría que construir y mantener el script.",
+   "C": "Las variables de entorno requieren redeploy para cambiar y no rotan automáticamente.",
+   "D": "Un archivo en S3 no rota credenciales ni integra el cambio en la base de datos."
   },
-  {
-    "id": "sec-10",
-    "domain": "secure",
-    "topic": "ACM and TLS",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una empresa debe servir un sitio web por HTTPS en un Application Load Balancer con un certificado público para su dominio, con renovación automática y sin gestionar archivos de certificado. ¿Qué debe hacer?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Generar un certificado autofirmado con OpenSSL e importarlo a IAM"
-      },
-      {
-        "id": "B",
-        "text": "Solicitar un certificado público en AWS Certificate Manager (ACM), validarlo por DNS y asociarlo al listener HTTPS"
-      },
-      {
-        "id": "C",
-        "text": "Comprar un certificado a una CA externa e importarlo en ACM"
-      },
-      {
-        "id": "D",
-        "text": "Instalar el certificado en cada instancia detrás del ALB"
-      }
-    ],
-    "answer": [
-      "B"
-    ],
-    "explanation": "Los certificados públicos emitidos por ACM se renuevan automáticamente (con validación DNS vigente) y se integran con ALB. No requieren gestión manual de claves.",
-    "distractors": {
-      "A": "Un certificado autofirmado no es de confianza para los navegadores y se gestiona a mano.",
-      "C": "Los certificados importados no se renuevan automáticamente; hay que reimportarlos antes de que expiren.",
-      "D": "Instalar certificados en cada instancia añade carga operativa y no usa renovación automática."
-    },
-    "difficulty": 1
+  "difficulty": 1
+ },
+ {
+  "id": "sec-10",
+  "domain": "secure",
+  "topic": "ACM and TLS",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa debe servir un sitio web por HTTPS en un Application Load Balancer con un certificado público para su dominio, con renovación automática y sin gestionar archivos de certificado. ¿Qué debe hacer?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Generar un certificado autofirmado con OpenSSL e importarlo a IAM"
+   },
+   {
+    "id": "B",
+    "text": "Solicitar un certificado público en AWS Certificate Manager (ACM), validarlo por DNS y asociarlo al listener HTTPS"
+   },
+   {
+    "id": "C",
+    "text": "Comprar un certificado a una CA externa e importarlo en ACM"
+   },
+   {
+    "id": "D",
+    "text": "Instalar el certificado en cada instancia detrás del ALB"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "Los certificados públicos emitidos por ACM se renuevan automáticamente (con validación DNS vigente) y se integran con ALB. No requieren gestión manual de claves.",
+  "distractors": {
+   "A": "Un certificado autofirmado no es de confianza para los navegadores y se gestiona a mano.",
+   "C": "Los certificados importados no se renuevan automáticamente; hay que reimportarlos antes de que expiren.",
+   "D": "Instalar certificados en cada instancia añade carga operativa y no usa renovación automática."
   },
-  {
-    "id": "sec-11",
-    "domain": "secure",
-    "topic": "S3 Object Lock",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una entidad regulada debe conservar registros financieros en Amazon S3 durante 7 años de forma que ni siquiera el usuario root de la cuenta pueda eliminarlos o sobrescribirlos durante ese plazo. ¿Qué configuración cumple el requisito?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Habilitar MFA Delete en el bucket con versionado"
-      },
-      {
-        "id": "B",
-        "text": "Aplicar una bucket policy que deniegue s3:DeleteObject a todos los principals"
-      },
-      {
-        "id": "C",
-        "text": "Usar S3 Object Lock en modo compliance con un periodo de retención de 7 años"
-      },
-      {
-        "id": "D",
-        "text": "Usar S3 Object Lock en modo governance con un periodo de retención de 7 años"
-      }
-    ],
-    "answer": [
-      "C"
-    ],
-    "explanation": "En modo compliance, ningún usuario, incluido root, puede eliminar ni acortar la retención de una versión protegida mientras dure el periodo. Es el modelo WORM exigido por regulaciones.",
-    "distractors": {
-      "A": "MFA Delete añade una barrera adicional pero el propietario del bucket con MFA aún puede borrar versiones.",
-      "B": "Una bucket policy puede ser modificada por quien tenga permisos para cambiarla, así que no es inmutable.",
-      "D": "El modo governance permite que usuarios con permisos especiales (s3:BypassGovernanceRetention) eliminen o alteren la retención."
-    },
-    "difficulty": 2
+  "difficulty": 1
+ },
+ {
+  "id": "sec-11",
+  "domain": "secure",
+  "topic": "S3 Object Lock",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una entidad regulada debe conservar registros financieros en Amazon S3 durante 7 años de forma que ni siquiera el usuario root de la cuenta pueda eliminarlos o sobrescribirlos durante ese plazo. ¿Qué configuración cumple el requisito?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Habilitar MFA Delete en el bucket con versionado"
+   },
+   {
+    "id": "B",
+    "text": "Aplicar una bucket policy que deniegue s3:DeleteObject a todos los principals"
+   },
+   {
+    "id": "C",
+    "text": "Usar S3 Object Lock en modo compliance con un retention period de 7 años"
+   },
+   {
+    "id": "D",
+    "text": "Usar S3 Object Lock en modo governance con un retention period de 7 años"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "En modo compliance, ningún usuario, incluido root, puede eliminar ni acortar la retención de una versión protegida mientras dure el periodo. Es el modelo WORM exigido por regulaciones.",
+  "distractors": {
+   "A": "MFA Delete añade una barrera adicional pero el propietario del bucket con MFA aún puede borrar versiones.",
+   "B": "Una bucket policy puede ser modificada por quien tenga permisos para cambiarla, así que no es inmutable.",
+   "D": "El modo governance permite que usuarios con permisos especiales (s3:BypassGovernanceRetention) eliminen o alteren la retención."
   },
-  {
-    "id": "sec-12",
-    "domain": "secure",
-    "topic": "S3 presigned URLs",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una aplicación web debe permitir que un usuario autenticado descargue un informe privado de S3 durante 15 minutos sin hacer público el bucket ni crear una cuenta IAM para el usuario. ¿Qué se debe hacer?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Cambiar el objeto a acceso público y borrarlo después de 15 minutos"
-      },
-      {
-        "id": "B",
-        "text": "Compartir las claves de acceso del rol de la aplicación con el usuario"
-      },
-      {
-        "id": "C",
-        "text": "Crear una bucket policy permanente con la IP del usuario"
-      },
-      {
-        "id": "D",
-        "text": "Generar una presigned URL con caducidad de 15 minutos desde el backend"
-      }
-    ],
-    "answer": [
-      "D"
-    ],
-    "explanation": "Una presigned URL concede acceso temporal a un objeto concreto con los permisos de quien la firma y caduca según el tiempo configurado. El bucket permanece privado.",
-    "distractors": {
-      "A": "Hacer público el objeto lo expone a cualquiera durante ese periodo y la limpieza manual es propensa a errores.",
-      "B": "Compartir claves de acceso otorga más permisos de los necesarios y no son temporales por usuario.",
-      "C": "Las IP de usuarios cambian y una política permanente no limita en el tiempo el acceso."
-    },
-    "difficulty": 1
+  "difficulty": 2
+ },
+ {
+  "id": "sec-12",
+  "domain": "secure",
+  "topic": "S3 presigned URLs",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación web debe permitir que un usuario autenticado descargue un informe privado de S3 durante 15 minutos sin hacer público el bucket ni crear una cuenta IAM para el usuario. ¿Qué se debe hacer?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Cambiar el objeto a acceso público y borrarlo después de 15 minutos"
+   },
+   {
+    "id": "B",
+    "text": "Compartir las access keys del rol de la aplicación con el usuario"
+   },
+   {
+    "id": "C",
+    "text": "Crear una bucket policy permanente con la IP del usuario"
+   },
+   {
+    "id": "D",
+    "text": "Generar una presigned URL con caducidad de 15 minutos desde el backend"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "Una presigned URL concede acceso temporal a un objeto concreto con los permisos de quien la firma y caduca según el tiempo configurado. El bucket permanece privado.",
+  "distractors": {
+   "A": "Hacer público el objeto lo expone a cualquiera durante ese periodo y la limpieza manual es propensa a errores.",
+   "B": "Compartir access keys otorga más permisos de los necesarios y no son temporales por usuario.",
+   "C": "Las IP de usuarios cambian y una política permanente no limita en el tiempo el acceso."
   },
-  {
-    "id": "sec-13",
-    "domain": "secure",
-    "topic": "CloudTrail log integrity",
-    "type": "single",
-    "choose": 1,
-    "stem": "Un auditor exige demostrar que los archivos de log de AWS CloudTrail no han sido modificados ni eliminados tras su entrega a Amazon S3. ¿Qué característica se debe habilitar?",
-    "options": [
-      {
-        "id": "A",
-        "text": "La validación de integridad de los archivos de log (log file integrity validation) en el trail"
-      },
-      {
-        "id": "B",
-        "text": "El cifrado SSE-S3 en el bucket de destino"
-      },
-      {
-        "id": "C",
-        "text": "Un evento de Amazon EventBridge para cada PutObject en el bucket"
-      },
-      {
-        "id": "D",
-        "text": "El versionado de S3 en el bucket sin más configuración"
-      }
-    ],
-    "answer": [
-      "A"
-    ],
-    "explanation": "La validación de integridad genera archivos digest firmados con hash SHA-256 y firma digital que permiten verificar que los logs no fueron alterados. Se comprueba con la AWS CLI.",
-    "distractors": {
-      "B": "El cifrado protege la confidencialidad, no demuestra que el contenido no se modificó.",
-      "C": "Las notificaciones de eventos informan de escrituras, pero no verifican integridad criptográfica.",
-      "D": "El versionado conserva versiones, pero no ofrece prueba criptográfica de que los logs sean los originales."
-    },
-    "difficulty": 2
+  "difficulty": 1
+ },
+ {
+  "id": "sec-13",
+  "domain": "secure",
+  "topic": "CloudTrail log integrity",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un auditor exige demostrar que los archivos de log de AWS CloudTrail no han sido modificados ni eliminados tras su entrega a Amazon S3. ¿Qué característica se debe habilitar?",
+  "options": [
+   {
+    "id": "A",
+    "text": "La validación de integridad de los archivos de log (log file integrity validation) en el trail"
+   },
+   {
+    "id": "B",
+    "text": "El cifrado SSE-S3 en el bucket de destino"
+   },
+   {
+    "id": "C",
+    "text": "Un evento de Amazon EventBridge para cada PutObject en el bucket"
+   },
+   {
+    "id": "D",
+    "text": "El versionado de S3 en el bucket sin más configuración"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "La validación de integridad genera archivos digest firmados con hash SHA-256 y firma digital que permiten verificar que los logs no fueron alterados. Se comprueba con la AWS CLI.",
+  "distractors": {
+   "B": "El cifrado protege la confidencialidad, no demuestra que el contenido no se modificó.",
+   "C": "Las notificaciones de eventos informan de escrituras, pero no verifican integridad criptográfica.",
+   "D": "El versionado conserva versiones, pero no ofrece prueba criptográfica de que los logs sean los originales."
   },
-  {
-    "id": "sec-14",
-    "domain": "secure",
-    "topic": "RDS encryption",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una base de datos Amazon RDS for PostgreSQL en producción se creó sin cifrado. El equipo de cumplimiento exige cifrado en reposo con una KMS key administrada por el cliente, con el MENOR tiempo de inactividad posible. ¿Cuál es el enfoque correcto?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Habilitar el cifrado modificando la instancia existente desde la consola"
-      },
-      {
-        "id": "B",
-        "text": "Crear un snapshot, copiarlo habilitando el cifrado con la KMS key, restaurar una instancia nueva desde la copia y apuntar la aplicación a ella"
-      },
-      {
-        "id": "C",
-        "text": "Habilitar SSL/TLS en la instancia para cifrar los datos en reposo"
-      },
-      {
-        "id": "D",
-        "text": "Cifrar los volúmenes EBS subyacentes manualmente"
-      }
-    ],
-    "answer": [
-      "B"
-    ],
-    "explanation": "No se puede activar el cifrado en una instancia RDS existente sin cifrar. Se copia el snapshot cifrándolo con la KMS key y se restaura; para menor downtime se puede combinar con réplicas o AWS DMS.",
-    "distractors": {
-      "A": "RDS no permite activar el cifrado directamente sobre una instancia ya creada sin cifrar.",
-      "C": "SSL/TLS protege los datos en tránsito, no en reposo.",
-      "D": "Los volúmenes subyacentes de RDS los administra el servicio y no son accesibles para cifrarlos manualmente."
-    },
-    "difficulty": 2
+  "difficulty": 2
+ },
+ {
+  "id": "sec-14",
+  "domain": "secure",
+  "topic": "RDS encryption",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una base de datos Amazon RDS for PostgreSQL en producción se creó sin cifrado. El equipo de cumplimiento exige encryption at rest con una KMS key administrada por el cliente, con el MENOR tiempo de inactividad posible. ¿Cuál es el enfoque correcto?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Habilitar el cifrado modificando la instancia existente desde la consola"
+   },
+   {
+    "id": "B",
+    "text": "Crear un snapshot, copiarlo habilitando el cifrado con la KMS key, restaurar una instancia nueva desde la copia y apuntar la aplicación a ella"
+   },
+   {
+    "id": "C",
+    "text": "Habilitar SSL/TLS en la instancia para cifrar los datos at rest"
+   },
+   {
+    "id": "D",
+    "text": "Cifrar los volúmenes EBS subyacentes manualmente"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "No se puede activar el cifrado en una instancia RDS existente sin cifrar. Se copia el snapshot cifrándolo con la KMS key y se restaura; para menor downtime se puede replicar hacia la nueva instancia cifrada con AWS DMS (una read replica no sirve: la réplica de una instancia sin cifrar no puede cifrarse).",
+  "distractors": {
+   "A": "RDS no permite activar el cifrado directamente sobre una instancia ya creada sin cifrar.",
+   "C": "SSL/TLS protege los datos in transit, no at rest.",
+   "D": "Los volúmenes subyacentes de RDS los administra el servicio y no son accesibles para cifrarlos manualmente."
   },
-  {
-    "id": "sec-15",
-    "domain": "secure",
-    "topic": "KMS multi-Region keys",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una aplicación almacena datos cifrados en Amazon DynamoDB global tables en us-east-1 y eu-west-1. Los datos cifrados con la clave de una región deben poder descifrarse en la otra sin volver a cifrarlos. ¿Qué se debe usar?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Una KMS key en cada región con alias idéntico"
-      },
-      {
-        "id": "B",
-        "text": "Una KMS key de una sola región y llamadas cross-region a kms:Decrypt"
-      },
-      {
-        "id": "C",
-        "text": "Una multi-Region key de AWS KMS con réplicas en ambas regiones"
-      },
-      {
-        "id": "D",
-        "text": "Claves de datos generadas por la aplicación y guardadas en texto plano en cada región"
-      }
-    ],
-    "answer": [
-      "C"
-    ],
-    "explanation": "Las multi-Region keys comparten el mismo key ID y material de clave entre regiones, lo que permite cifrar en una región y descifrar en otra sin reencriptar. Cada réplica se administra de forma independiente.",
-    "distractors": {
-      "A": "Las claves distintas con el mismo alias tienen material criptográfico diferente y no descifran datos de la otra región.",
-      "B": "Depender de llamadas cross-region añade latencia y un punto de fallo regional, y no es una solución multi-Region.",
-      "D": "Guardar claves en texto plano elimina la protección de KMS."
-    },
-    "difficulty": 3
+  "difficulty": 2
+ },
+ {
+  "id": "sec-15",
+  "domain": "secure",
+  "topic": "KMS multi-Region keys",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación almacena datos cifrados en Amazon DynamoDB global tables en us-east-1 y eu-west-1. Los datos cifrados con la clave de una Region deben poder descifrarse en la otra sin volver a cifrarlos. ¿Qué se debe usar?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Una KMS key en cada Region con alias idéntico"
+   },
+   {
+    "id": "B",
+    "text": "Una KMS key de una sola Region y llamadas cross-Region a kms:Decrypt"
+   },
+   {
+    "id": "C",
+    "text": "Una multi-Region key de AWS KMS con réplicas en ambas Regions"
+   },
+   {
+    "id": "D",
+    "text": "Claves de datos generadas por la aplicación y guardadas en texto plano en cada Region"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "Las multi-Region keys comparten el mismo key ID y material de clave entre Regions, lo que permite cifrar en una Region y descifrar en otra sin reencriptar. Cada réplica se administra de forma independiente.",
+  "distractors": {
+   "A": "Las claves distintas con el mismo alias tienen material criptográfico diferente y no descifran datos de la otra Region.",
+   "B": "Depender de llamadas cross-Region añade latencia y un punto de fallo regional, y no es una solución multi-Region.",
+   "D": "Guardar claves en texto plano elimina la protección de KMS."
   },
-  {
-    "id": "sec-16",
-    "domain": "secure",
-    "topic": "AWS Firewall Manager",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una organización con 60 cuentas en AWS Organizations quiere aplicar automáticamente las mismas reglas de AWS WAF a todos los Application Load Balancers, incluidos los que se creen en el futuro, y gestionarlo de forma central. ¿Qué servicio debe usar?",
-    "options": [
-      {
-        "id": "A",
-        "text": "AWS Config con conformance packs"
-      },
-      {
-        "id": "B",
-        "text": "AWS Control Tower con guardrails detectives"
-      },
-      {
-        "id": "C",
-        "text": "Amazon GuardDuty con administrador delegado"
-      },
-      {
-        "id": "D",
-        "text": "AWS Firewall Manager con una política de AWS WAF"
-      }
-    ],
-    "answer": [
-      "D"
-    ],
-    "explanation": "Firewall Manager administra de forma central reglas de WAF, Shield Advanced, security groups y Network Firewall en todas las cuentas de una organización y aplica la política a recursos nuevos automáticamente.",
-    "distractors": {
-      "A": "Config evalúa cumplimiento pero no despliega ni mantiene reglas de WAF por sí solo.",
-      "B": "Los guardrails de Control Tower gobiernan configuración de cuentas, no distribuyen web ACLs.",
-      "C": "GuardDuty detecta amenazas; no gestiona reglas de firewall."
-    },
-    "difficulty": 2
+  "difficulty": 3
+ },
+ {
+  "id": "sec-16",
+  "domain": "secure",
+  "topic": "AWS Firewall Manager",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una organización con 60 cuentas en AWS Organizations quiere aplicar automáticamente las mismas reglas de AWS WAF a todos los Application Load Balancers, incluidos los que se creen en el futuro, y gestionarlo de forma central. ¿Qué servicio debe usar?",
+  "options": [
+   {
+    "id": "A",
+    "text": "AWS Config con conformance packs"
+   },
+   {
+    "id": "B",
+    "text": "AWS Control Tower con guardrails detectives"
+   },
+   {
+    "id": "C",
+    "text": "Amazon GuardDuty con administrador delegado"
+   },
+   {
+    "id": "D",
+    "text": "AWS Firewall Manager con una política de AWS WAF"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "Firewall Manager administra de forma central reglas de WAF, Shield Advanced, security groups y Network Firewall en todas las cuentas de una organización y aplica la política a recursos nuevos automáticamente.",
+  "distractors": {
+   "A": "Config evalúa cumplimiento pero no despliega ni mantiene reglas de WAF por sí solo.",
+   "B": "Los guardrails de Control Tower gobiernan configuración de cuentas, no distribuyen web ACLs.",
+   "C": "GuardDuty detecta amenazas; no gestiona reglas de firewall."
   },
-  {
-    "id": "sec-17",
-    "domain": "secure",
-    "topic": "Directory Service",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una empresa mantiene Active Directory on-premises y quiere que sus usuarios inicien sesión en instancias EC2 Windows de AWS con sus credenciales actuales. No quiere replicar el directorio en AWS ni almacenar información de directorio en la nube. ¿Qué opción es la adecuada?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Simple AD"
-      },
-      {
-        "id": "B",
-        "text": "AWS Managed Microsoft AD con una relación de confianza unidireccional"
-      },
-      {
-        "id": "C",
-        "text": "AD Connector"
-      },
-      {
-        "id": "D",
-        "text": "Amazon Cognito user pools"
-      }
-    ],
-    "answer": [
-      "C"
-    ],
-    "explanation": "AD Connector actúa como proxy hacia el Active Directory on-premises sin almacenar ni replicar información de directorio en AWS. Redirige las solicitudes de autenticación al directorio existente.",
-    "distractors": {
-      "A": "Simple AD es un directorio independiente compatible con Samba y no se conecta a tu AD corporativo.",
-      "B": "Managed Microsoft AD aloja un directorio real en AWS, lo que contradice el requisito de no replicar información en la nube.",
-      "D": "Cognito user pools gestiona identidades de aplicaciones, no el inicio de sesión de dominio en EC2 Windows."
-    },
-    "difficulty": 2
+  "difficulty": 2
+ },
+ {
+  "id": "sec-17",
+  "domain": "secure",
+  "topic": "Directory Service",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa mantiene Active Directory on-premises y quiere que sus usuarios inicien sesión en instancias EC2 Windows de AWS con sus credenciales actuales. No quiere replicar el directorio en AWS ni almacenar información de directorio en la nube. ¿Qué opción es la adecuada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Simple AD"
+   },
+   {
+    "id": "B",
+    "text": "AWS Managed Microsoft AD con una one-way trust"
+   },
+   {
+    "id": "C",
+    "text": "AD Connector"
+   },
+   {
+    "id": "D",
+    "text": "Amazon Cognito user pools"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "AD Connector actúa como proxy hacia el Active Directory on-premises sin almacenar ni replicar información de directorio en AWS. Redirige las solicitudes de autenticación al directorio existente.",
+  "distractors": {
+   "A": "Simple AD es un directorio independiente compatible con Samba y no se conecta a tu AD corporativo.",
+   "B": "Managed Microsoft AD aloja un directorio real en AWS, lo que contradice el requisito de no replicar información en la nube.",
+   "D": "Cognito user pools gestiona identidades de aplicaciones, no el inicio de sesión de dominio en EC2 Windows."
   },
-  {
-    "id": "sec-18",
-    "domain": "secure",
-    "topic": "Threat detection services",
-    "type": "multi",
-    "choose": 2,
-    "stem": "Una empresa quiere detectar actividad anómala en sus cuentas, como llamadas inusuales a la API o instancias EC2 comunicándose con dominios maliciosos, y además necesita ver los hallazgos de seguridad consolidados de varios servicios en un solo panel. ¿Qué DOS servicios debe habilitar? Elige DOS.",
-    "options": [
-      {
-        "id": "A",
-        "text": "Amazon GuardDuty"
-      },
-      {
-        "id": "B",
-        "text": "Amazon Macie"
-      },
-      {
-        "id": "C",
-        "text": "AWS Security Hub"
-      },
-      {
-        "id": "D",
-        "text": "AWS Artifact"
-      },
-      {
-        "id": "E",
-        "text": "AWS Trusted Advisor con comprobaciones de costes"
-      }
-    ],
-    "answer": [
-      "A",
-      "C"
-    ],
-    "explanation": "GuardDuty analiza CloudTrail, VPC Flow Logs y DNS para detectar amenazas. Security Hub agrega y normaliza hallazgos de GuardDuty, Inspector, Macie y otros en un panel central.",
-    "distractors": {
-      "B": "Macie descubre datos sensibles en S3, no detecta llamadas anómalas ni comunicación con dominios maliciosos.",
-      "D": "AWS Artifact ofrece informes de cumplimiento y acuerdos, no detecta amenazas.",
-      "E": "Las comprobaciones de costes de Trusted Advisor no detectan actividad maliciosa."
-    },
-    "difficulty": 2
+  "difficulty": 2
+ },
+ {
+  "id": "sec-18",
+  "domain": "secure",
+  "topic": "Threat detection services",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una empresa quiere detectar actividad anómala en sus cuentas, como llamadas inusuales a la API o instancias EC2 comunicándose con dominios maliciosos, y además necesita ver los findings de seguridad consolidados de varios servicios en un solo panel. ¿Qué DOS servicios debe habilitar? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Amazon GuardDuty"
+   },
+   {
+    "id": "B",
+    "text": "Amazon Macie"
+   },
+   {
+    "id": "C",
+    "text": "AWS Security Hub"
+   },
+   {
+    "id": "D",
+    "text": "AWS Artifact"
+   },
+   {
+    "id": "E",
+    "text": "AWS Trusted Advisor con comprobaciones de costos"
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "explanation": "GuardDuty analiza CloudTrail, VPC Flow Logs y DNS para detectar amenazas. Security Hub agrega y normaliza findings de GuardDuty, Inspector, Macie y otros en un panel central.",
+  "distractors": {
+   "B": "Macie descubre datos sensibles en S3, no detecta llamadas anómalas ni comunicación con dominios maliciosos.",
+   "D": "AWS Artifact ofrece informes de cumplimiento y acuerdos, no detecta amenazas.",
+   "E": "Las comprobaciones de costos de Trusted Advisor no detectan actividad maliciosa."
   },
-  {
-    "id": "sec-19",
-    "domain": "secure",
-    "topic": "IAM least privilege",
-    "type": "multi",
-    "choose": 2,
-    "stem": "Un equipo de desarrollo necesita crear roles IAM para sus aplicaciones, pero el equipo de seguridad debe evitar que esos roles tengan más permisos que los definidos por la empresa, aunque el desarrollador pueda adjuntar políticas. ¿Qué DOS acciones combinadas lo logran? Elige DOS.",
-    "options": [
-      {
-        "id": "A",
-        "text": "Exigir que los roles creados incluyan una permissions boundary definida por seguridad mediante una condición en la política del desarrollador"
-      },
-      {
-        "id": "B",
-        "text": "Conceder al desarrollador la política administrada AdministratorAccess"
-      },
-      {
-        "id": "C",
-        "text": "Desactivar AWS CloudTrail para reducir permisos"
-      },
-      {
-        "id": "D",
-        "text": "Permitir al desarrollador iam:CreateRole e iam:AttachRolePolicy solo si se establece la permissions boundary indicada"
-      },
-      {
-        "id": "E",
-        "text": "Eliminar la política de confianza de los roles creados"
-      }
-    ],
-    "answer": [
-      "A",
-      "D"
-    ],
-    "explanation": "Se delega la creación de roles condicionando iam:CreateRole y iam:AttachRolePolicy a que se aplique una permissions boundary específica; así los roles nunca superan el límite definido, aunque el desarrollador adjunte políticas.",
-    "distractors": {
-      "B": "AdministratorAccess permite saltarse cualquier límite y es lo contrario del mínimo privilegio.",
-      "C": "Desactivar CloudTrail elimina auditoría y no limita permisos.",
-      "E": "Quitar la trust policy dejaría los roles inutilizables y no limita sus permisos."
-    },
-    "difficulty": 3
+  "difficulty": 2
+ },
+ {
+  "id": "sec-19",
+  "domain": "secure",
+  "topic": "IAM least privilege",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Un equipo de desarrollo necesita crear roles IAM para sus aplicaciones, pero el equipo de seguridad debe evitar que esos roles tengan más permisos que los definidos por la empresa, aunque el desarrollador pueda adjuntar políticas. ¿Qué DOS acciones combinadas lo logran? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Exigir que los roles creados incluyan una permissions boundary definida por seguridad mediante una condición en la política del desarrollador"
+   },
+   {
+    "id": "B",
+    "text": "Conceder al desarrollador la managed policy AdministratorAccess"
+   },
+   {
+    "id": "C",
+    "text": "Desactivar AWS CloudTrail para reducir permisos"
+   },
+   {
+    "id": "D",
+    "text": "Permitir al desarrollador iam:CreateRole e iam:AttachRolePolicy solo si se establece la permissions boundary indicada"
+   },
+   {
+    "id": "E",
+    "text": "Eliminar la trust policy de los roles creados"
+   }
+  ],
+  "answer": [
+   "A",
+   "D"
+  ],
+  "explanation": "Se delega la creación de roles condicionando iam:CreateRole y iam:AttachRolePolicy a que se aplique una permissions boundary específica; así los roles nunca superan el límite definido, aunque el desarrollador adjunte políticas.",
+  "distractors": {
+   "B": "AdministratorAccess permite saltarse cualquier límite y es lo contrario del mínimo privilegio.",
+   "C": "Desactivar CloudTrail elimina auditoría y no limita permisos.",
+   "E": "Quitar la trust policy dejaría los roles inutilizables y no limita sus permisos."
   },
-  {
-    "id": "sec-20",
-    "domain": "secure",
-    "topic": "S3 data protection",
-    "type": "multi",
-    "choose": 3,
-    "stem": "Una empresa almacena documentos sensibles en Amazon S3. Debe impedir cualquier exposición pública accidental, garantizar que todos los objetos se cifren con una KMS key propia y asegurar que el acceso solo ocurra por HTTPS. ¿Qué TRES acciones cumplen los requisitos? Elige TRES.",
-    "options": [
-      {
-        "id": "A",
-        "text": "Habilitar S3 Block Public Access a nivel de cuenta"
-      },
-      {
-        "id": "B",
-        "text": "Configurar el cifrado predeterminado del bucket con SSE-KMS usando la KMS key del cliente"
-      },
-      {
-        "id": "C",
-        "text": "Añadir una ACL pública de solo lectura para auditoría"
-      },
-      {
-        "id": "D",
-        "text": "Añadir a la bucket policy un Deny cuando aws:SecureTransport sea false"
-      },
-      {
-        "id": "E",
-        "text": "Habilitar S3 Transfer Acceleration"
-      }
-    ],
-    "answer": [
-      "A",
-      "B",
-      "D"
-    ],
-    "explanation": "Block Public Access evita políticas o ACL públicas, SSE-KMS por defecto cifra los objetos con la clave del cliente y la condición aws:SecureTransport obliga a usar TLS.",
-    "distractors": {
-      "C": "Una ACL pública es justo lo que se quiere impedir.",
-      "E": "Transfer Acceleration mejora la velocidad de transferencia, no la seguridad ni el cifrado exigido."
-    },
-    "difficulty": 2
-  }
+  "difficulty": 3
+ },
+ {
+  "id": "sec-20",
+  "domain": "secure",
+  "topic": "S3 data protection",
+  "type": "multi",
+  "choose": 3,
+  "stem": "Una empresa almacena documentos sensibles en Amazon S3. Debe impedir cualquier exposición pública accidental, garantizar que todos los objetos se cifren con una KMS key propia y asegurar que el acceso solo ocurra por HTTPS. ¿Qué TRES acciones cumplen los requisitos? Elige TRES.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Habilitar S3 Block Public Access a nivel de cuenta"
+   },
+   {
+    "id": "B",
+    "text": "Configurar el default encryption del bucket con SSE-KMS usando la KMS key del cliente"
+   },
+   {
+    "id": "C",
+    "text": "Añadir una ACL pública de solo lectura para auditoría"
+   },
+   {
+    "id": "D",
+    "text": "Añadir a la bucket policy un Deny cuando aws:SecureTransport sea false"
+   },
+   {
+    "id": "E",
+    "text": "Habilitar S3 Transfer Acceleration"
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
+  "explanation": "Block Public Access evita políticas o ACL públicas, SSE-KMS por defecto cifra los objetos con la clave del cliente y la condición aws:SecureTransport obliga a usar TLS.",
+  "distractors": {
+   "C": "Una ACL pública es justo lo que se quiere impedir.",
+   "E": "Transfer Acceleration mejora la velocidad de transferencia, no la seguridad ni el cifrado exigido."
+  },
+  "difficulty": 2
+ }
 ]

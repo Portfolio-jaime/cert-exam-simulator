@@ -50,4 +50,11 @@ describe('scoring', () => {
     expect(r.passed).toBe(false);
     expect(r.scaled).toBe(100);
   });
+
+  it('revealed questions score as incorrect even when answered right', () => {
+    const items = [{ id: single.id, scored: true }];
+    const r = scoreAttempt(items, map, { [single.id]: ['B'] }, SAA, [single.id]);
+    expect(r.correct).toBe(0);
+    expect(r.scaled).toBe(100);
+  });
 });

@@ -11,6 +11,8 @@ export interface SessionState {
   items: ExamItem[];
   answers: Record<string, string[]>;
   flags: string[];
+  /** Ids whose answer was shown (they score as incorrect). */
+  revealed?: string[];
   index: number;
 }
 
@@ -31,7 +33,7 @@ export class ExamSession {
     // Shorter custom sets (e.g. few failed questions) scale the clock to 2 min per question.
     const limitSec = Math.min(limit, Math.max(items.length * 120, 120));
     return new ExamSession(
-      { id: `${now.toString(36)}-${Math.random().toString(36).slice(2, 8)}`, exam: exam.id, mode, startedAt: now, limitSec, items, answers: {}, flags: [], index: 0 },
+      { id: `${now.toString(36)}-${Math.random().toString(36).slice(2, 8)}`, exam: exam.id, mode, startedAt: now, limitSec, items, answers: {}, flags: [], revealed: [], index: 0 },
       bank,
     );
   }
@@ -70,6 +72,18 @@ export class ExamSession {
     this.state.flags = [...f];
   }
 
+  /** Show the correct answer for a question. The question will score as incorrect. */
+  reveal(i = this.state.index): void {
+    const id = this.state.items[i].id;
+    const r = new Set(this.state.revealed ?? []);
+    r.add(id);
+    this.state.revealed = [...r];
+  }
+
+  isRevealed(i = this.state.index): boolean {
+    return (this.state.revealed ?? []).includes(this.state.items[i].id);
+  }
+
   isAnswered(i: number): boolean {
     const q = this.question(i);
     return (this.state.answers[q.id]?.length ?? 0) > 0;
@@ -104,7 +118,8 @@ export class ExamSession {
       items: s.items,
       answers: s.answers,
       flags: s.flags,
-      result: scoreAttempt(s.items, this.bank, s.answers, examById(s.exam)),
+      revealed: s.revealed ?? [],
+      result: scoreAttempt(s.items, this.bank, s.answers, examById(s.exam), s.revealed ?? []),
     };
   }
 }

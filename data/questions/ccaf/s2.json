@@ -59,7 +59,7 @@
   "topic": "TS 3.2 Skill context: fork",
   "type": "single",
   "choose": 1,
-  "stem": "El equipo crea un skill /analyze-codebase que recorre cientos de archivos y produce un informe de dependencias muy extenso. Tras usarlo, los desarrolladores notan que la sesión principal queda saturada y Claude pierde el hilo de la tarea de refactorización en curso. ¿Qué cambio resuelve mejor el problema?",
+  "stem": "El equipo crea un skill /analyze-codebase que recorre cientos de archivos y produce un informe de dependencias muy extenso. Tras usarlo, los desarrolladores notan que la session principal queda saturada y Claude pierde el hilo de la tarea de refactorización en curso. ¿Qué cambio resuelve mejor el problema?",
   "options": [
    {
     "id": "A",
@@ -75,17 +75,17 @@
    },
    {
     "id": "D",
-    "text": "Configurar context: fork en el frontmatter de SKILL.md para ejecutarlo en un contexto de sub-agente aislado."
+    "text": "Configurar context: fork en el frontmatter de SKILL.md para ejecutarlo en un contexto de subagent aislado."
    }
   ],
   "answer": [
    "D"
   ],
-  "explanation": "TS 3.2: context: fork ejecuta el skill en un contexto de sub-agente aislado, de modo que su salida verbosa (análisis de código, exploración) no contamina la conversación principal.",
+  "explanation": "TS 3.2: context: fork ejecuta el skill en un contexto de subagent aislado, de modo que su salida verbosa (análisis de código, exploración) no contamina la conversación principal.",
   "distractors": {
    "A": "Una instrucción en CLAUDE.md es probabilística y no evita que la salida completa se acumule en el contexto principal.",
    "B": "Cambiar el alcance a nivel usuario no altera dónde se ejecuta ni dónde se acumula la salida.",
-   "C": "allowed-tools limita qué herramientas puede usar el skill, no aísla el contexto; la lectura masiva seguiría llenando la sesión."
+   "C": "allowed-tools limita qué herramientas puede usar el skill, no aísla el contexto; la lectura masiva seguiría llenando la session."
   },
   "difficulty": 2,
   "en": {
@@ -234,7 +234,7 @@
    },
    {
     "id": "D",
-    "text": "Dividir el trabajo en una sesión por formato de fecha para que no se mezclen en el contexto."
+    "text": "Dividir el trabajo en una session por formato de fecha para que no se mezclen en el contexto."
    }
   ],
   "answer": [
@@ -244,7 +244,7 @@
   "distractors": {
    "A": "El énfasis no elimina la ambigüedad de la descripción; la interpretación sigue variando.",
    "C": "La confianza autoinformada no es un proxy fiable de corrección y no define la transformación esperada.",
-   "D": "Separar sesiones no aclara las reglas de transformación ni cubre los casos límite; solo fragmenta el trabajo."
+   "D": "Separar sessions no aclara las reglas de transformación ni cubre los casos límite; solo fragmenta el trabajo."
   },
   "difficulty": 2,
   "en": {
@@ -296,7 +296,7 @@
   "explanation": "TS 3.6: -p ejecuta Claude Code de forma no interactiva evitando bloqueos, y --output-format json con --json-schema produce salida estructurada y parseable para publicar comentarios automáticamente.",
   "distractors": {
    "A": "El modo interactivo no está pensado para CI y parsear texto libre con regex es frágil.",
-   "B": "Pedir JSON en el prompt no garantiza el esquema, y redirigir stdin no es el mecanismo previsto para modo no interactivo.",
+   "B": "Pedir JSON en el prompt no garantiza el schema, y redirigir stdin no es el mecanismo previsto para modo no interactivo.",
    "C": "El modo interactivo sigue esperando entrada y exigir confirmación manual contradice la automatización del pipeline."
   },
   "difficulty": 2,
@@ -348,7 +348,7 @@
   ],
   "explanation": "TS 3.2: CLAUDE.md contiene estándares universales siempre cargados; los skills sirven para flujos específicos de una tarea que se invocan bajo demanda.",
   "distractors": {
-   "B": "Cargar flujos ocasionales siempre en CLAUDE.md consume contexto innecesario en cada sesión.",
+   "B": "Cargar flujos ocasionales siempre en CLAUDE.md consume contexto innecesario en cada session.",
    "C": "Un estándar universal en un skill depende de invocarlo y puede omitirse; debe estar siempre cargado.",
    "D": "Invierte los roles: el estándar universal no debe depender de invocación y el flujo puntual no debe ocupar contexto permanente."
   },
@@ -377,7 +377,7 @@
   "topic": "TS 3.1 @import and .claude/rules",
   "type": "multi",
   "choose": 2,
-  "stem": "El CLAUDE.md raíz de un monorepo creció a cientos de líneas mezclando pruebas, convenciones de API y despliegue, y cada paquete solo necesita una parte. Además, los desarrolladores reportan comportamientos distintos entre sesiones. ¿Qué DOS acciones resuelven mejor la situación? Elige DOS.",
+  "stem": "El CLAUDE.md raíz de un monorepo creció a cientos de líneas mezclando pruebas, convenciones de API y despliegue, y cada paquete solo necesita una parte. Además, los desarrolladores reportan comportamientos distintos entre sessions. ¿Qué DOS acciones resuelven mejor la situación? Elige DOS.",
   "options": [
    {
     "id": "A",
@@ -406,7 +406,7 @@
   ],
   "explanation": "TS 3.1: .claude/rules/ permite organizar reglas por tema en lugar de un CLAUDE.md monolítico, y @import incluye selectivamente estándares por paquete. Además, /memory ayuda a verificar qué archivos se cargaron.",
   "distractors": {
-   "B": "El nivel usuario no se comparte con el equipo y reproduce el problema de inconsistencia entre sesiones y personas.",
+   "B": "El nivel usuario no se comparte con el equipo y reproduce el problema de inconsistencia entre sessions y personas.",
    "D": "Duplicar el contenido completo aumenta el contexto irrelevante y genera divergencias de mantenimiento.",
    "E": "Pegar convenciones en cada prompt es manual, propenso a omisiones y descarta el mecanismo versionado de configuración."
   },
@@ -444,11 +444,11 @@
    },
    {
     "id": "B",
-    "text": "Aumentar la ventana de contexto y confiar en que el modelo ignore los campos irrelevantes."
+    "text": "Aumentar la context window y confiar en que el modelo ignore los campos irrelevantes."
    },
    {
     "id": "C",
-    "text": "Recortar la salida de la herramienta a los campos relevantes antes de que se acumule en el contexto."
+    "text": "Recortar el tool output a los campos relevantes antes de que se acumule en el contexto."
    },
    {
     "id": "D",
@@ -458,7 +458,7 @@
   "answer": [
    "C"
   ],
-  "explanation": "TS 5.1: los resultados de herramientas se acumulan y consumen tokens desproporcionadamente; conviene recortarlos a los campos relevantes antes de que lleguen al contexto.",
+  "explanation": "TS 5.1: los tool results se acumulan y consumen tokens desproporcionadamente; conviene recortarlos a los campos relevantes antes de que lleguen al contexto.",
   "distractors": {
    "A": "El resumen posterior ya consumió el contexto con la salida completa y además puede perder valores numéricos o fechas.",
    "B": "Más contexto no evita el ruido ni el efecto de información relevante perdida entre contenido irrelevante.",
@@ -489,7 +489,7 @@
   "topic": "TS 5.4 Scratchpad files",
   "type": "single",
   "choose": 1,
-  "stem": "Durante una larga sesión de exploración de un repositorio grande, Claude empieza a responder con 'patrones típicos' en lugar de citar las clases concretas que había descubierto horas antes, y sus respuestas se vuelven inconsistentes. ¿Qué práctica mitiga mejor esta degradación?",
+  "stem": "Durante una larga session de exploración de un repositorio grande, Claude empieza a responder con 'patrones típicos' en lugar de citar las clases concretas que había descubierto horas antes, y sus respuestas se vuelven inconsistentes. ¿Qué práctica mitiga mejor esta degradación?",
   "options": [
    {
     "id": "A",
@@ -501,7 +501,7 @@
    },
    {
     "id": "C",
-    "text": "Continuar la sesión sin cambios y verificar manualmente cada respuesta contra el código."
+    "text": "Continuar la session sin cambios y verificar manualmente cada respuesta contra el código."
    },
    {
     "id": "D",
@@ -511,7 +511,7 @@
   "answer": [
    "A"
   ],
-  "explanation": "TS 5.4: los scratchpad files persisten hallazgos clave a través de los límites de contexto y contrarrestan la degradación en sesiones extensas, permitiendo referenciar hechos concretos en vez de patrones genéricos.",
+  "explanation": "TS 5.4: los scratchpad files persisten hallazgos clave a través de los límites de contexto y contrarrestan la degradación en sessions extensas, permitiendo referenciar hechos concretos en vez de patrones genéricos.",
   "distractors": {
    "B": "Una instrucción de atención no repone información que ya se degradó en un contexto extenso.",
    "C": "No corrige la causa y traslada al desarrollador el costo de verificar todo manualmente.",
@@ -595,11 +595,11 @@
   "topic": "TS 5.4 /compact and subagent delegation",
   "type": "multi",
   "choose": 2,
-  "stem": "En una sesión larga de exploración de un servicio heredado, el contexto se está llenando con salida verbosa de búsquedas y lecturas de archivos, y aún falta una fase de análisis de pruebas. ¿Qué DOS acciones preservan mejor la capacidad de coordinación de la sesión principal? Elige DOS.",
+  "stem": "En una session larga de exploración de un servicio heredado, el contexto se está llenando con salida verbosa de búsquedas y lecturas de archivos, y aún falta una fase de análisis de pruebas. ¿Qué DOS acciones preservan mejor la capacidad de coordinación de la session principal? Elige DOS.",
   "options": [
    {
     "id": "A",
-    "text": "Delegar preguntas específicas (por ejemplo, localizar todos los archivos de prueba) a subagentes que devuelvan solo un resumen."
+    "text": "Delegar preguntas específicas (por ejemplo, localizar todos los archivos de prueba) a subagents que devuelvan solo un resumen."
    },
    {
     "id": "B",
@@ -611,7 +611,7 @@
    },
    {
     "id": "D",
-    "text": "Continuar en la misma sesión sin intervenir hasta que el contexto se agote y luego empezar de cero sin notas."
+    "text": "Continuar en la misma session sin intervenir hasta que el contexto se agote y luego empezar de cero sin notas."
    },
    {
     "id": "E",
@@ -622,7 +622,7 @@
    "A",
    "C"
   ],
-  "explanation": "TS 5.4: la delegación a subagentes aísla la exploración verbosa mientras el agente principal coordina, y /compact reduce el contexto cuando se llena de salida de descubrimiento.",
+  "explanation": "TS 5.4: la delegación a subagents aísla la exploración verbosa mientras el agente principal coordina, y /compact reduce el contexto cuando se llena de salida de descubrimiento.",
   "distractors": {
    "B": "Reinsertar toda la salida agrava la saturación en lugar de reducirla.",
    "D": "Esperar al agotamiento pierde hallazgos sin registro; faltan scratchpad files o resúmenes que persistan el estado.",

@@ -1,480 +1,480 @@
 [
-  {
-    "id": "cost-01",
-    "domain": "cost",
-    "topic": "Compute Savings Plans",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una empresa ejecuta una flota estable de instancias m5 en EC2, funciones Lambda y algunas tareas en AWS Fargate. Durante el próximo año planea migrar parte de la flota a otras familias de instancias y a instancias Graviton. Quiere un descuento sobre un gasto por hora comprometido a 1 año. ¿Qué opción ofrece el MAYOR ahorro conservando flexibilidad?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Comprar Compute Savings Plans a 1 año por el gasto base por hora"
-      },
-      {
-        "id": "B",
-        "text": "Comprar EC2 Instance Savings Plans para la familia m5 en la Región actual"
-      },
-      {
-        "id": "C",
-        "text": "Comprar Standard Reserved Instances para m5 con pago total anticipado"
-      },
-      {
-        "id": "D",
-        "text": "Usar solo instancias On-Demand y revisar la factura mensualmente"
-      }
-    ],
-    "answer": [
-      "A"
-    ],
-    "explanation": "Compute Savings Plans se aplican automáticamente a EC2 de cualquier familia, tamaño, Región o sistema operativo, y también a Fargate y Lambda. Es el plan adecuado cuando la arquitectura va a cambiar durante el compromiso.",
-    "distractors": {
-      "B": "Un EC2 Instance Savings Plan queda atado a una familia y Región, por lo que perdería ahorro al migrar de m5 y no cubre Fargate ni Lambda.",
-      "C": "Las Standard Reserved Instances son específicas de familia y no cubren Lambda ni Fargate, con la menor flexibilidad.",
-      "D": "On-Demand no ofrece ningún descuento por compromiso, así que es la opción más cara."
-    },
-    "difficulty": 2
+ {
+  "id": "cost-01",
+  "domain": "cost",
+  "topic": "Compute Savings Plans",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa ejecuta una flota estable de instancias m5 en EC2, funciones Lambda y algunas tareas en AWS Fargate. Durante el próximo año planea migrar parte de la flota a otras familias de instancias y a instancias Graviton. Quiere un descuento sobre un gasto por hora comprometido a 1 año. ¿Qué opción ofrece el MAYOR ahorro conservando flexibilidad?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Comprar Compute Savings Plans a 1 año por el gasto base por hora"
+   },
+   {
+    "id": "B",
+    "text": "Comprar EC2 Instance Savings Plans para la familia m5 en la Region actual"
+   },
+   {
+    "id": "C",
+    "text": "Comprar Standard Reserved Instances para m5 con pago All Upfront"
+   },
+   {
+    "id": "D",
+    "text": "Usar solo instancias On-Demand y revisar la factura mensualmente"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "Compute Savings Plans se aplican automáticamente a EC2 de cualquier familia, tamaño, Region o sistema operativo, y también a Fargate y Lambda. Es el plan adecuado cuando la arquitectura va a cambiar durante el compromiso.",
+  "distractors": {
+   "B": "Un EC2 Instance Savings Plan queda atado a una familia y Region, por lo que perdería ahorro al migrar de m5 y no cubre Fargate ni Lambda.",
+   "C": "Las Standard Reserved Instances son específicas de familia y no cubren Lambda ni Fargate, con la menor flexibilidad.",
+   "D": "On-Demand no ofrece ningún descuento por compromiso, así que es la opción más cara."
   },
-  {
-    "id": "cost-02",
-    "domain": "cost",
-    "topic": "S3 lifecycle minimum duration",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una aplicación genera archivos de log en Amazon S3 que se consultan con frecuencia durante los primeros 7 días, casi nunca después, y deben eliminarse al cumplirse 20 días. Un ingeniero propone transicionar los objetos a otra clase de almacenamiento a los 7 días. ¿Qué configuración de lifecycle es la MÁS rentable?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Transicionar a S3 Standard-IA a los 7 días y expirar a los 20 días"
-      },
-      {
-        "id": "B",
-        "text": "Mantener los objetos en S3 Standard y configurar una regla de expiración a los 20 días"
-      },
-      {
-        "id": "C",
-        "text": "Transicionar a S3 Glacier Flexible Retrieval a los 7 días y expirar a los 20 días"
-      },
-      {
-        "id": "D",
-        "text": "Transicionar a S3 One Zone-IA a los 7 días y expirar a los 20 días"
-      }
-    ],
-    "answer": [
-      "B"
-    ],
-    "explanation": "Las clases Standard-IA y One Zone-IA cobran una duración mínima de 30 días y Glacier Flexible Retrieval de 90 días. Como los objetos se eliminan a los 20 días, cualquier transición generaría cargos por días no usados, además de cargos por transición; dejarlos en Standard es más barato.",
-    "distractors": {
-      "A": "Standard-IA cobra un mínimo de 30 días de almacenamiento, así que se pagaría hasta el día 37 aunque el objeto se elimine antes, más la solicitud de transición.",
-      "C": "Glacier Flexible Retrieval tiene una duración mínima de 90 días y cargos por transición, por lo que el costo total sería mayor.",
-      "D": "One Zone-IA también tiene un mínimo de 30 días y cargo por transición, anulando cualquier ahorro."
-    },
-    "difficulty": 2
+  "difficulty": 2
+ },
+ {
+  "id": "cost-02",
+  "domain": "cost",
+  "topic": "S3 lifecycle minimum duration",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación genera archivos de log en Amazon S3 que se consultan con frecuencia durante los primeros 7 días, casi nunca después, y deben eliminarse al cumplirse 20 días. Un ingeniero propone transicionar los objetos a otra storage class a los 7 días. ¿Qué configuración de lifecycle es la MÁS rentable?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Transicionar a S3 Standard-IA a los 7 días y expirar a los 20 días"
+   },
+   {
+    "id": "B",
+    "text": "Mantener los objetos en S3 Standard y configurar una regla de expiración a los 20 días"
+   },
+   {
+    "id": "C",
+    "text": "Transicionar a S3 Glacier Flexible Retrieval a los 7 días y expirar a los 20 días"
+   },
+   {
+    "id": "D",
+    "text": "Transicionar a S3 One Zone-IA a los 7 días y expirar a los 20 días"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "Las storage classes Standard-IA y One Zone-IA cobran una duración mínima de 30 días y Glacier Flexible Retrieval de 90 días. Como los objetos se eliminan a los 20 días, cualquier transición generaría cargos por días no usados, además de cargos por transición; dejarlos en Standard es más barato.",
+  "distractors": {
+   "A": "Standard-IA cobra un mínimo de 30 días de almacenamiento, así que se pagaría hasta el día 37 aunque el objeto se elimine antes, más la solicitud de transición.",
+   "C": "Glacier Flexible Retrieval tiene una duración mínima de 90 días y cargos por transición, por lo que el costo total sería mayor.",
+   "D": "One Zone-IA también tiene un mínimo de 30 días y cargo por transición, anulando cualquier ahorro."
   },
-  {
-    "id": "cost-03",
-    "domain": "cost",
-    "topic": "S3 Intelligent-Tiering",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una startup almacena millones de imágenes de usuarios en S3 Standard. Los patrones de acceso son impredecibles: algunas imágenes se vuelven populares meses después de subirse. El equipo no quiere gestionar reglas de lifecycle ni pagar cargos por recuperación al acceder a datos antiguos. ¿Qué solución MINIMIZA el costo con el menor esfuerzo operativo?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Regla de lifecycle que mueve todo a S3 Standard-IA a los 30 días"
-      },
-      {
-        "id": "B",
-        "text": "Regla de lifecycle que mueve todo a S3 Glacier Flexible Retrieval a los 30 días"
-      },
-      {
-        "id": "C",
-        "text": "Almacenar los objetos en la clase S3 Intelligent-Tiering"
-      },
-      {
-        "id": "D",
-        "text": "Mover los objetos a S3 One Zone-IA desde el inicio"
-      }
-    ],
-    "answer": [
-      "C"
-    ],
-    "explanation": "S3 Intelligent-Tiering mueve automáticamente los objetos entre niveles de acceso según su uso, sin cargos de recuperación y sin gestión de reglas; solo cobra una pequeña tarifa de monitoreo y automatización por objeto. Es ideal para patrones impredecibles.",
-    "distractors": {
-      "A": "Standard-IA cobra por GB recuperado, lo cual penaliza a las imágenes que se vuelven populares después de moverse.",
-      "B": "Glacier Flexible Retrieval exige restaurar objetos antes de leerlos, algo inviable para imágenes servidas a usuarios.",
-      "D": "One Zone-IA almacena en una sola AZ, reduce la resiliencia y también cobra por recuperación."
-    },
-    "difficulty": 2
+  "difficulty": 2
+ },
+ {
+  "id": "cost-03",
+  "domain": "cost",
+  "topic": "S3 Intelligent-Tiering",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una startup almacena millones de imágenes de usuarios en S3 Standard. Los patrones de acceso son impredecibles: algunas imágenes se vuelven populares meses después de subirse. El equipo no quiere gestionar reglas de lifecycle ni pagar cargos por recuperación al acceder a datos antiguos. ¿Qué solución MINIMIZA el costo con el menor esfuerzo operativo?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Regla de lifecycle que mueve todo a S3 Standard-IA a los 30 días"
+   },
+   {
+    "id": "B",
+    "text": "Regla de lifecycle que mueve todo a S3 Glacier Flexible Retrieval a los 30 días"
+   },
+   {
+    "id": "C",
+    "text": "Almacenar los objetos en la clase S3 Intelligent-Tiering"
+   },
+   {
+    "id": "D",
+    "text": "Mover los objetos a S3 One Zone-IA desde el inicio"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "S3 Intelligent-Tiering mueve automáticamente los objetos entre access tiers según su uso, sin cargos de recuperación y sin gestión de reglas; solo cobra una pequeña tarifa de monitoreo y automatización por objeto. Es ideal para patrones impredecibles.",
+  "distractors": {
+   "A": "Standard-IA cobra por GB recuperado, lo cual penaliza a las imágenes que se vuelven populares después de moverse.",
+   "B": "Glacier Flexible Retrieval exige restaurar objetos antes de leerlos, algo inviable para imágenes servidas a usuarios.",
+   "D": "One Zone-IA almacena en una sola AZ, reduce la resiliencia y también cobra por recuperación."
   },
-  {
-    "id": "cost-04",
-    "domain": "cost",
-    "topic": "NAT Gateway vs VPC endpoints",
-    "type": "single",
-    "choose": 1,
-    "stem": "Instancias EC2 en subredes privadas suben cientos de GB diarios a un bucket de S3 en la misma Región a través de un NAT Gateway. La factura muestra altos cargos por procesamiento de datos del NAT Gateway. ¿Qué cambio reduce el costo con el MENOR esfuerzo?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Crear un interface VPC endpoint para S3 en cada AZ"
-      },
-      {
-        "id": "B",
-        "text": "Agregar un segundo NAT Gateway en otra AZ para repartir el tráfico"
-      },
-      {
-        "id": "C",
-        "text": "Reemplazar el NAT Gateway por una NAT instance más pequeña"
-      },
-      {
-        "id": "D",
-        "text": "Crear un gateway VPC endpoint para S3 y agregarlo a las tablas de rutas de las subredes privadas"
-      }
-    ],
-    "answer": [
-      "D"
-    ],
-    "explanation": "El gateway VPC endpoint para S3 no tiene costo por hora ni por datos procesados, y el tráfico deja de pasar por el NAT Gateway. Solo requiere agregar la ruta a las tablas de rutas.",
-    "distractors": {
-      "A": "Un interface endpoint genera cargos por hora y por GB procesado; para S3 el gateway endpoint es gratuito y más barato.",
-      "B": "Un segundo NAT Gateway añade cargos por hora y sigue cobrando por GB procesado, aumentando el costo.",
-      "C": "Una NAT instance exige administración y dimensionamiento, y el tráfico seguiría saliendo por NAT en lugar de usar la red privada de AWS."
-    },
-    "difficulty": 2
+  "difficulty": 2
+ },
+ {
+  "id": "cost-04",
+  "domain": "cost",
+  "topic": "NAT Gateway vs VPC endpoints",
+  "type": "single",
+  "choose": 1,
+  "stem": "Instancias EC2 en private subnets suben cientos de GB diarios a un bucket de S3 en la misma Region a través de un NAT Gateway. La factura muestra altos cargos por procesamiento de datos del NAT Gateway. ¿Qué cambio reduce el costo con el MENOR esfuerzo?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Crear un interface VPC endpoint para S3 en cada AZ"
+   },
+   {
+    "id": "B",
+    "text": "Agregar un segundo NAT Gateway en otra AZ para repartir el tráfico"
+   },
+   {
+    "id": "C",
+    "text": "Reemplazar el NAT Gateway por una NAT instance más pequeña"
+   },
+   {
+    "id": "D",
+    "text": "Crear un gateway VPC endpoint para S3 y agregarlo a las route tables de las private subnets"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "El gateway VPC endpoint para S3 no tiene costo por hora ni por datos procesados, y el tráfico deja de pasar por el NAT Gateway. Solo requiere agregar la ruta a las route tables.",
+  "distractors": {
+   "A": "Un interface endpoint genera cargos por hora y por GB procesado; para S3 el gateway endpoint es gratuito y más barato.",
+   "B": "Un segundo NAT Gateway añade cargos por hora y sigue cobrando por GB procesado, aumentando el costo.",
+   "C": "Una NAT instance exige administración y dimensionamiento, y el tráfico seguiría saliendo por NAT en lugar de usar la red privada de AWS."
   },
-  {
-    "id": "cost-05",
-    "domain": "cost",
-    "topic": "Cost Anomaly Detection",
-    "type": "single",
-    "choose": 1,
-    "stem": "Un equipo de FinOps quiere ser notificado cuando el gasto de un servicio o cuenta se desvíe inesperadamente del patrón histórico, por ejemplo por un recurso olvidado que genera costos elevados. No quieren definir umbrales fijos para cada servicio. ¿Qué servicio deben usar?",
-    "options": [
-      {
-        "id": "A",
-        "text": "AWS Cost Anomaly Detection con suscripciones de alerta"
-      },
-      {
-        "id": "B",
-        "text": "AWS Budgets con un presupuesto mensual fijo"
-      },
-      {
-        "id": "C",
-        "text": "AWS Cost and Usage Report entregado a Amazon S3"
-      },
-      {
-        "id": "D",
-        "text": "Cost Explorer con el reporte de cobertura de Reserved Instances"
-      }
-    ],
-    "answer": [
-      "A"
-    ],
-    "explanation": "AWS Cost Anomaly Detection usa machine learning para identificar gasto atípico por servicio, cuenta, etiqueta de costo o categoría, y envía alertas por SNS o correo sin umbrales manuales.",
-    "distractors": {
-      "B": "Un presupuesto fijo alerta al cruzar un umbral definido manualmente, no detecta desviaciones respecto al patrón histórico.",
-      "C": "El CUR entrega datos detallados de uso y costo, pero por sí solo no detecta ni notifica anomalías.",
-      "D": "El reporte de cobertura de RI mide qué parte del uso está cubierta por reservas, no detecta gasto inesperado."
-    },
-    "difficulty": 1
+  "difficulty": 2
+ },
+ {
+  "id": "cost-05",
+  "domain": "cost",
+  "topic": "Cost Anomaly Detection",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un equipo de FinOps quiere ser notificado cuando el gasto de un servicio o cuenta se desvíe inesperadamente del patrón histórico, por ejemplo por un recurso olvidado que genera costos elevados. No quieren definir umbrales fijos para cada servicio. ¿Qué servicio deben usar?",
+  "options": [
+   {
+    "id": "A",
+    "text": "AWS Cost Anomaly Detection con suscripciones de alerta"
+   },
+   {
+    "id": "B",
+    "text": "AWS Budgets con un budget mensual fijo"
+   },
+   {
+    "id": "C",
+    "text": "AWS Cost and Usage Report entregado a Amazon S3"
+   },
+   {
+    "id": "D",
+    "text": "Cost Explorer con el reporte de cobertura de Reserved Instances"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "AWS Cost Anomaly Detection usa machine learning para identificar gasto atípico por servicio, cuenta, cost allocation tag o cost category, y envía alertas por SNS o correo sin umbrales manuales.",
+  "distractors": {
+   "B": "Un budget fijo alerta al cruzar un umbral definido manualmente, no detecta desviaciones respecto al patrón histórico.",
+   "C": "El CUR entrega datos detallados de uso y costo, pero por sí solo no detecta ni notifica anomalías.",
+   "D": "El reporte de cobertura de RI mide qué parte del uso está cubierta por reservas, no detecta gasto inesperado."
   },
-  {
-    "id": "cost-06",
-    "domain": "cost",
-    "topic": "Compute Optimizer right-sizing",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una empresa sospecha que muchas de sus instancias EC2 están sobredimensionadas, con CPU y memoria muy poco utilizadas. Quiere recomendaciones concretas de tipos de instancia más pequeños o más baratos basadas en métricas de uso reales, sin construir herramientas propias. ¿Qué debe hacer?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Revisar el reporte de Reserved Instance utilization en Cost Explorer"
-      },
-      {
-        "id": "B",
-        "text": "Activar AWS Compute Optimizer y revisar sus recomendaciones de right-sizing"
-      },
-      {
-        "id": "C",
-        "text": "Crear presupuestos en AWS Budgets para cada instancia"
-      },
-      {
-        "id": "D",
-        "text": "Habilitar S3 Storage Lens en la organización"
-      }
-    ],
-    "answer": [
-      "B"
-    ],
-    "explanation": "AWS Compute Optimizer analiza métricas de CloudWatch (y memoria si se instala el CloudWatch agent) y recomienda tipos de instancia óptimos para EC2, Auto Scaling groups, EBS y Lambda. Permite reducir costos mediante right-sizing.",
-    "distractors": {
-      "A": "El reporte de utilización de RI indica cuánto de las reservas se aprovecha, pero no recomienda cambiar el tamaño de las instancias.",
-      "C": "Budgets alerta sobre gasto, no analiza el uso de CPU ni memoria ni propone tipos de instancia.",
-      "D": "S3 Storage Lens ofrece métricas de almacenamiento de S3 y no tiene relación con el dimensionamiento de EC2."
-    },
-    "difficulty": 1
+  "difficulty": 1
+ },
+ {
+  "id": "cost-06",
+  "domain": "cost",
+  "topic": "Compute Optimizer right-sizing",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa sospecha que muchas de sus instancias EC2 están sobredimensionadas, con CPU y memoria muy poco utilizadas. Quiere recomendaciones concretas de tipos de instancia más pequeños o más baratos basadas en métricas de uso reales, sin construir herramientas propias. ¿Qué debe hacer?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Revisar el reporte de Reserved Instance utilization en Cost Explorer"
+   },
+   {
+    "id": "B",
+    "text": "Activar AWS Compute Optimizer y revisar sus recomendaciones de right-sizing"
+   },
+   {
+    "id": "C",
+    "text": "Crear budgets en AWS Budgets para cada instancia"
+   },
+   {
+    "id": "D",
+    "text": "Habilitar S3 Storage Lens en la organización"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "AWS Compute Optimizer analiza métricas de CloudWatch (y memoria si se instala el CloudWatch agent) y recomienda tipos de instancia óptimos para EC2, Auto Scaling groups, EBS y Lambda. Permite reducir costos mediante right-sizing.",
+  "distractors": {
+   "A": "El reporte de utilización de RI indica cuánto de las reservas se aprovecha, pero no recomienda cambiar el tamaño de las instancias.",
+   "C": "Budgets alerta sobre gasto, no analiza el uso de CPU ni memoria ni propone tipos de instancia.",
+   "D": "S3 Storage Lens ofrece métricas de almacenamiento de S3 y no tiene relación con el right-sizing de EC2."
   },
-  {
-    "id": "cost-07",
-    "domain": "cost",
-    "topic": "Graviton price-performance",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una API escrita en Python y empaquetada en contenedores multi-arquitectura corre en una flota de instancias EC2 basadas en x86 con carga estable. El equipo quiere reducir el costo de cómputo sin cambiar el código y sin sacrificar disponibilidad. ¿Qué opción es la MÁS adecuada?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Migrar a instancias x86 de mayor tamaño para reducir el número de instancias"
-      },
-      {
-        "id": "B",
-        "text": "Usar solo instancias Spot sin reserva de capacidad On-Demand"
-      },
-      {
-        "id": "C",
-        "text": "Migrar la flota a instancias basadas en AWS Graviton, que ofrecen mejor relación precio-rendimiento"
-      },
-      {
-        "id": "D",
-        "text": "Moverlas a Dedicated Hosts para optimizar la licencia de CPU"
-      }
-    ],
-    "answer": [
-      "C"
-    ],
-    "explanation": "Las instancias basadas en Graviton suelen ofrecer mejor precio-rendimiento que equivalentes x86. Al tratarse de Python y contenedores multi-arquitectura, la migración exige pocos o ningún cambio de código.",
-    "distractors": {
-      "A": "Instancias más grandes no reducen el costo por unidad de cómputo y pueden aumentar el desperdicio de capacidad.",
-      "B": "Usar solo Spot expone la API a interrupciones y pone en riesgo la disponibilidad que se debe conservar.",
-      "D": "Los Dedicated Hosts son más caros y solo se justifican por licencias o cumplimiento, no para una API sin esos requisitos."
-    },
-    "difficulty": 2
+  "difficulty": 1
+ },
+ {
+  "id": "cost-07",
+  "domain": "cost",
+  "topic": "Graviton price-performance",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una API escrita en Python y empaquetada en contenedores multi-arquitectura corre en una flota de instancias EC2 basadas en x86 con carga estable. El equipo quiere reducir el costo de cómputo sin cambiar el código y sin sacrificar disponibilidad. ¿Qué opción es la MÁS adecuada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Migrar a instancias x86 de mayor tamaño para reducir el número de instancias"
+   },
+   {
+    "id": "B",
+    "text": "Usar solo instancias Spot sin reserva de capacidad On-Demand"
+   },
+   {
+    "id": "C",
+    "text": "Migrar la flota a instancias basadas en AWS Graviton, que ofrecen mejor relación precio-rendimiento"
+   },
+   {
+    "id": "D",
+    "text": "Moverlas a Dedicated Hosts para optimizar la licencia de CPU"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "Las instancias basadas en Graviton suelen ofrecer mejor precio-rendimiento que equivalentes x86. Al tratarse de Python y contenedores multi-arquitectura, la migración exige pocos o ningún cambio de código.",
+  "distractors": {
+   "A": "Instancias más grandes no reducen el costo por unidad de cómputo y pueden aumentar el desperdicio de capacidad.",
+   "B": "Usar solo Spot expone la API a interrupciones y pone en riesgo la disponibilidad que se debe conservar.",
+   "D": "Los Dedicated Hosts son más caros y solo se justifican por licencias o cumplimiento, no para una API sin esos requisitos."
   },
-  {
-    "id": "cost-08",
-    "domain": "cost",
-    "topic": "EBS gp3 vs gp2",
-    "type": "single",
-    "choose": 1,
-    "stem": "Un equipo aprovisionó volúmenes EBS gp2 de 1 TB en varias instancias solo para alcanzar 3.000 IOPS, aunque los datos ocupan menos de 200 GB. Quieren reducir el costo de almacenamiento sin afectar el rendimiento ni detener las aplicaciones. ¿Qué acción es la MÁS rentable?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Cambiar a volúmenes io2 con 3.000 IOPS aprovisionados"
-      },
-      {
-        "id": "B",
-        "text": "Cambiar a volúmenes st1 de 1 TB"
-      },
-      {
-        "id": "C",
-        "text": "Mantener gp2 y añadir más volúmenes en RAID 0"
-      },
-      {
-        "id": "D",
-        "text": "Migrar a gp3 con Elastic Volumes y reducir el tamaño provisionado a lo necesario"
-      }
-    ],
-    "answer": [
-      "D"
-    ],
-    "explanation": "gp3 tiene un precio por GB menor que gp2 y ofrece 3.000 IOPS y 125 MiB/s de base independientemente del tamaño, por lo que ya no hace falta sobredimensionar para obtener IOPS. Elastic Volumes permite cambiar el tipo en línea.",
-    "distractors": {
-      "A": "io2 es de mayor costo y se justifica para necesidades de IOPS muy altas o durabilidad superior, no para 3.000 IOPS.",
-      "B": "st1 es HDD optimizado para throughput secuencial, no para cargas con IOPS y no puede usarse como volumen de arranque.",
-      "C": "Agregar volúmenes aumenta el costo y la complejidad; gp3 resuelve el requisito de IOPS directamente."
-    },
-    "difficulty": 2
+  "difficulty": 2
+ },
+ {
+  "id": "cost-08",
+  "domain": "cost",
+  "topic": "EBS gp3 vs gp2",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un equipo aprovisionó volúmenes EBS gp2 de 1 TB en varias instancias solo para alcanzar 3.000 IOPS, aunque los datos ocupan menos de 200 GB. Quieren reducir el costo de almacenamiento sin afectar el rendimiento ni detener las aplicaciones. ¿Qué acción es la MÁS rentable?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Cambiar a volúmenes io2 con 3.000 IOPS aprovisionados"
+   },
+   {
+    "id": "B",
+    "text": "Cambiar a volúmenes st1 de 1 TB"
+   },
+   {
+    "id": "C",
+    "text": "Mantener gp2 y añadir más volúmenes en RAID 0"
+   },
+   {
+    "id": "D",
+    "text": "Migrar a gp3 con Elastic Volumes y reducir el tamaño provisionado a lo necesario"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "gp3 tiene un precio por GB menor que gp2 y ofrece 3.000 IOPS y 125 MiB/s de base independientemente del tamaño, por lo que ya no hace falta sobredimensionar para obtener IOPS. Elastic Volumes permite cambiar el tipo en línea.",
+  "distractors": {
+   "A": "io2 es de mayor costo y se justifica para necesidades de IOPS muy altas o durabilidad superior, no para 3.000 IOPS.",
+   "B": "st1 es HDD optimizado para throughput secuencial, no para cargas con IOPS y no puede usarse como boot volume.",
+   "C": "Agregar volúmenes aumenta el costo y la complejidad; gp3 resuelve el requisito de IOPS directamente."
   },
-  {
-    "id": "cost-09",
-    "domain": "cost",
-    "topic": "Aurora Serverless v2",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una aplicación SaaS usa una base de datos Aurora MySQL con instancias provisionadas dimensionadas para el pico, que ocurre solo unas horas al día. La carga restante es baja e impredecible. El equipo desea pagar según la capacidad realmente usada, manteniendo compatibilidad con MySQL y alta disponibilidad Multi-AZ. ¿Qué opción es la MÁS rentable?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Migrar a Aurora Serverless v2, que escala la capacidad en ACUs de forma granular"
-      },
-      {
-        "id": "B",
-        "text": "Comprar Reserved Instances para la instancia provisionada del tamaño del pico"
-      },
-      {
-        "id": "C",
-        "text": "Cambiar a una instancia de RDS for MySQL más grande en Single-AZ"
-      },
-      {
-        "id": "D",
-        "text": "Agregar más réplicas de lectura Aurora provisionadas permanentemente"
-      }
-    ],
-    "answer": [
-      "A"
-    ],
-    "explanation": "Aurora Serverless v2 ajusta la capacidad (ACUs) en incrementos pequeños según la demanda y es compatible con MySQL y con configuraciones multi-AZ, evitando pagar permanentemente por la capacidad de pico.",
-    "distractors": {
-      "B": "Reservar la capacidad pico reduce el precio unitario, pero seguiría pagando por capacidad ociosa casi todo el día.",
-      "C": "Una instancia más grande en Single-AZ aumenta el costo y elimina la alta disponibilidad requerida.",
-      "D": "Réplicas permanentes añaden costo fijo y no reducen el gasto de la capacidad ociosa."
-    },
-    "difficulty": 3
+  "difficulty": 2
+ },
+ {
+  "id": "cost-09",
+  "domain": "cost",
+  "topic": "Aurora Serverless v2",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación SaaS usa una base de datos Aurora MySQL con instancias provisionadas dimensionadas para el pico, que ocurre solo unas horas al día. La carga restante es baja e impredecible. El equipo desea pagar según la capacidad realmente usada, manteniendo compatibilidad con MySQL y high availability Multi-AZ. ¿Qué opción es la MÁS rentable?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Migrar a Aurora Serverless v2, que escala la capacidad en ACUs de forma granular"
+   },
+   {
+    "id": "B",
+    "text": "Comprar Reserved Instances para la instancia provisionada del tamaño del pico"
+   },
+   {
+    "id": "C",
+    "text": "Cambiar a una instancia de RDS for MySQL más grande en Single-AZ"
+   },
+   {
+    "id": "D",
+    "text": "Agregar más Aurora read replicas provisionadas permanentemente"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "Aurora Serverless v2 ajusta la capacidad (ACUs) en incrementos pequeños según la demanda y es compatible con MySQL y con configuraciones Multi-AZ, evitando pagar permanentemente por la capacidad de pico.",
+  "distractors": {
+   "B": "Reservar la capacidad pico reduce el precio unitario, pero seguiría pagando por capacidad ociosa casi todo el día.",
+   "C": "Una instancia más grande en Single-AZ aumenta el costo y elimina la high availability requerida.",
+   "D": "Las read replicas permanentes añaden costo fijo y no reducen el gasto de la capacidad ociosa."
   },
-  {
-    "id": "cost-10",
-    "domain": "cost",
-    "topic": "DynamoDB on-demand vs provisioned",
-    "type": "single",
-    "choose": 1,
-    "stem": "Una aplicación nueva usa una tabla de Amazon DynamoDB. El tráfico es totalmente impredecible: puede estar casi inactiva durante horas y luego recibir ráfagas intensas. El equipo no tiene datos históricos para estimar la capacidad y quiere evitar tanto la limitación como pagar por capacidad no usada. ¿Qué modo de capacidad deben elegir?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Provisioned con la capacidad máxima esperada fijada"
-      },
-      {
-        "id": "B",
-        "text": "On-demand capacity mode"
-      },
-      {
-        "id": "C",
-        "text": "Provisioned con Auto Scaling y un mínimo alto de RCU/WCU"
-      },
-      {
-        "id": "D",
-        "text": "Provisioned con reserved capacity a 3 años"
-      }
-    ],
-    "answer": [
-      "B"
-    ],
-    "explanation": "El modo on-demand cobra por solicitud de lectura y escritura y absorbe tráfico variable sin planificar capacidad. Es la opción adecuada para cargas nuevas o impredecibles, ya que no se paga por capacidad ociosa.",
-    "distractors": {
-      "A": "Fijar la capacidad máxima implica pagar por capacidad ociosa casi todo el tiempo.",
-      "C": "Un mínimo alto genera costo fijo permanente y el escalado automático reacciona con retraso ante ráfagas bruscas.",
-      "D": "La capacidad reservada exige comprometer un nivel de capacidad estable, algo inadecuado para tráfico impredecible."
-    },
-    "difficulty": 2
+  "difficulty": 3
+ },
+ {
+  "id": "cost-10",
+  "domain": "cost",
+  "topic": "DynamoDB on-demand vs provisioned",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación nueva usa una tabla de Amazon DynamoDB. El tráfico es totalmente impredecible: puede estar casi inactiva durante horas y luego recibir ráfagas intensas. El equipo no tiene datos históricos para estimar la capacidad y quiere evitar tanto el throttling como pagar por capacidad no usada. ¿Qué modo de capacidad deben elegir?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Provisioned con la capacidad máxima esperada fijada"
+   },
+   {
+    "id": "B",
+    "text": "On-demand capacity mode"
+   },
+   {
+    "id": "C",
+    "text": "Provisioned con Auto Scaling y un mínimo alto de RCU/WCU"
+   },
+   {
+    "id": "D",
+    "text": "Provisioned con reserved capacity a 3 años"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "El modo on-demand cobra por solicitud de lectura y escritura y absorbe tráfico variable sin planificar capacidad. Es la opción adecuada para cargas nuevas o impredecibles, ya que no se paga por capacidad ociosa.",
+  "distractors": {
+   "A": "Fijar la capacidad máxima implica pagar por capacidad ociosa casi todo el tiempo.",
+   "C": "Un mínimo alto genera costo fijo permanente y Auto Scaling reacciona con retraso ante ráfagas bruscas.",
+   "D": "La capacidad reservada exige comprometer un nivel de capacidad estable, algo inadecuado para tráfico impredecible."
   },
-  {
-    "id": "cost-11",
-    "domain": "cost",
-    "topic": "Spot in Auto Scaling groups",
-    "type": "single",
-    "choose": 1,
-    "stem": "Un sitio web sin estado corre en un Auto Scaling group detrás de un Application Load Balancer. El tráfico necesita un mínimo garantizado de capacidad en todo momento, y el resto puede absorber interrupciones. El equipo quiere minimizar costos sin perder disponibilidad. ¿Qué configuración es la MÁS adecuada?",
-    "options": [
-      {
-        "id": "A",
-        "text": "Un launch template con todas las instancias Spot de un solo tipo"
-      },
-      {
-        "id": "B",
-        "text": "Un grupo con todas las instancias On-Demand y Standard Reserved Instances para el pico"
-      },
-      {
-        "id": "C",
-        "text": "Un mixed instances policy con capacidad base On-Demand y el resto Spot, usando varios tipos de instancia"
-      },
-      {
-        "id": "D",
-        "text": "Un grupo Spot en una sola AZ para reducir la transferencia entre AZ"
-      }
-    ],
-    "answer": [
-      "C"
-    ],
-    "explanation": "Un mixed instances policy permite una base On-Demand que garantiza la capacidad mínima y complementa con Spot de varios tipos de instancia y AZ, reduciendo el riesgo de interrupción simultánea y el costo total.",
-    "distractors": {
-      "A": "Todas las instancias Spot de un solo tipo pueden interrumpirse a la vez, perdiendo la capacidad mínima requerida.",
-      "B": "Todo On-Demand más reservas para el pico paga capacidad estable sin aprovechar el descuento de Spot para la parte tolerante.",
-      "D": "Una sola AZ reduce la disponibilidad y la diversificación de capacidad Spot, aumentando el riesgo de interrupción."
-    },
-    "difficulty": 3
+  "difficulty": 2
+ },
+ {
+  "id": "cost-11",
+  "domain": "cost",
+  "topic": "Spot in Auto Scaling groups",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un sitio web sin estado corre en un Auto Scaling group detrás de un Application Load Balancer. El tráfico necesita un mínimo garantizado de capacidad en todo momento, y el resto puede absorber interrupciones. El equipo quiere minimizar costos sin perder disponibilidad. ¿Qué configuración es la MÁS adecuada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un launch template con todas las instancias Spot de un solo tipo"
+   },
+   {
+    "id": "B",
+    "text": "Un Auto Scaling group con todas las instancias On-Demand y Standard Reserved Instances para el pico"
+   },
+   {
+    "id": "C",
+    "text": "Un mixed instances policy con capacidad base On-Demand y el resto Spot, usando varios tipos de instancia"
+   },
+   {
+    "id": "D",
+    "text": "Un Auto Scaling group Spot en una sola AZ para reducir la data transfer entre AZ"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "Un mixed instances policy permite una base On-Demand que garantiza la capacidad mínima y complementa con Spot de varios tipos de instancia y AZ, reduciendo el riesgo de interrupción simultánea y el costo total.",
+  "distractors": {
+   "A": "Todas las instancias Spot de un solo tipo pueden interrumpirse a la vez, perdiendo la capacidad mínima requerida.",
+   "B": "Todo On-Demand más reservas para el pico paga capacidad estable sin aprovechar el descuento de Spot para la parte tolerante.",
+   "D": "Una sola AZ reduce la disponibilidad y la diversificación de capacidad Spot, aumentando el riesgo de interrupción."
   },
-  {
-    "id": "cost-12",
-    "domain": "cost",
-    "topic": "Cost allocation tags",
-    "type": "multi",
-    "choose": 2,
-    "stem": "Una organización con varias cuentas quiere atribuir el gasto de AWS a cada equipo de producto en Cost Explorer y en los informes de facturación. Los recursos se crean con etiquetas como Team y Project, pero los informes no muestran el desglose por esas etiquetas, y algunos recursos se crean sin etiquetas. Elige DOS acciones para resolverlo.",
-    "options": [
-      {
-        "id": "A",
-        "text": "Crear AWS Resource Groups con el nombre del equipo, lo que agrega costos automáticamente"
-      },
-      {
-        "id": "B",
-        "text": "Activar las etiquetas Team y Project como cost allocation tags en la consola de facturación"
-      },
-      {
-        "id": "C",
-        "text": "Habilitar AWS CloudTrail para registrar quién crea los recursos y calcular el costo"
-      },
-      {
-        "id": "D",
-        "text": "Usar tag policies de AWS Organizations (y controles de IAM/SCP) para exigir las etiquetas al crear recursos"
-      },
-      {
-        "id": "E",
-        "text": "Crear un presupuesto en AWS Budgets sin filtros por cuenta"
-      }
-    ],
-    "answer": [
-      "B",
-      "D"
-    ],
-    "explanation": "Las etiquetas definidas por el usuario solo aparecen en Cost Explorer y el CUR después de activarse como cost allocation tags en Billing. Las tag policies y los controles de política ayudan a estandarizar y exigir el etiquetado para que el desglose sea completo.",
-    "distractors": {
-      "A": "Los Resource Groups organizan recursos, pero no cambian cómo se atribuyen los costos en los informes de facturación.",
-      "C": "CloudTrail registra actividad de API, no asigna costos a equipos.",
-      "E": "Un presupuesto sin filtros solo alerta sobre el gasto total y no atribuye costos a equipos."
-    },
-    "difficulty": 2
+  "difficulty": 3
+ },
+ {
+  "id": "cost-12",
+  "domain": "cost",
+  "topic": "Cost allocation tags",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una organización con varias cuentas quiere atribuir el gasto de AWS a cada equipo de producto en Cost Explorer y en los informes de facturación. Los recursos se crean con tags como Team y Project, pero los informes no muestran el desglose por esas tags, y algunos recursos se crean sin tags. Elige DOS acciones para resolverlo.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Crear AWS Resource Groups con el nombre del equipo, lo que agrega costos automáticamente"
+   },
+   {
+    "id": "B",
+    "text": "Activar las tags Team y Project como cost allocation tags en la consola de facturación"
+   },
+   {
+    "id": "C",
+    "text": "Habilitar AWS CloudTrail para registrar quién crea los recursos y calcular el costo"
+   },
+   {
+    "id": "D",
+    "text": "Usar tag policies de AWS Organizations para estandarizar las keys y valores de las tags, y SCP o políticas de IAM con la condición aws:RequestTag para exigirlas al crear recursos"
+   },
+   {
+    "id": "E",
+    "text": "Crear un budget en AWS Budgets sin filtros por cuenta"
+   }
+  ],
+  "answer": [
+   "B",
+   "D"
+  ],
+  "explanation": "Las tags definidas por el usuario solo aparecen en Cost Explorer y el CUR después de activarse como cost allocation tags en Billing. Las tag policies estandarizan keys y valores, mientras que las SCP o políticas de IAM con aws:RequestTag exigen que la tag exista al crear el recurso, para que el desglose sea completo.",
+  "distractors": {
+   "A": "Los Resource Groups organizan recursos, pero no cambian cómo se atribuyen los costos en los informes de facturación.",
+   "C": "CloudTrail registra actividad de API, no asigna costos a equipos.",
+   "E": "Un budget sin filtros solo alerta sobre el gasto total y no atribuye costos a equipos."
   },
-  {
-    "id": "cost-13",
-    "domain": "cost",
-    "topic": "Spot Instances on Amazon EMR",
-    "type": "multi",
-    "choose": 2,
-    "stem": "Un clúster de Amazon EMR procesa un trabajo por lotes nocturno de unas dos horas que es tolerante a reintentos. Los datos de entrada y salida están en S3, y HDFS solo guarda datos temporales. El equipo quiere reducir el costo del clúster manteniendo la fiabilidad del trabajo. Elige DOS acciones.",
-    "options": [
-      {
-        "id": "A",
-        "text": "Ejecutar los nodos primary y core en Spot para maximizar el ahorro"
-      },
-      {
-        "id": "B",
-        "text": "Ejecutar los task nodes en Spot, manteniendo primary y core en On-Demand"
-      },
-      {
-        "id": "C",
-        "text": "Comprar Standard Reserved Instances a 3 años para un clúster que corre dos horas por noche"
-      },
-      {
-        "id": "D",
-        "text": "Usar Dedicated Hosts para evitar interrupciones"
-      },
-      {
-        "id": "E",
-        "text": "Configurar instance fleets con varios tipos de instancia y una estrategia de asignación como capacity-optimized"
-      }
-    ],
-    "answer": [
-      "B",
-      "E"
-    ],
-    "explanation": "Los task nodes no almacenan datos de HDFS, por lo que perderlos por una interrupción Spot es seguro, mientras primary y core se mantienen estables. Diversificar tipos de instancia con instance fleets aumenta la probabilidad de obtener capacidad Spot y reduce interrupciones.",
-    "distractors": {
-      "A": "Perder el nodo primary o los nodos core en Spot puede hacer fallar el clúster o perder datos de HDFS.",
-      "C": "Un clúster de dos horas diarias no aprovecha una reserva de 3 años y el compromiso resultaría mucho menos rentable que Spot.",
-      "D": "Los Dedicated Hosts son más costosos y no abordan el objetivo de reducir el costo de un lote tolerante a reintentos."
-    },
-    "difficulty": 3
-  }
+  "difficulty": 2
+ },
+ {
+  "id": "cost-13",
+  "domain": "cost",
+  "topic": "Spot Instances on Amazon EMR",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Un cluster de Amazon EMR procesa un batch job nocturno de unas dos horas que es tolerante a reintentos. Los datos de entrada y salida están en S3, y HDFS solo guarda datos temporales. El equipo quiere reducir el costo del cluster manteniendo la fiabilidad del trabajo. Elige DOS acciones.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Ejecutar los nodos primary y core en Spot para maximizar el ahorro"
+   },
+   {
+    "id": "B",
+    "text": "Ejecutar los task nodes en Spot, manteniendo primary y core en On-Demand"
+   },
+   {
+    "id": "C",
+    "text": "Comprar Standard Reserved Instances a 3 años para un cluster que corre dos horas por noche"
+   },
+   {
+    "id": "D",
+    "text": "Usar Dedicated Hosts para evitar interrupciones"
+   },
+   {
+    "id": "E",
+    "text": "Configurar instance fleets con varios tipos de instancia y una estrategia de asignación como price-capacity-optimized"
+   }
+  ],
+  "answer": [
+   "B",
+   "E"
+  ],
+  "explanation": "Los task nodes no almacenan datos de HDFS, por lo que perderlos por una interrupción Spot es seguro, mientras primary y core se mantienen estables. Diversificar tipos de instancia con instance fleets aumenta la probabilidad de obtener capacidad Spot y reduce interrupciones.",
+  "distractors": {
+   "A": "Perder el nodo primary o los nodos core en Spot puede hacer fallar el cluster o perder datos de HDFS.",
+   "C": "Un cluster de dos horas diarias no aprovecha una reserva de 3 años y el compromiso resultaría mucho menos rentable que Spot.",
+   "D": "Los Dedicated Hosts son más costosos y no abordan el objetivo de reducir el costo de un batch tolerante a reintentos."
+  },
+  "difficulty": 3
+ }
 ]

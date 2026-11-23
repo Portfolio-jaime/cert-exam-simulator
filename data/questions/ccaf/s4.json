@@ -112,15 +112,15 @@
   "topic": "TS 2.4 MCP tool descriptions vs built-in tools",
   "type": "single",
   "choose": 1,
-  "stem": "Integraste un servidor MCP con una herramienta `search_symbols` que hace búsqueda semántica de símbolos con resultados rankeados, pero el agente sigue usando Grep para casi todo. La descripción actual de la herramienta es \"Search code\". ¿Cuál es la mejora más apropiada?",
+  "stem": "Integraste un servidor MCP con una tool `search_symbols` que hace búsqueda semántica de símbolos con resultados rankeados, pero el agente sigue usando Grep para casi todo. La descripción actual de la tool es \"Search code\". ¿Cuál es la mejora más apropiada?",
   "options": [
    {
     "id": "A",
-    "text": "Eliminar Grep del conjunto de tools para forzar el uso de la herramienta MCP en cualquier caso."
+    "text": "Eliminar Grep del conjunto de tools para forzar el uso de la MCP tool en cualquier caso."
    },
    {
     "id": "B",
-    "text": "Agregar al system prompt \"nunca uses Grep\" para sustituir la descripción de la herramienta."
+    "text": "Agregar al system prompt \"nunca uses Grep\" para sustituir la descripción de la tool."
    },
    {
     "id": "C",
@@ -128,17 +128,17 @@
    },
    {
     "id": "D",
-    "text": "Enriquecer la descripción de la herramienta MCP con sus capacidades, formato de entrada, salidas y cuándo es mejor que Grep."
+    "text": "Enriquecer la descripción de la MCP tool con sus capacidades, formato de entrada, salidas y cuándo es mejor que Grep."
    }
   ],
   "answer": [
    "D"
   ],
-  "explanation": "TS 2.4: las descripciones detalladas de herramientas MCP evitan que el agente prefiera built-in tools como Grep por no entender que la herramienta MCP es más capaz.",
+  "explanation": "TS 2.4: las descripciones detalladas de MCP tools evitan que el agente prefiera built-in tools como Grep por no entender que la MCP tool es más capaz.",
   "distractors": {
-   "A": "Quitar Grep elimina una herramienta válida para búsquedas literales y no resuelve la causa, que es una descripción pobre.",
+   "A": "Quitar Grep elimina una tool válida para búsquedas literales y no resuelve la causa, que es una descripción pobre.",
    "B": "Las instrucciones de system prompt con palabras clave pueden crear asociaciones no deseadas; la descripción es el mecanismo primario de selección.",
-   "C": "Una descripción mínima empeora la selección de herramientas similares."
+   "C": "Una descripción mínima empeora la selección de tools similares."
   },
   "difficulty": 2,
   "en": {
@@ -165,19 +165,19 @@
   "topic": "TS 2.4 MCP resources as content catalogs",
   "type": "single",
   "choose": 1,
-  "stem": "El agente explora un sistema legado con cientos de tablas y gasta muchas llamadas de herramientas solo para descubrir qué esquemas y documentos existen antes de responder. ¿Qué cambio en el servidor MCP reduce más esas llamadas exploratorias?",
+  "stem": "El agente explora un sistema legado con cientos de tablas y gasta muchas tool calls solo para descubrir qué schemas y documentos existen antes de responder. ¿Qué cambio en el servidor MCP reduce más esos tool calls exploratorios?",
   "options": [
    {
     "id": "A",
-    "text": "Agregar más herramientas MCP de listado, una por cada tipo de objeto del sistema."
+    "text": "Agregar más MCP tools de listado, una por cada tipo de objeto del sistema."
    },
    {
     "id": "B",
-    "text": "Exponer un catálogo (esquemas de base de datos, jerarquía de documentación) como MCP resources para dar visibilidad previa de lo disponible."
+    "text": "Exponer un catálogo (schemas de base de datos, jerarquía de documentación) como MCP resources para dar visibilidad previa de lo disponible."
    },
    {
     "id": "C",
-    "text": "Pasar todo el contenido de los esquemas en el system prompt en cada sesión."
+    "text": "Pasar todo el contenido de los schemas en el system prompt en cada sesión."
    },
    {
     "id": "D",
@@ -187,9 +187,9 @@
   "answer": [
    "B"
   ],
-  "explanation": "TS 2.4: los MCP resources exponen catálogos de contenido (esquemas, jerarquías de documentación, resúmenes) para que el agente vea qué hay disponible sin llamadas exploratorias.",
+  "explanation": "TS 2.4: los MCP resources exponen catálogos de contenido (schemas, jerarquías de documentación, resúmenes) para que el agente vea qué hay disponible sin tool calls exploratorios.",
   "distractors": {
-   "A": "Más herramientas aumenta la complejidad de selección y sigue requiriendo llamadas exploratorias.",
+   "A": "Más tools aumenta la complejidad de selección y sigue requiriendo tool calls exploratorios.",
    "C": "Cargar todo en el prompt desperdicia contexto y no escala con cientos de tablas.",
    "D": "Un find solo lista archivos locales, no el catálogo del sistema expuesto por el servidor, y repite la exploración."
   },
@@ -226,7 +226,7 @@
    },
    {
     "id": "B",
-    "text": "Definir `context: fork` en el frontmatter de SKILL.md para ejecutarlo en un contexto de sub-agent aislado."
+    "text": "Definir `context: fork` en el frontmatter de SKILL.md para ejecutarlo en un contexto de subagent aislado."
    },
    {
     "id": "C",
@@ -240,7 +240,7 @@
   "answer": [
    "B"
   ],
-  "explanation": "TS 3.2: `context: fork` ejecuta el skill en un sub-agent aislado, evitando que salidas verbosas (análisis de código, exploración) contaminen la conversación principal.",
+  "explanation": "TS 3.2: `context: fork` ejecuta el skill en un subagent aislado, evitando que salidas verbosas (análisis de código, exploración) contaminen la conversación principal.",
   "distractors": {
    "A": "CLAUDE.md se carga siempre y aumentaría el ruido de contexto en vez de aislarlo.",
    "C": "`argument-hint` solo guía qué parámetros pide el skill, no aísla su salida.",
@@ -564,7 +564,7 @@
   "answer": [
    "C"
   ],
-  "explanation": "TS 1.7: con resultados de herramientas obsoletos, es más fiable empezar de cero con un resumen estructurado; si se reanuda, hay que informar los cambios concretos para un re-análisis dirigido.",
+  "explanation": "TS 1.7: con tool results obsoletos, es más fiable empezar de cero con un resumen estructurado; si se reanuda, hay que informar los cambios concretos para un re-análisis dirigido.",
   "distractors": {
    "A": "El agente no sabe que los archivos cambiaron y razonará con datos obsoletos.",
    "B": "`fork_session` sirve para explorar enfoques divergentes desde una base común, no para refrescar contexto obsoleto.",
@@ -599,7 +599,7 @@
   "options": [
    {
     "id": "A",
-    "text": "Emitir varias llamadas a la tool Task en una sola respuesta del coordinador para ejecutar los subagents en paralelo."
+    "text": "Emitir varios tool calls a la tool Task en una sola respuesta del coordinador para ejecutar los subagents en paralelo."
    },
    {
     "id": "B",
@@ -607,7 +607,7 @@
    },
    {
     "id": "C",
-    "text": "Pasar a cada subagent en su prompt el contexto necesario y a la subagent de síntesis los hallazgos completos de los anteriores, con metadatos (archivo, ruta) separados del contenido."
+    "text": "Pasar a cada subagent en su prompt el contexto necesario y al subagent de síntesis los hallazgos completos de los anteriores, con metadatos (archivo, ruta) separados del contenido."
    },
    {
     "id": "D",
