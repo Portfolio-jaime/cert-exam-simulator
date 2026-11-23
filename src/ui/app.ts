@@ -76,7 +76,7 @@ function renderHome(): void {
   const saved = store.loadSession();
   const days = daysUntil(exam.date);
   const history = store.history().filter((a) => a.exam === exam.id);
-  const nameInput = h('input', { type: 'text', placeholder: T('Tu nombre (para el PDF)', 'Your name (for the PDF)'), value: store.name(), maxLength: 60 });
+  const nameInput = h('input', { type: 'text', placeholder: T('Tu nombre completo (aparecerá en el PDF)', 'Your full name (it will appear on the PDF)'), value: store.name(), maxLength: 60 });
   nameInput.oninput = () => store.setName(nameInput.value);
   const domainSel = h('select', {}, ...exam.domains.map((d) => h('option', { value: d.id }, `${d.label} (${bank.filter((q) => q.domain === d.id).length})`)));
   const failedHere = [...st.failed].filter((id) => BANK_MAP.get(id) && bank.includes(BANK_MAP.get(id)!)).length;
@@ -272,9 +272,12 @@ function renderResults(id: string): void {
   if (!a) return go('#/');
   const exam = examById(a.exam);
   const r = a.result;
-  const nameInput = h('input', { type: 'text', placeholder: T('Tu nombre (para el PDF)', 'Your name (for the PDF)'), value: store.name(), maxLength: 60 });
-  nameInput.oninput = () => store.setName(nameInput.value);
-  const pdfBtn = h('button', { class: 'primary', onclick: async () => { pdfBtn.disabled = true; await downloadPdf(a, store.name(), exam, lang()); pdfBtn.disabled = false; } },
+  const nameInput = h('input', { type: 'text', placeholder: T('Nombre completo (aparecerá en el PDF)', 'Full name (it will appear on the PDF)'), value: store.name(), maxLength: 60 });
+  const nameErr = h('p', { class: 'small', style: 'color:var(--bad);display:none;margin:6px 0 0' }, T('Escribe tu nombre para el PDF.', 'Enter your name for the PDF.'));
+  nameInput.oninput = () => { store.setName(nameInput.value); if (nameInput.value.trim()) nameErr.style.display = 'none'; };
+  const pdfBtn = h('button', { class: 'primary', onclick: async () => {
+    if (!store.name().trim()) { nameErr.style.display = 'block'; nameInput.focus(); return; }
+    pdfBtn.disabled = true; await downloadPdf(a, store.name(), exam, lang()); pdfBtn.disabled = false; } },
     certificateEligible(a) ? T('Descargar certificado PDF', 'Download certificate PDF') : T('Descargar informe PDF', 'Download report PDF'));
   const scored = exam.domains.filter((d) => r.byDomain[d.id]?.total > 0).sort((x, y) => r.byDomain[x.id].pct - r.byDomain[y.id].pct);
   const weakest = scored[0];
@@ -293,7 +296,7 @@ function renderResults(id: string): void {
         h('div', { class: 'row spread small' }, h('span', {}, d.label), h('span', {}, x.total ? `${x.correct}/${x.total} · ${x.pct} %` : T('sin preguntas', 'no questions'))),
         h('div', { class: `bar${x.total && x.pct < 70 ? ' weak' : ''}` }, h('i', { style: `width:${x.pct}%` }))); }),
       weakest && h('p', { class: 'small muted' }, T(`Dominio más débil: ${weakest.label}.`, `Weakest domain: ${weakest.label}.`))),
-    h('div', { class: 'card' }, nameInput, h('div', { class: 'row', style: 'margin-top:10px' }, pdfBtn,
+    h('div', { class: 'card' }, h('label', { class: 'small muted' }, T('Nombre para el certificado / informe', 'Name for the certificate / report')), nameInput, nameErr, h('div', { class: 'row', style: 'margin-top:10px' }, pdfBtn,
       h('button', { onclick: () => go(`#/review/${a.id}`) }, T('Ver revisión', 'View review')), h('button', { onclick: () => go('#/') }, T('Inicio', 'Home'))),
       !certificateEligible(a) && h('p', { class: 'small muted' }, T('El certificado se emite al aprobar un simulacro completo; cualquier otro intento genera un informe.', 'The certificate is issued when you pass a full simulation; any other attempt produces a report.'))));
 }
