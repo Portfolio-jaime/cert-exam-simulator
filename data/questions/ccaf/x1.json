@@ -1,0 +1,491 @@
+[
+  {
+    "id": "cca-s1-13",
+    "domain": "agentic",
+    "scenario": "s1",
+    "topic": "TS 1.1 Loop termination via stop_reason",
+    "type": "single",
+    "choose": 1,
+    "stem": "Tu agente de soporte a veces se detiene a mitad de un caso: el loop termina en cuanto la respuesta de Claude contiene un bloque de texto (por ejemplo, \"Voy a consultar tu pedido...\"), aunque esa misma respuesta incluya una solicitud de tool call. ¿Cuál es la corrección correcta del control de flujo?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Terminar el loop cuando el texto del asistente no contenga signos de interrogación, porque indica que ya no necesita más datos."
+      },
+      {
+        "id": "B",
+        "text": "Continuar mientras `stop_reason` sea \"tool_use\" (ejecutar las tools y devolver los resultados) y terminar cuando sea \"end_turn\"."
+      },
+      {
+        "id": "C",
+        "text": "Buscar en el texto frases como \"listo\" o \"resuelto\" y terminar el loop cuando aparezcan."
+      },
+      {
+        "id": "D",
+        "text": "Limitar el loop a 5 iteraciones y considerar completado el caso al llegar al límite."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "TS 1.1: la señal fiable de control es `stop_reason`. \"tool_use\" significa que Claude pidió ejecutar tools y se debe iterar; \"end_turn\" indica que terminó. La presencia de texto no indica finalización.",
+    "distractors": {
+      "A": "Inferir la terminación a partir del contenido del texto es un anti-patrón; una respuesta puede tener texto y tool calls a la vez.",
+      "C": "Parsear lenguaje natural para decidir la terminación es frágil: el modelo puede cambiar de redacción o no usar esas palabras.",
+      "D": "Un tope arbitrario de iteraciones como mecanismo principal corta casos a medias; solo debe ser una salvaguarda secundaria."
+    },
+    "difficulty": 1,
+    "en": {
+      "stem": "Your support agent sometimes stops mid-case: the loop ends as soon as Claude's response contains a text block (for example, \"I'll look up your order...\"), even though that same response also includes a tool call request. What is the correct fix to the control flow?",
+      "options": {
+        "A": "End the loop when the assistant text contains no question marks, since that means it needs no more data.",
+        "B": "Continue while `stop_reason` is \"tool_use\" (execute the tools and return the results) and terminate when it is \"end_turn\".",
+        "C": "Search the text for phrases such as \"done\" or \"resolved\" and end the loop when they appear.",
+        "D": "Cap the loop at 5 iterations and consider the case complete when the limit is reached."
+      },
+      "explanation": "TS 1.1: the reliable control signal is `stop_reason`. \"tool_use\" means Claude asked to run tools and you must iterate; \"end_turn\" means it finished. The presence of text does not indicate completion.",
+      "distractors": {
+        "A": "Inferring termination from text content is an anti-pattern; a response can contain text and tool calls at the same time.",
+        "C": "Parsing natural language to decide termination is brittle: the model may change wording or not use those words.",
+        "D": "An arbitrary iteration cap as the primary mechanism cuts cases off midway; it should only be a secondary safeguard."
+      },
+      "topic": "TS 1.1 Loop termination via stop_reason"
+    }
+  },
+  {
+    "id": "cca-s1-14",
+    "domain": "agentic",
+    "scenario": "s1",
+    "topic": "TS 1.1 Tool results in conversation history",
+    "type": "multi",
+    "choose": 2,
+    "stem": "Estás implementando el loop del agente de soporte con el Agent SDK. Para que Claude pueda razonar sobre el siguiente paso tras ejecutar `lookup_order`, ¿qué dos acciones debe hacer tu código en cada iteración? (Elige 2)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Agregar a la conversación la respuesta del asistente (con sus bloques `tool_use`) y luego un mensaje con el `tool_result` que referencia el `tool_use_id` correspondiente."
+      },
+      {
+        "id": "B",
+        "text": "Enviar en la siguiente petición solo el último `tool_result`, para ahorrar tokens y evitar ruido del historial."
+      },
+      {
+        "id": "C",
+        "text": "Ejecutar siempre en código la secuencia fija get_customer → lookup_order → process_refund, sin importar lo que Claude solicite."
+      },
+      {
+        "id": "D",
+        "text": "Devolver el resultado de la tool como un mensaje de texto del asistente resumido por tu código, en lugar de un `tool_result`."
+      },
+      {
+        "id": "E",
+        "text": "Cuando `stop_reason` sea \"end_turn\", salir del loop y presentar la respuesta final al usuario."
+      }
+    ],
+    "answer": [
+      "A",
+      "E"
+    ],
+    "explanation": "TS 1.1: los resultados de tools se añaden al historial (respuesta del asistente más `tool_result` con su id) para que el modelo incorpore la nueva información, y el loop sale cuando `stop_reason` es \"end_turn\".",
+    "distractors": {
+      "B": "Sin el historial previo y sin la solicitud `tool_use` que originó el resultado, el modelo pierde contexto y el resultado queda huérfano.",
+      "C": "Una secuencia fija impuesta por código sustituye la decisión dirigida por el modelo, que debe elegir la siguiente tool según el contexto.",
+      "D": "Los resultados deben devolverse como `tool_result` ligado al `tool_use_id`; fingirlos como texto del asistente rompe el protocolo de tool use."
+    },
+    "difficulty": 2,
+    "en": {
+      "stem": "You are implementing the support agent's loop with the Agent SDK. So that Claude can reason about the next step after running `lookup_order`, which two actions must your code perform on each iteration? (Choose 2)",
+      "options": {
+        "A": "Append the assistant response (with its `tool_use` blocks) to the conversation and then a message with the `tool_result` that references the matching `tool_use_id`.",
+        "B": "Send only the latest `tool_result` in the next request, to save tokens and avoid history noise.",
+        "C": "Always run the fixed sequence get_customer → lookup_order → process_refund in code, regardless of what Claude requests.",
+        "D": "Return the tool output as a summarized assistant text message written by your code instead of a `tool_result`.",
+        "E": "When `stop_reason` is \"end_turn\", exit the loop and present the final answer to the user."
+      },
+      "explanation": "TS 1.1: tool results are appended to the history (the assistant response plus the `tool_result` with its id) so the model can incorporate the new information, and the loop exits when `stop_reason` is \"end_turn\".",
+      "distractors": {
+        "B": "Without the prior history and the `tool_use` request that produced the result, the model loses context and the result is orphaned.",
+        "C": "A code-imposed fixed sequence replaces model-driven decisions; the model should pick the next tool from context.",
+        "D": "Results must be returned as a `tool_result` tied to the `tool_use_id`; faking them as assistant text breaks the tool use protocol."
+      },
+      "topic": "TS 1.1 Tool results in conversation history"
+    }
+  },
+  {
+    "id": "cca-s1-15",
+    "domain": "agentic",
+    "scenario": "s1",
+    "topic": "TS 1.1 Model-driven vs fixed decision tree",
+    "type": "single",
+    "choose": 1,
+    "stem": "Un compañero propone que el agente de soporte clasifique cada mensaje con un árbol de decisión en código (\"devolución\" → siempre get_customer, lookup_order, process_refund en ese orden). Pero los clientes mezclan temas: una disputa de facturación que depende de un problema de cuenta, o una devolución que no requiere ver el pedido. ¿Qué diseño es más adecuado?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Ampliar el árbol de decisión con una rama por cada combinación de temas observada en producción."
+      },
+      {
+        "id": "B",
+        "text": "Pedir a Claude en el system prompt que siempre imprima el plan completo de tools antes de empezar y ejecutarlo en ese orden."
+      },
+      {
+        "id": "C",
+        "text": "Dar a Claude las tools con descripciones claras dentro del agentic loop y dejar que decida qué llamar a continuación según el contexto y los resultados previos."
+      },
+      {
+        "id": "D",
+        "text": "Usar un clasificador separado que elija una única tool por mensaje y terminar tras ejecutarla."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "TS 1.1: en solicitudes ambiguas o mixtas conviene la toma de decisiones dirigida por el modelo, que elige la siguiente tool según el contexto, en lugar de secuencias preconfiguradas que no cubren las combinaciones reales.",
+    "distractors": {
+      "A": "Un árbol de decisión crece sin límite y siempre quedará una combinación sin rama; es la rigidez que se busca evitar.",
+      "B": "Fijar el plan por adelantado impide adaptarse a lo que devuelve cada tool, que es justo lo que cambia el siguiente paso.",
+      "D": "Limitar a una sola tool por mensaje corta los casos que requieren varios pasos encadenados."
+    },
+    "difficulty": 2,
+    "en": {
+      "stem": "A teammate proposes that the support agent classify every message with a decision tree in code (\"refund\" → always get_customer, lookup_order, process_refund in that order). But customers mix topics: a billing dispute that depends on an account problem, or a refund that does not require looking at the order. Which design is most appropriate?",
+      "options": {
+        "A": "Extend the decision tree with one branch for each combination of topics seen in production.",
+        "B": "Ask Claude in the system prompt to always print the full tool plan up front and execute it in that order.",
+        "C": "Give Claude the tools with clear descriptions inside the agentic loop and let it decide what to call next based on context and prior results.",
+        "D": "Use a separate classifier that picks a single tool per message and end after running it."
+      },
+      "explanation": "TS 1.1: for ambiguous or mixed requests, model-driven decision-making, where the model picks the next tool from context, is preferable to preconfigured sequences that do not cover real-world combinations.",
+      "distractors": {
+        "A": "A decision tree grows without bound and some combination will always lack a branch; it is the rigidity you want to avoid.",
+        "B": "Fixing the plan up front prevents adapting to what each tool returns, which is exactly what changes the next step.",
+        "D": "Limiting to a single tool per message cuts off cases that need several chained steps."
+      },
+      "topic": "TS 1.1 Model-driven vs fixed decision tree"
+    }
+  },
+  {
+    "id": "cca-s5-13",
+    "domain": "agentic",
+    "scenario": "s5",
+    "topic": "TS 1.6 Per-file passes plus integration pass",
+    "type": "single",
+    "choose": 1,
+    "stem": "Tu pipeline de CI revisa pull requests con 14 archivos modificados en una sola petición. Los resultados son inconsistentes: detalla algunos archivos y apenas comenta otros, marca como problema un patrón en un archivo y lo aprueba en otro, y se le escapan incompatibilidades de interfaz entre módulos. ¿Cuál es la mejor reestructuración?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Cambiar a un modelo con un context window mayor y mantener una sola petición con los 14 archivos."
+      },
+      {
+        "id": "B",
+        "text": "Ejecutar la misma revisión completa tres veces y quedarse solo con los hallazgos que aparezcan en al menos dos ejecuciones."
+      },
+      {
+        "id": "C",
+        "text": "Pedir en el prompt que \"revise cada archivo con la misma profundidad\" y mantener una sola pasada."
+      },
+      {
+        "id": "D",
+        "text": "Dividir en una pasada de análisis local por archivo y una pasada de integración separada que examine las interacciones entre archivos con los hallazgos locales."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "TS 1.6: dividir las revisiones grandes en análisis local por archivo más una pasada de integración entre archivos evita la dilución de atención y da profundidad consistente.",
+    "distractors": {
+      "A": "Un context window mayor no resuelve la dilución de atención; el problema es la profundidad desigual, no el límite de tokens.",
+      "B": "Votar entre ejecuciones filtra hallazgos reales que aparecen una sola vez y no corrige la cobertura desigual.",
+      "C": "Una instrucción en el prompt no cambia que una sola pasada sobre muchos archivos diluye la atención."
+    },
+    "difficulty": 2,
+    "en": {
+      "stem": "Your CI pipeline reviews pull requests with 14 modified files in a single request. Results are inconsistent: it details some files and barely comments on others, flags a pattern as a problem in one file and approves it in another, and misses interface mismatches between modules. What is the best restructuring?",
+      "options": {
+        "A": "Switch to a model with a larger context window and keep a single request with the 14 files.",
+        "B": "Run the same full review three times and keep only the findings that appear in at least two runs.",
+        "C": "Ask in the prompt to \"review every file with the same depth\" and keep a single pass.",
+        "D": "Split into a per-file local analysis pass and a separate integration pass that examines cross-file interactions using the local findings."
+      },
+      "explanation": "TS 1.6: splitting large reviews into per-file local analysis plus a cross-file integration pass avoids attention dilution and gives consistent depth.",
+      "distractors": {
+        "A": "A larger context window does not fix attention dilution; the problem is uneven depth, not the token limit.",
+        "B": "Voting across runs filters out real findings that appear only once and does not fix the uneven coverage.",
+        "C": "A prompt instruction does not change the fact that one pass over many files dilutes attention."
+      },
+      "topic": "TS 1.6 Per-file passes plus integration pass"
+    }
+  },
+  {
+    "id": "cca-s5-14",
+    "domain": "agentic",
+    "scenario": "s5",
+    "topic": "TS 1.6 Prompt chaining vs dynamic decomposition",
+    "type": "single",
+    "choose": 1,
+    "stem": "En tu plataforma de CI debes automatizar dos flujos: (1) la revisión estándar de cada PR, siempre con los mismos aspectos (estilo, seguridad, cobertura de tests); (2) investigar un fallo intermitente en producción cuya causa se desconoce. ¿Qué patrón de descomposición asignas a cada uno?",
+    "options": [
+      {
+        "id": "A",
+        "text": "(1) Prompt chaining con pasos secuenciales fijos; (2) descomposición dinámica y adaptativa que genera subtareas según lo que se descubre."
+      },
+      {
+        "id": "B",
+        "text": "(1) Descomposición dinámica; (2) prompt chaining fijo con los mismos pasos de la revisión de PR."
+      },
+      {
+        "id": "C",
+        "text": "Prompt chaining fijo para ambos, para que los resultados sean reproducibles."
+      },
+      {
+        "id": "D",
+        "text": "Descomposición dinámica para ambos, porque la flexibilidad siempre es preferible."
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "TS 1.6: el prompt chaining encaja con revisiones predecibles de múltiples aspectos; las tareas abiertas de investigación necesitan un plan adaptativo cuyas subtareas dependen de los hallazgos intermedios.",
+    "distractors": {
+      "B": "Invierte los patrones: añade variabilidad innecesaria a la revisión estándar y rigidez a una investigación de causa desconocida.",
+      "C": "Una secuencia fija no puede reaccionar a pistas que aparecen durante la investigación del fallo.",
+      "D": "En un flujo predecible la flexibilidad añade costo y variabilidad sin beneficio; el patrón debe ajustarse al flujo."
+    },
+    "difficulty": 1,
+    "en": {
+      "stem": "On your CI platform you must automate two flows: (1) the standard review of each PR, always with the same aspects (style, security, test coverage); (2) investigating an intermittent production failure whose cause is unknown. Which decomposition pattern do you assign to each?",
+      "options": {
+        "A": "(1) Prompt chaining with fixed sequential steps; (2) dynamic, adaptive decomposition that generates subtasks based on what is discovered.",
+        "B": "(1) Dynamic decomposition; (2) fixed prompt chaining with the same steps as the PR review.",
+        "C": "Fixed prompt chaining for both, so results are reproducible.",
+        "D": "Dynamic decomposition for both, because flexibility is always preferable."
+      },
+      "explanation": "TS 1.6: prompt chaining fits predictable multi-aspect reviews; open-ended investigations need an adaptive plan whose subtasks depend on intermediate findings.",
+      "distractors": {
+        "B": "This reverses the patterns: it adds needless variability to the standard review and rigidity to an investigation of unknown cause.",
+        "C": "A fixed sequence cannot react to clues that appear during the failure investigation.",
+        "D": "In a predictable flow, flexibility adds cost and variability with no benefit; the pattern should match the workflow."
+      },
+      "topic": "TS 1.6 Prompt chaining vs dynamic decomposition"
+    }
+  },
+  {
+    "id": "cca-s4-13",
+    "domain": "agentic",
+    "scenario": "s4",
+    "topic": "TS 1.6 Adaptive plan for legacy code",
+    "type": "single",
+    "choose": 1,
+    "stem": "Le pides a tu agente de productividad: \"agrega tests completos a este monolito legacy de 400 archivos sin documentación\". Un primer intento genera tests archivo por archivo en orden alfabético y se atasca en módulos con dependencias ocultas. ¿Qué estrategia de descomposición es la más adecuada?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Generar primero todos los tests de forma superficial y refinarlos después en una segunda ronda alfabética."
+      },
+      {
+        "id": "B",
+        "text": "Mapear primero la estructura del código, identificar las áreas de mayor impacto y crear un plan priorizado que se ajusta al descubrir dependencias."
+      },
+      {
+        "id": "C",
+        "text": "Pedir al equipo que escriba la lista completa de módulos y dependencias a mano y ejecutar ese plan fijo sin cambios."
+      },
+      {
+        "id": "D",
+        "text": "Dividir el repositorio en 400 subtareas iguales, una por archivo, y ejecutarlas en paralelo sin coordinación."
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "TS 1.6: las tareas abiertas se descomponen mapeando la estructura, priorizando áreas de alto impacto y generando un plan que se adapta conforme se descubren dependencias.",
+    "distractors": {
+      "A": "Un recorrido alfabético ignora la importancia y las dependencias; refinar después no corrige un orden mal elegido.",
+      "C": "Un plan fijo hecho a mano sin documentación será incompleto y no se adapta a dependencias descubiertas durante el trabajo.",
+      "D": "Subtareas uniformes sin coordinación ignoran dependencias entre módulos y el impacto relativo de cada área."
+    },
+    "difficulty": 2,
+    "en": {
+      "stem": "You ask your productivity agent: \"add comprehensive tests to this undocumented 400-file legacy monolith\". A first attempt generates tests file by file in alphabetical order and gets stuck on modules with hidden dependencies. Which decomposition strategy is most appropriate?",
+      "options": {
+        "A": "Generate all the tests superficially first and refine them later in a second alphabetical round.",
+        "B": "First map the code structure, identify the highest-impact areas, and create a prioritized plan that adapts as dependencies are discovered.",
+        "C": "Ask the team to write the full list of modules and dependencies by hand and execute that fixed plan unchanged.",
+        "D": "Split the repository into 400 equal subtasks, one per file, and run them in parallel without coordination."
+      },
+      "explanation": "TS 1.6: open-ended tasks are decomposed by mapping structure, prioritizing high-impact areas, and generating a plan that adapts as dependencies are discovered.",
+      "distractors": {
+        "A": "An alphabetical walk ignores importance and dependencies; refining later does not fix a poorly chosen order.",
+        "C": "A hand-made fixed plan for undocumented code will be incomplete and cannot adapt to dependencies found along the way.",
+        "D": "Uniform subtasks without coordination ignore cross-module dependencies and the relative impact of each area."
+      },
+      "topic": "TS 1.6 Adaptive plan for legacy code"
+    }
+  },
+  {
+    "id": "cca-s4-14",
+    "domain": "agentic",
+    "scenario": "s4",
+    "topic": "TS 1.7 Resuming a named session after code changes",
+    "type": "single",
+    "choose": 1,
+    "stem": "Ayer investigaste el módulo de pagos legacy en una sesión nombrada `payments-audit`. Hoy un compañero refactorizó tres de los archivos que el agente ya había analizado. Quieres continuar la investigación sin repetir todo. ¿Qué haces?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Reanudar `payments-audit` con `--resume` sin comentar nada, porque el agente detectará solo los cambios."
+      },
+      {
+        "id": "B",
+        "text": "Descartar la sesión y repetir la exploración completa del módulo desde cero."
+      },
+      {
+        "id": "C",
+        "text": "Reanudar `payments-audit` con `--resume` e indicarle explícitamente qué tres archivos cambiaron para que los vuelva a analizar de forma dirigida."
+      },
+      {
+        "id": "D",
+        "text": "Crear una sesión nueva con un nombre distinto y pegar el historial completo de la sesión anterior."
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "TS 1.7: al reanudar tras cambios de código se debe informar al agente qué archivos cambiaron para un re-análisis dirigido; así se aprovecha el contexto aún válido sin volver a explorar todo.",
+    "distractors": {
+      "A": "Los resultados de tools previos quedan obsoletos y el agente no sabe que los archivos cambiaron; razonará con datos desactualizados.",
+      "B": "Desperdicia el análisis válido de los demás archivos; solo tres archivos requieren re-análisis.",
+      "D": "Pegar todo el historial reinyecta también los resultados obsoletos y consume context window sin ventaja sobre `--resume`."
+    },
+    "difficulty": 2,
+    "en": {
+      "stem": "Yesterday you investigated the legacy payments module in a named session `payments-audit`. Today a teammate refactored three of the files the agent had already analyzed. You want to continue the investigation without repeating everything. What do you do?",
+      "options": {
+        "A": "Resume `payments-audit` with `--resume` without saying anything, because the agent will detect the changes on its own.",
+        "B": "Discard the session and repeat the full exploration of the module from scratch.",
+        "C": "Resume `payments-audit` with `--resume` and explicitly tell it which three files changed so it re-analyzes them in a targeted way.",
+        "D": "Create a new session with a different name and paste the full history of the previous session."
+      },
+      "explanation": "TS 1.7: when resuming after code changes, tell the agent which files changed for targeted re-analysis; this reuses the still-valid context without re-exploring everything.",
+      "distractors": {
+        "A": "Earlier tool results are now stale and the agent does not know the files changed; it will reason with outdated data.",
+        "B": "It wastes the valid analysis of the other files; only three files need re-analysis.",
+        "D": "Pasting the full history also re-injects the stale results and consumes context window with no advantage over `--resume`."
+      },
+      "topic": "TS 1.7 Resuming a named session after code changes"
+    }
+  },
+  {
+    "id": "cca-s4-15",
+    "domain": "agentic",
+    "scenario": "s4",
+    "topic": "TS 1.7 Resume vs fresh start with summary",
+    "type": "multi",
+    "choose": 2,
+    "stem": "Tu equipo usa sesiones del agente para investigar un sistema legacy durante varios días. Entre sesiones el código cambia en distinta medida. ¿Qué dos afirmaciones describen prácticas correctas? (Elige 2)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Reanudar siempre la sesión previa es seguro, porque el modelo vuelve a verificar automáticamente cualquier resultado de tools antiguo."
+      },
+      {
+        "id": "B",
+        "text": "Si el contexto previo sigue siendo mayormente válido, reanudar con `--resume <session-name>` conserva el análisis y solo requiere avisar de los cambios puntuales."
+      },
+      {
+        "id": "C",
+        "text": "Con `fork_session`, las ramas comparten memoria en vivo, así que lo que descubre una rama aparece automáticamente en la otra."
+      },
+      {
+        "id": "D",
+        "text": "Si muchos resultados de tools quedaron obsoletos, es más fiable iniciar una sesión nueva e inyectar un resumen estructurado de los hallazgos que aún son válidos."
+      },
+      {
+        "id": "E",
+        "text": "Es preferible pegar en la sesión nueva todos los resultados brutos de tools anteriores para no perder detalle."
+      }
+    ],
+    "answer": [
+      "B",
+      "D"
+    ],
+    "explanation": "TS 1.7: se reanuda cuando el contexto sigue siendo mayormente válido (informando los cambios), y se empieza de nuevo con un resumen estructurado cuando los resultados de tools están desactualizados, lo cual es más fiable que arrastrar datos obsoletos.",
+    "distractors": {
+      "A": "El modelo no re-verifica por sí solo resultados antiguos; puede razonar con datos que ya no reflejan el código.",
+      "C": "`fork_session` crea ramas independientes desde una base compartida; después divergen sin compartir descubrimientos.",
+      "E": "Reinyectar resultados brutos reintroduce datos obsoletos y llena el context window; el resumen debe contener solo hallazgos verificados."
+    },
+    "difficulty": 3,
+    "en": {
+      "stem": "Your team uses agent sessions to investigate a legacy system over several days. Between sessions the code changes to varying degrees. Which two statements describe correct practices? (Choose 2)",
+      "options": {
+        "A": "Always resuming the previous session is safe, because the model automatically re-verifies any old tool results.",
+        "B": "If the earlier context is still mostly valid, resuming with `--resume <session-name>` preserves the analysis and only requires flagging the specific changes.",
+        "C": "With `fork_session`, branches share live memory, so what one branch discovers automatically appears in the other.",
+        "D": "If many tool results became stale, starting a new session and injecting a structured summary of the findings that are still valid is more reliable.",
+        "E": "It is better to paste all the raw earlier tool results into the new session so no detail is lost."
+      },
+      "explanation": "TS 1.7: you resume when the context is still mostly valid (reporting the changes), and you start fresh with a structured summary when tool results are outdated, which is more reliable than carrying stale data forward.",
+      "distractors": {
+        "A": "The model does not re-verify old results on its own; it may reason with data that no longer reflects the code.",
+        "C": "`fork_session` creates independent branches from a shared baseline; afterwards they diverge without sharing discoveries.",
+        "E": "Re-injecting raw results brings back stale data and fills the context window; the summary should contain only verified findings."
+      },
+      "topic": "TS 1.7 Resume vs fresh start with summary"
+    }
+  },
+  {
+    "id": "cca-s3-13",
+    "domain": "agentic",
+    "scenario": "s3",
+    "topic": "TS 1.7 fork_session for divergent approaches",
+    "type": "single",
+    "choose": 1,
+    "stem": "Tu sistema de investigación multiagente ya completó un análisis largo y costoso de 40 fuentes. Ahora quieres comparar dos estructuras de informe (cronológica vs. temática) a partir de ese mismo análisis, sin que una contamine a la otra ni repetir la investigación. ¿Qué enfoque usas?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Pedir ambos informes en la misma conversación, uno tras otro, y esperar que el segundo ignore el primero."
+      },
+      {
+        "id": "B",
+        "text": "Repetir la investigación completa en dos sesiones nuevas independientes, una por estructura."
+      },
+      {
+        "id": "C",
+        "text": "Reanudar la sesión original con `--resume` dos veces al mismo tiempo para que ambas escriban en el mismo historial."
+      },
+      {
+        "id": "D",
+        "text": "Usar `fork_session` para crear dos ramas independientes desde la base de análisis compartida y desarrollar una estructura en cada una."
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "TS 1.7: `fork_session` crea ramas independientes desde una línea base compartida para explorar enfoques divergentes sin repetir el análisis ni mezclar contextos.",
+    "distractors": {
+      "A": "En una sola conversación el segundo informe queda influido por el primero; no hay aislamiento entre los enfoques.",
+      "B": "Repite el costoso análisis de las 40 fuentes sin necesidad, cuando ya existe una base compartida válida.",
+      "C": "Reanudar dos veces sobre el mismo historial genera conflicto y mezcla de contexto, no ramas aisladas."
+    },
+    "difficulty": 2,
+    "en": {
+      "stem": "Your multi-agent research system has already completed a long, costly analysis of 40 sources. You now want to compare two report structures (chronological vs. thematic) starting from that same analysis, without one contaminating the other and without repeating the research. Which approach do you use?",
+      "options": {
+        "A": "Ask for both reports in the same conversation, one after the other, and hope the second ignores the first.",
+        "B": "Repeat the full research in two new independent sessions, one per structure.",
+        "C": "Resume the original session with `--resume` twice at the same time so both write to the same history.",
+        "D": "Use `fork_session` to create two independent branches from the shared analysis baseline and develop one structure in each."
+      },
+      "explanation": "TS 1.7: `fork_session` creates independent branches from a shared baseline to explore divergent approaches without repeating the analysis or mixing contexts.",
+      "distractors": {
+        "A": "In a single conversation the second report is influenced by the first; there is no isolation between approaches.",
+        "B": "It repeats the costly analysis of the 40 sources needlessly when a valid shared baseline already exists.",
+        "C": "Resuming twice over the same history causes conflict and context mixing, not isolated branches."
+      },
+      "topic": "TS 1.7 fork_session for divergent approaches"
+    }
+  }
+]
