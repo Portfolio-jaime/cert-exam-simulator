@@ -1,6 +1,6 @@
 import { ALL_QUESTIONS, BANK_MAP, bankFor } from '../bank';
 import { ExamSession, modeConfig } from '../exam/engine';
-import { buildExam } from '../exam/sampler';
+import { buildExam, orderOptions } from '../exam/sampler';
 import { certificateEligible, isCorrect } from '../exam/scoring';
 import { daysUntil, EXAMS, examById, type ExamDef } from '../exams';
 import { scenarioView, tr, view, type Lang } from '../i18n';
@@ -247,9 +247,9 @@ function renderExam(): void {
     h('div', { class: 'card' },
       h('div', { class: 'row' }, multi && h('span', { class: 'tag multi' }, T(`ELIGE ${words[q.choose] ?? q.choose}`, `SELECT ${words[q.choose] ?? q.choose}`)), flagged && h('span', { class: 'tag' }, T('Marcada', 'Flagged')), shown && h('span', { class: 'tag multi' }, T('Respuesta vista', 'Answer shown'))),
       h('div', { class: 'stem' }, v.stem),
-      ...v.options.map((o) => h('label', { class: `opt${shown && q.answer.includes(o.id) ? ' right' : sel.has(o.id) ? ' sel' : ''}` },
+      ...orderOptions(v.options, `${s.state.startedAt}:${q.id}`).map((o, oi) => h('label', { class: `opt${shown && q.answer.includes(o.id) ? ' right' : sel.has(o.id) ? ' sel' : ''}` },
         h('input', { type: multi ? 'checkbox' : 'radio', name: 'opt', checked: sel.has(o.id), onchange: () => { s.select(o.id); persist(); renderExam(); } }),
-        h('span', {}, `${o.id}. ${o.text}${shown && q.answer.includes(o.id) ? '  ✓' : ''}`))),
+        h('span', {}, `${LETTERS[oi]}. ${o.text}${shown && q.answer.includes(o.id) ? '  ✓' : ''}`))),
       shown && h('div', { class: 'card banner', style: 'margin:10px 0' },
         h('p', { class: 'small' }, h('strong', {}, `${T('Respuesta correcta', 'Correct answer')}: ${q.answer.join(', ')}. `), v.explanation),
         h('p', { class: 'small muted' }, T('Esta pregunta cuenta como incorrecta porque viste la respuesta.', 'This question counts as incorrect because you viewed the answer.'))),
@@ -317,7 +317,7 @@ function renderReview(id: string): void {
       const picked = a.answers[q.id] ?? [];
       const ok = isCorrect(q, picked) && !(a.revealed ?? []).includes(q.id);
       if (onlyWrong.checked && ok) return;
-      nodes.push(reviewCard(q, exam, idx + 1, picked, ok, it.scored, (a.revealed ?? []).includes(q.id)));
+      nodes.push(reviewCard(q, exam, idx + 1, picked, ok, it.scored, (a.revealed ?? []).includes(q.id), String(a.startedAt)));
     });
     list.replaceChildren(...(nodes.length ? nodes : [h('p', { class: 'muted' }, T('Nada que mostrar.', 'Nothing to show.'))]));
   };
@@ -327,7 +327,9 @@ function renderReview(id: string): void {
     h('label', { class: 'row' }, onlyWrong, T('Solo incorrectas / sin responder', 'Only incorrect / unanswered')), list);
 }
 
-function reviewCard(q: Question, exam: ExamDef, n: number, picked: string[], ok: boolean, scored: boolean, revealed = false): HTMLElement {
+const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+function reviewCard(q: Question, exam: ExamDef, n: number, picked: string[], ok: boolean, scored: boolean, revealed = false, seed = ''): HTMLElement {
   const v = view(q, lang());
   const dom = exam.domains.find((d) => d.id === q.domain)?.label ?? q.domain;
   const sc = scenarioView(exam, q.scenario, lang());
@@ -337,12 +339,12 @@ function reviewCard(q: Question, exam: ExamDef, n: number, picked: string[], ok:
       h('span', { class: 'tag' }, dom), h('span', { class: 'tag' }, v.topic), sc && h('span', { class: 'tag' }, sc.title),
       q.type === 'multi' && h('span', { class: 'tag multi' }, T(`Elige ${q.choose}`, `Select ${q.choose}`)), !scored && h('span', { class: 'tag' }, T('Sin puntuar', 'Unscored')), revealed && h('span', { class: 'tag multi' }, T('Respuesta vista', 'Answer shown'))),
     h('div', { class: 'stem' }, `${n}. ${v.stem}`),
-    ...v.options.map((o) => {
+    ...orderOptions(v.options, `${seed}:${q.id}`).map((o, oi) => {
       const right = q.answer.includes(o.id);
       const mine = picked.includes(o.id);
       const why = v.distractors[o.id];
       return h('div', {},
-        h('div', { class: `opt ${right ? 'right' : mine ? 'wrong' : ''}` }, h('span', {}, `${o.id}. ${o.text}${mine ? `  ← ${T('tu respuesta', 'your answer')}` : ''}${right ? '  ✓' : ''}`)),
+        h('div', { class: `opt ${right ? 'right' : mine ? 'wrong' : ''}` }, h('span', {}, `${LETTERS[oi]}. ${o.text}${mine ? `  ← ${T('tu respuesta', 'your answer')}` : ''}${right ? '  ✓' : ''}`)),
         why && !right && h('div', { class: 'why' }, why));
     }),
     h('p', { class: 'small' }, h('strong', {}, T('Explicación: ', 'Explanation: ')), v.explanation));

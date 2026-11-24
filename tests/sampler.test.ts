@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { allocate, buildExam } from '../src/exam/sampler';
+import { allocate, buildExam, orderOptions } from '../src/exam/sampler';
 import { CCAF, makeBank, makeScenarioBank, SAA } from './helpers';
 
 describe('sampler', () => {
@@ -73,5 +73,14 @@ describe('sampler', () => {
     const sb = makeScenarioBank(3);
     const items = buildExam({ bank: sb, exam: CCAF, size: 60, seed: 4, byScenario: true });
     expect(items.length).toBe(12);
+  });
+
+  it('orders options stably per attempt and differently across attempts', () => {
+    const opts = ['A', 'B', 'C', 'D', 'E'].map((id) => ({ id }));
+    const a = orderOptions(opts, '100:q1');
+    expect(orderOptions(opts, '100:q1')).toEqual(a);
+    expect(a.map((o) => o.id).sort()).toEqual(['A', 'B', 'C', 'D', 'E']);
+    const seen = new Set(Array.from({ length: 30 }, (_, i) => orderOptions(opts, `${i}:q1`).map((o) => o.id).join('')));
+    expect(seen.size).toBeGreaterThan(10);
   });
 });

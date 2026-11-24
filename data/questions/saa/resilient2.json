@@ -1,0 +1,1502 @@
+[
+ {
+  "id": "res-18",
+  "domain": "resilient",
+  "topic": "SNS fan-out hacia SQS",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una tienda en línea publica un evento cada vez que se crea un pedido. Los servicios de inventario, facturación y analítica deben procesar CADA pedido de forma independiente y a su propio ritmo, sin perder eventos si uno de los consumidores está caído. ¿Qué diseño cumple el requisito?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Publicar el evento en un SNS topic y suscribir una cola SQS por cada servicio"
+   },
+   {
+    "id": "B",
+    "text": "Enviar los pedidos a una única cola SQS compartida por los tres servicios"
+   },
+   {
+    "id": "C",
+    "text": "Suscribir los tres servicios directamente al SNS topic mediante endpoints HTTP"
+   },
+   {
+    "id": "D",
+    "text": "Una función Lambda que invoque de forma síncrona a los tres servicios en secuencia"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "El patrón fan-out (SNS + SQS) entrega una copia del evento a cada cola; cada servicio consume a su ritmo y la cola retiene los mensajes si el consumidor está caído.",
+  "distractors": {
+   "B": "Cada mensaje de una cola lo procesa un solo consumidor, por lo que los otros dos servicios no verían el pedido.",
+   "C": "Sin cola intermedia, si un servicio está caído los reintentos son limitados y se pueden perder eventos.",
+   "D": "Genera acoplamiento fuerte: un servicio lento o caído bloquea o hace fallar todo el flujo."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-19",
+  "domain": "resilient",
+  "topic": "SQS FIFO y message groups",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un sistema bancario procesa movimientos de cuentas. Los movimientos de una misma cuenta deben procesarse en orden estricto y sin duplicados, pero el sistema debe procesar en paralelo los movimientos de miles de cuentas distintas. ¿Qué configuración es la adecuada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Cola SQS Standard con varios consumidores"
+   },
+   {
+    "id": "B",
+    "text": "Cola SQS FIFO con un único MessageGroupId fijo para todos los mensajes"
+   },
+   {
+    "id": "C",
+    "text": "Cola SQS FIFO usando el ID de cuenta como MessageGroupId"
+   },
+   {
+    "id": "D",
+    "text": "SNS Standard topic con una función Lambda por suscripción"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "En FIFO el orden se garantiza dentro de cada message group; usar el ID de cuenta como grupo mantiene el orden por cuenta y permite paralelismo entre cuentas.",
+  "distractors": {
+   "A": "La cola Standard ofrece orden best-effort y entrega al menos una vez, por lo que hay desorden y duplicados.",
+   "B": "Serializa todo el procesamiento en un solo grupo y elimina el paralelismo entre cuentas.",
+   "D": "SNS Standard no garantiza el orden ni elimina duplicados."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-20",
+  "domain": "resilient",
+  "topic": "EventBridge partner events",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa recibe eventos de un proveedor SaaS compatible con partner event sources de Amazon EventBridge. Los eventos de tipo order.failed deben ir a una función Lambda y el resto a un flujo de Kinesis, con el mínimo código y sin hacer polling. ¿Qué solución es la mejor?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Una función Lambda programada cada minuto que consulte la API del proveedor y clasifique los eventos"
+   },
+   {
+    "id": "B",
+    "text": "Asociar el partner event source a un event bus y crear rules con event patterns hacia cada destino"
+   },
+   {
+    "id": "C",
+    "text": "Colocar un Application Load Balancer con reglas de listener para clasificar los eventos"
+   },
+   {
+    "id": "D",
+    "text": "Una cola SQS Standard y un consumidor en EC2 que clasifique cada mensaje"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "EventBridge recibe eventos de SaaS partners y enruta por reglas con event patterns a múltiples targets, sin servidores ni polling.",
+  "distractors": {
+   "A": "Es polling con código personalizado: más operación, latencia y posibilidad de perder o duplicar eventos.",
+   "C": "Un ALB enruta peticiones HTTP, no consume eventos de un partner event source.",
+   "D": "Exige código y servidores propios para algo que EventBridge hace de forma nativa con rules."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-21",
+  "domain": "resilient",
+  "topic": "API Gateway usage plans",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una API pública en Amazon API Gateway invoca funciones Lambda. Un cliente con una API key genera ráfagas de tráfico que degradan el servicio de los demás clientes. Se necesita limitar el consumo POR CLIENTE sin modificar el código. ¿Qué debe hacerse?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Aplicar una regla de AWS WAF de geo-match"
+   },
+   {
+    "id": "B",
+    "text": "Aumentar la reserved concurrency de las funciones Lambda"
+   },
+   {
+    "id": "C",
+    "text": "Mover la API a una Region con mayor capacidad"
+   },
+   {
+    "id": "D",
+    "text": "Crear usage plans con throttling y quotas y asociar una API key a cada cliente"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "Los usage plans de API Gateway definen límites de tasa, ráfaga y cuotas por API key, protegiendo el backend y a los demás clientes.",
+  "distractors": {
+   "A": "El geo-match filtra por país, no limita el consumo individual de cada cliente.",
+   "B": "No limita al cliente abusivo; solo permite que más ejecuciones simultáneas lo atiendan.",
+   "C": "Las Regions no resuelven un consumo desbalanceado entre clientes."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-22",
+  "domain": "resilient",
+  "topic": "Lambda concurrency y base de datos",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una función Lambda consume mensajes de una cola SQS e inserta registros en una base de datos Amazon RDS que soporta como máximo 100 conexiones. En los picos, Lambda escala y satura la base de datos. No se puede perder ningún mensaje. ¿Qué solución protege la base de datos con el menor cambio?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Aumentar el timeout de la función Lambda"
+   },
+   {
+    "id": "B",
+    "text": "Configurar provisioned concurrency muy alta"
+   },
+   {
+    "id": "C",
+    "text": "Eliminar la cola e invocar la función de forma síncrona desde el productor"
+   },
+   {
+    "id": "D",
+    "text": "Limitar la concurrencia máxima en el event source mapping de SQS (o la reserved concurrency) para que los mensajes esperen en la cola"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "La cola absorbe el pico y limitar la concurrencia del consumidor controla el número de conexiones simultáneas, sin perder mensajes.",
+  "distractors": {
+   "A": "El timeout no controla cuántas ejecuciones simultáneas abren conexiones.",
+   "B": "Provisioned concurrency precalienta entornos, no limita las ejecuciones; aumentaría la presión sobre la BD.",
+   "C": "Quita el buffer, acopla productor y base de datos y puede perder peticiones durante picos."
+  },
+  "difficulty": 3
+ },
+ {
+  "id": "res-23",
+  "domain": "resilient",
+  "topic": "Kinesis Data Streams partition key",
+  "type": "single",
+  "choose": 1,
+  "stem": "Miles de sensores IoT envían telemetría a Amazon Kinesis Data Streams. Las lecturas de un mismo sensor deben procesarse en el orden en que se generaron, y el stream tiene varios shards. ¿Qué debe hacerse?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Usar una partition key aleatoria para repartir la carga"
+   },
+   {
+    "id": "B",
+    "text": "Usar el ID del sensor como partition key de cada registro"
+   },
+   {
+    "id": "C",
+    "text": "Reemplazar el stream por una cola SQS Standard"
+   },
+   {
+    "id": "D",
+    "text": "Enviar los datos a un único shard y desactivar el resharding"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "Kinesis garantiza el orden dentro de un shard, y la partition key determina el shard; con el ID del sensor cada dispositivo mantiene su orden.",
+  "distractors": {
+   "A": "Los registros de un sensor caerían en shards distintos y se perdería el orden por sensor.",
+   "C": "SQS Standard no garantiza orden.",
+   "D": "Elimina el escalado horizontal y crea un cuello de botella; la partition key ya garantiza el orden por sensor."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-24",
+  "domain": "resilient",
+  "topic": "Amazon Data Firehose a S3",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación genera eventos de clickstream que deben almacenarse en Amazon S3 en formato Parquet, agrupados cada pocos minutos, sin administrar servidores ni código consumidor. ¿Qué servicio usarías?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Kinesis Data Streams con consumidores KCL en instancias EC2"
+   },
+   {
+    "id": "B",
+    "text": "Una función Lambda por cada evento escribiendo un objeto en S3"
+   },
+   {
+    "id": "C",
+    "text": "Amazon Data Firehose con buffering y conversión de formato hacia S3"
+   },
+   {
+    "id": "D",
+    "text": "Un SNS topic con S3 como suscriptor"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "Firehose es un servicio administrado que agrupa por tamaño o tiempo, convierte a Parquet y entrega a S3 sin servidores propios.",
+  "distractors": {
+   "A": "Requiere administrar instancias y código consumidor, lo que se quiere evitar.",
+   "B": "Genera millones de objetos pequeños y sin agrupar; es costoso y poco eficiente.",
+   "D": "S3 no es un destino de suscripción de SNS."
+  },
+  "difficulty": 1
+ },
+ {
+  "id": "res-25",
+  "domain": "resilient",
+  "topic": "Network Load Balancer",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un juego multijugador usa tráfico TCP y UDP, necesita soportar millones de conexiones con latencia ultra baja y exponer direcciones IP estáticas por Availability Zone para que los clientes las agreguen a su allowlist. ¿Qué load balancer corresponde?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Network Load Balancer con una Elastic IP por Availability Zone"
+   },
+   {
+    "id": "B",
+    "text": "Application Load Balancer"
+   },
+   {
+    "id": "C",
+    "text": "Gateway Load Balancer"
+   },
+   {
+    "id": "D",
+    "text": "Application Load Balancer detrás de Route 53 con alias"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "El NLB opera en capa 4, maneja TCP/UDP con latencia muy baja y permite asignar una Elastic IP por AZ.",
+  "distractors": {
+   "B": "Opera en capa 7 (HTTP/HTTPS) y no ofrece IP estáticas por AZ.",
+   "C": "Se usa para desplegar y escalar appliances de red virtuales, no para exponer una aplicación.",
+   "D": "El alias no da IPs estáticas ni soporta UDP a nivel de aplicación."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-26",
+  "domain": "resilient",
+  "topic": "Predictive scaling",
+  "type": "single",
+  "choose": 1,
+  "stem": "El tráfico de una aplicación sigue un patrón cíclico diario y semanal. Las instancias tardan varios minutos en estar listas y el target tracking reacciona demasiado tarde en los picos. Se quiere tener la capacidad lista ANTES de la demanda, sin programar acciones a mano. ¿Qué opción es la mejor?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Bajar el umbral de CPU del step scaling"
+   },
+   {
+    "id": "B",
+    "text": "Habilitar predictive scaling en el Auto Scaling group"
+   },
+   {
+    "id": "C",
+    "text": "Aumentar el cooldown de las políticas de scaling"
+   },
+   {
+    "id": "D",
+    "text": "Fijar manualmente la desired capacity cada semana"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "Predictive scaling usa machine learning sobre el historial para lanzar capacidad antes del pico, y se complementa con target tracking.",
+  "distractors": {
+   "A": "Sigue siendo reactivo: actúa después de que la demanda ya subió.",
+   "C": "Retrasa aún más la respuesta.",
+   "D": "Es una tarea manual y no se adapta a variaciones del patrón."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-27",
+  "domain": "resilient",
+  "topic": "EFS como almacenamiento compartido",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una flota de instancias EC2 en tres Availability Zones debe leer y escribir de forma concurrente los mismos archivos con semántica POSIX. El almacenamiento debe crecer y reducirse automáticamente. ¿Qué servicio es el adecuado?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Amazon EBS io2 con Multi-Attach"
+   },
+   {
+    "id": "B",
+    "text": "Instance store de cada instancia"
+   },
+   {
+    "id": "C",
+    "text": "Un volumen EBS gp3 por instancia sincronizado con rsync"
+   },
+   {
+    "id": "D",
+    "text": "Amazon EFS"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "EFS es un sistema de archivos NFS elástico y multi-AZ que puede montarse simultáneamente desde muchas instancias.",
+  "distractors": {
+   "A": "Multi-Attach solo funciona dentro de una AZ, con límites de instancias, y no crece automáticamente.",
+   "B": "Es almacenamiento efímero local, no compartido.",
+   "C": "Es frágil, añade latencia de sincronización y trabajo operativo."
+  },
+  "difficulty": 1
+ },
+ {
+  "id": "res-28",
+  "domain": "resilient",
+  "topic": "Lambda asíncrona y destinos",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una función Lambda se invoca de forma asíncrona desde S3. Si falla tras los reintentos automáticos, el evento original debe conservarse para analizarlo, sin modificar el código de la función. ¿Qué debe configurarse?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un on-failure destination (por ejemplo, una cola SQS) en la configuración de invocación asíncrona"
+   },
+   {
+    "id": "B",
+    "text": "Aumentar la memoria de la función"
+   },
+   {
+    "id": "C",
+    "text": "Cambiar a invocación síncrona"
+   },
+   {
+    "id": "D",
+    "text": "Solo crear una alarma de CloudWatch por errores"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "Las invocaciones asíncronas permiten destinos on-failure (SQS, SNS, Lambda o EventBridge) y evitan perder el evento sin cambiar el código.",
+  "distractors": {
+   "B": "No guarda los eventos fallidos.",
+   "C": "S3 invoca de forma asíncrona; cambiarlo no es posible ni preserva los eventos.",
+   "D": "Avisa del fallo pero no conserva el evento que falló."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-29",
+  "domain": "resilient",
+  "topic": "API Gateway con SQS como buffer",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un socio envía solicitudes a una API pública y durante campañas el tráfico se multiplica por diez durante minutos. El backend en EC2 tarda en escalar y no se puede perder ninguna solicitud; el cliente acepta una respuesta de 'recibido' sin resultado inmediato. ¿Qué arquitectura es la mejor?",
+  "options": [
+   {
+    "id": "A",
+    "text": "API Gateway integrado directamente con el backend y un límite de throttling muy alto"
+   },
+   {
+    "id": "B",
+    "text": "Un Network Load Balancer frente a las instancias con más instancias fijas"
+   },
+   {
+    "id": "C",
+    "text": "API Gateway con integración directa a SQS y consumidores en un Auto Scaling group que escalan según la profundidad de la cola"
+   },
+   {
+    "id": "D",
+    "text": "Una función Lambda síncrona con provisioned concurrency que llame al backend"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "La cola desacopla la entrada del procesamiento: absorbe el pico y el backend escala según el backlog sin perder solicitudes.",
+  "distractors": {
+   "A": "El backend recibiría el pico completo antes de escalar y rechazaría o perdería solicitudes.",
+   "B": "Obliga a sobredimensionar de forma permanente y no ofrece un buffer duradero.",
+   "D": "Sigue enviando el pico al backend y fallará si no escala a tiempo."
+  },
+  "difficulty": 3
+ },
+ {
+  "id": "res-30",
+  "domain": "resilient",
+  "topic": "ALB path-based routing",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa divide un monolito en microservicios en Amazon ECS. Las rutas /orders y /users deben llegar a servicios distintos con un único nombre DNS y el mínimo de componentes. ¿Qué solución es la adecuada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un Network Load Balancer con listeners TCP"
+   },
+   {
+    "id": "B",
+    "text": "Registros de Route 53 con weighted routing"
+   },
+   {
+    "id": "C",
+    "text": "Un Application Load Balancer con reglas de listener basadas en ruta hacia distintos target groups"
+   },
+   {
+    "id": "D",
+    "text": "Una instancia EC2 con NGINX como proxy único"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "El ALB entiende HTTP y enruta por path o host hacia target groups distintos.",
+  "distractors": {
+   "A": "Opera en capa 4 y no inspecciona rutas HTTP.",
+   "B": "DNS no distingue rutas URL; solo resuelve nombres.",
+   "D": "Introduce un punto único de falla y trabajo operativo."
+  },
+  "difficulty": 1
+ },
+ {
+  "id": "res-31",
+  "domain": "resilient",
+  "topic": "EventBridge archive y replay",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un bug en un consumidor provocó que se procesaran mal los eventos de las últimas 48 horas publicados en un event bus de Amazon EventBridge. Tras corregirlo, se deben reprocesar esos eventos. ¿Qué característica lo permite con menor esfuerzo?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Crear un archive en el event bus y ejecutar un replay del período afectado"
+   },
+   {
+    "id": "B",
+    "text": "Consultar AWS CloudTrail y reenviar los eventos manualmente"
+   },
+   {
+    "id": "C",
+    "text": "Cambiar el bus por un SNS topic"
+   },
+   {
+    "id": "D",
+    "text": "Aumentar el número de reintentos de la rule"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "EventBridge permite archivar eventos y reproducirlos después en el mismo bus, ideal para recuperar tras errores de consumidor.",
+  "distractors": {
+   "B": "CloudTrail registra llamadas a la API, no es un mecanismo de reproducción de eventos.",
+   "C": "SNS no conserva mensajes ni ofrece replay.",
+   "D": "Los reintentos son de entrega inmediata y no cubren eventos ya procesados mal."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-32",
+  "domain": "resilient",
+  "topic": "Step Functions con reintentos",
+  "type": "multi",
+  "choose": 3,
+  "stem": "Un proceso de pedidos ejecuta los pasos validar, cobrar y enviar. Se necesita reintentar con backoff exponencial los fallos transitorios, ejecutar un paso de compensación si el cobro falla y conservar un historial visual de cada ejecución, sin escribir código de orquestación. ¿Qué TRES elementos se aplican? Elige TRES.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un workflow de AWS Step Functions que orqueste los pasos"
+   },
+   {
+    "id": "B",
+    "text": "Funciones Lambda encadenadas que se invoquen unas a otras directamente"
+   },
+   {
+    "id": "C",
+    "text": "Campos Retry con backoff exponencial en los estados"
+   },
+   {
+    "id": "D",
+    "text": "Un script con cron en una instancia EC2"
+   },
+   {
+    "id": "E",
+    "text": "Campos Catch que lleven a un estado de compensación"
+   }
+  ],
+  "answer": [
+   "A",
+   "C",
+   "E"
+  ],
+  "explanation": "Step Functions orquesta y mantiene el historial; Retry y Catch declaran reintentos y compensaciones dentro de la definición del estado.",
+  "distractors": {
+   "B": "Reparte la lógica de errores en cada función y no da historial central de ejecución.",
+   "D": "Es un punto único de falla y obliga a programar reintentos e historial a mano."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-33",
+  "domain": "resilient",
+  "topic": "ECS Fargate y SQS backlog",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Un servicio de Amazon ECS en AWS Fargate procesa trabajos desde una cola SQS. A veces la cola acumula miles de mensajes y los tiempos se disparan; la CPU de las tareas es baja. El servicio debe escalar según la carga real y tolerar la caída de una AZ. ¿Qué DOS acciones aplicarías? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Application Auto Scaling con target tracking sobre una métrica de backlog por tarea basada en ApproximateNumberOfMessagesVisible"
+   },
+   {
+    "id": "B",
+    "text": "Configurar el servicio con subredes en al menos dos Availability Zones"
+   },
+   {
+    "id": "C",
+    "text": "Escalar según la CPU promedio de las tareas"
+   },
+   {
+    "id": "D",
+    "text": "Escalar según la métrica RequestCountPerTarget de un ALB"
+   },
+   {
+    "id": "E",
+    "text": "Aumentar manualmente el número de tareas cada mañana"
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "explanation": "La profundidad de cola refleja la carga de los workers y el despliegue en varias AZ da tolerancia a fallos de zona.",
+  "distractors": {
+   "C": "La CPU es baja aunque haya backlog, así que no dispararía el escalado.",
+   "D": "No hay ALB: los workers consumen de una cola.",
+   "E": "Es manual y no responde a picos reales."
+  },
+  "difficulty": 3
+ },
+ {
+  "id": "res-34",
+  "domain": "resilient",
+  "topic": "Auto Scaling con Spot",
+  "type": "multi",
+  "choose": 3,
+  "stem": "Un trabajo de procesamiento por lotes tolerante a interrupciones se ejecuta en un Auto Scaling group. Se quiere reducir costo con Spot Instances minimizando la probabilidad de interrupción por falta de capacidad. ¿Qué TRES configuraciones ayudan? Elige TRES.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Elegir un único tipo de instancia en una sola AZ por ser el más barato"
+   },
+   {
+    "id": "B",
+    "text": "Usar una mixed instances policy con varios tipos y familias de instancia"
+   },
+   {
+    "id": "C",
+    "text": "Usar solo instancias On-Demand para evitar interrupciones"
+   },
+   {
+    "id": "D",
+    "text": "Distribuir el grupo en varias Availability Zones"
+   },
+   {
+    "id": "E",
+    "text": "Usar la estrategia de asignación price-capacity-optimized (o capacity-optimized)"
+   }
+  ],
+  "answer": [
+   "B",
+   "D",
+   "E"
+  ],
+  "explanation": "Diversificar tipos y AZ y elegir pools con más capacidad disponible reduce las interrupciones de Spot.",
+  "distractors": {
+   "A": "Concentra el riesgo en un solo pool de capacidad, con más interrupciones.",
+   "C": "Es válido pero no cumple el objetivo de reducir costo con Spot."
+  },
+  "difficulty": 3
+ },
+ {
+  "id": "res-35",
+  "domain": "resilient",
+  "topic": "S3 Event Notifications desacopladas",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una aplicación sube imágenes a un bucket de Amazon S3 y debe generar miniaturas. La subida no debe esperar al procesamiento, y los picos de subidas no deben saturar al procesador. ¿Qué DOS elementos incluirías? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un proceso en EC2 que liste el bucket cada minuto para buscar objetos nuevos"
+   },
+   {
+    "id": "B",
+    "text": "Hacer que el servidor de aplicaciones genere la miniatura antes de responder al usuario"
+   },
+   {
+    "id": "C",
+    "text": "Configurar S3 Event Notifications hacia una cola SQS"
+   },
+   {
+    "id": "D",
+    "text": "Un consumidor (Lambda con event source mapping o un Auto Scaling group) que lea la cola y genere las miniaturas"
+   },
+   {
+    "id": "E",
+    "text": "Registrar los eventos con CloudTrail y revisarlos al final del día"
+   }
+  ],
+  "answer": [
+   "C",
+   "D"
+  ],
+  "explanation": "S3 publica eventos a SQS, que actúa como buffer, y el consumidor procesa a su ritmo, desacoplando subida y procesamiento.",
+  "distractors": {
+   "A": "Es polling ineficiente, con latencia y sin buffer duradero.",
+   "B": "Acopla la subida al procesamiento y bloquea al usuario.",
+   "E": "No es procesamiento oportuno ni desacoplado."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-36",
+  "domain": "resilient",
+  "topic": "EKS: autoscaling de pods y nodos",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una aplicación en Amazon EKS recibe picos impredecibles. Los pods deben aumentar con la carga y, cuando no haya capacidad en los nodos, el clúster debe agregar nodos automáticamente. ¿Qué DOS componentes se necesitan? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Aumentar manualmente el tamaño del node group antes de cada pico"
+   },
+   {
+    "id": "B",
+    "text": "Horizontal Pod Autoscaler para ajustar el número de réplicas"
+   },
+   {
+    "id": "C",
+    "text": "Fijar réplicas mínimas muy altas de forma permanente"
+   },
+   {
+    "id": "D",
+    "text": "Un único node group en una sola AZ"
+   },
+   {
+    "id": "E",
+    "text": "Cluster Autoscaler o Karpenter para aprovisionar nodos"
+   }
+  ],
+  "answer": [
+   "B",
+   "E"
+  ],
+  "explanation": "HPA escala los pods y Cluster Autoscaler o Karpenter agrega nodos cuando los pods quedan sin capacidad.",
+  "distractors": {
+   "A": "No responde a picos impredecibles.",
+   "C": "Aumenta el costo sin adaptarse a la demanda.",
+   "D": "Reduce la disponibilidad y no aporta escalado."
+  },
+  "difficulty": 3
+ },
+ {
+  "id": "res-37",
+  "domain": "resilient",
+  "topic": "Escalabilidad de lecturas",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una aplicación de catálogo tiene una base de datos Amazon Aurora con muy alta proporción de lecturas repetidas, y el writer se satura. La aplicación puede tolerar datos con unos segundos de antigüedad. ¿Qué DOS cambios escalan las lecturas con mayor eficacia? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Agregar Aurora Replicas y usar el reader endpoint para las consultas de lectura"
+   },
+   {
+    "id": "B",
+    "text": "Hacer failover a otra AZ para dividir la carga"
+   },
+   {
+    "id": "C",
+    "text": "Colocar Amazon ElastiCache delante de la base de datos con un patrón cache-aside"
+   },
+   {
+    "id": "D",
+    "text": "Aumentar el tamaño de la instancia del writer indefinidamente"
+   },
+   {
+    "id": "E",
+    "text": "Desactivar la cache para evitar datos antiguos"
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "explanation": "Las réplicas distribuyen lecturas y la caché evita consultas repetidas a la base de datos, descargando al writer.",
+  "distractors": {
+   "B": "El failover cambia el writer, no reparte lecturas.",
+   "D": "El escalado vertical tiene límite y no resuelve el patrón de lecturas repetidas.",
+   "E": "Elimina justo la optimización que reduce la carga."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-38",
+  "domain": "resilient",
+  "topic": "Route 53 latency con health checks",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación se despliega activa en us-east-1 y eu-west-1. Los usuarios deben llegar a la Region con menor latencia, y si una Region deja de responder, el tráfico debe ir automáticamente a la otra. ¿Qué configuración de Amazon Route 53 es la adecuada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Registros con geolocation routing sin health checks"
+   },
+   {
+    "id": "B",
+    "text": "Registros con weighted routing 50/50"
+   },
+   {
+    "id": "C",
+    "text": "Un único registro simple con ambas IPs"
+   },
+   {
+    "id": "D",
+    "text": "Registros con latency routing en cada Region asociados a health checks"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "Latency routing elige la Region con menor latencia y los health checks retiran del DNS los endpoints no saludables.",
+  "distractors": {
+   "A": "Enruta por ubicación del usuario, no por latencia, y sin health checks no excluye una Region caída.",
+   "B": "No considera la latencia y envía la mitad del tráfico aunque una Region esté caída si no hay health checks.",
+   "C": "Devuelve ambos valores sin criterio de latencia ni conocimiento de salud."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-39",
+  "domain": "resilient",
+  "topic": "Route 53 geolocation",
+  "type": "single",
+  "choose": 1,
+  "stem": "Por normativa de residencia de datos, los usuarios ubicados en países de la Unión Europea deben ser atendidos exclusivamente por la infraestructura desplegada en Frankfurt. ¿Qué política de enrutamiento de Route 53 usarías?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Latency routing"
+   },
+   {
+    "id": "B",
+    "text": "Geolocation routing"
+   },
+   {
+    "id": "C",
+    "text": "Weighted routing"
+   },
+   {
+    "id": "D",
+    "text": "Failover routing"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "Geolocation enruta según el país o continente del usuario, lo que permite cumplir restricciones regulatorias.",
+  "distractors": {
+   "A": "Elige la menor latencia, que no siempre coincide con la ubicación geográfica del usuario.",
+   "C": "Reparte por pesos sin considerar la ubicación.",
+   "D": "Solo alterna entre primario y secundario según salud."
+  },
+  "difficulty": 1
+ },
+ {
+  "id": "res-40",
+  "domain": "resilient",
+  "topic": "DR pilot light",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa necesita una estrategia de DR con RPO de segundos y un RTO tolerable de unos 30 a 60 minutos. Quiere minimizar el costo manteniendo en la Region de DR solo la base de datos replicada y las AMIs listas; los servidores de aplicación se encienden al declarar el desastre. ¿Qué estrategia describe esto?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Pilot light"
+   },
+   {
+    "id": "B",
+    "text": "Backup and restore"
+   },
+   {
+    "id": "C",
+    "text": "Warm standby"
+   },
+   {
+    "id": "D",
+    "text": "Multi-site active-active"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "En pilot light solo el núcleo (datos replicados) está activo y el resto se aprovisiona al recuperar.",
+  "distractors": {
+   "B": "Tiene un RPO y RTO mucho mayores porque restaura desde copias; no mantiene la base de datos replicada.",
+   "C": "Mantiene una versión reducida de la aplicación ya en ejecución, con mayor costo.",
+   "D": "Ejecuta capacidad completa en ambas Regions, que es lo más caro."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-41",
+  "domain": "resilient",
+  "topic": "AWS Elastic Disaster Recovery",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa tiene servidores físicos y virtuales on-premises y quiere protegerlos con replicación continua a nivel de bloque hacia AWS, logrando un RPO de segundos y un RTO de minutos, pagando poco mientras no haya desastre. ¿Qué servicio utilizarías?",
+  "options": [
+   {
+    "id": "A",
+    "text": "AWS Backup"
+   },
+   {
+    "id": "B",
+    "text": "AWS DataSync"
+   },
+   {
+    "id": "C",
+    "text": "AWS Snowball Edge"
+   },
+   {
+    "id": "D",
+    "text": "AWS Elastic Disaster Recovery"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "Elastic Disaster Recovery replica de forma continua a un área de staging de bajo costo y lanza instancias recuperadas al ocurrir un desastre.",
+  "distractors": {
+   "A": "Hace copias programadas, no replicación continua a nivel de bloque con recuperación de servidores.",
+   "B": "Transfiere archivos entre almacenamientos, no recupera servidores.",
+   "C": "Es para transferir datos físicamente, no para replicación continua."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-42",
+  "domain": "resilient",
+  "topic": "Global Accelerator",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación TCP desplegada en dos Regions debe ofrecer a los clientes dos direcciones IP fijas para sus allowlists y redirigir el tráfico a la otra Region en segundos si falla una, sin esperar a que expiren cachés de DNS. ¿Qué servicio usarías?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Route 53 con failover routing"
+   },
+   {
+    "id": "B",
+    "text": "AWS Global Accelerator"
+   },
+   {
+    "id": "C",
+    "text": "Amazon CloudFront con origin group"
+   },
+   {
+    "id": "D",
+    "text": "Un Application Load Balancer entre Regions"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "Global Accelerator entrega IPs anycast estáticas y enruta por la red global de AWS con health checks, cambiando de endpoint rápidamente.",
+  "distractors": {
+   "A": "Depende de la resolución DNS y de los TTL cacheados, y no da IPs anycast fijas.",
+   "C": "Está orientado a contenido HTTP y no ofrece IP anycast fijas para tráfico TCP genérico.",
+   "D": "Un ALB es regional; no puede abarcar dos Regions."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-43",
+  "domain": "resilient",
+  "topic": "CloudFront origin failover",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un sitio estático se sirve con Amazon CloudFront desde un bucket de S3 en us-east-1 que se replica a otro bucket en us-west-2. Si el origen principal devuelve errores 5xx, CloudFront debe usar automáticamente el bucket secundario. ¿Qué se configura?",
+  "options": [
+   {
+    "id": "A",
+    "text": "S3 Transfer Acceleration en el bucket primario"
+   },
+   {
+    "id": "B",
+    "text": "Invalidar la caché cada minuto"
+   },
+   {
+    "id": "C",
+    "text": "Un origin group con failover entre ambos orígenes"
+   },
+   {
+    "id": "D",
+    "text": "Route 53 weighted routing entre los dos buckets"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "Un origin group define origen primario y secundario y códigos de estado que activan el failover automático.",
+  "distractors": {
+   "A": "Acelera cargas, no hace failover entre orígenes.",
+   "B": "No cambia de origen y aumenta las solicitudes al origen caído.",
+   "D": "Es DNS sin conocimiento del estado del origen y se salta CloudFront."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-44",
+  "domain": "resilient",
+  "topic": "Data Lifecycle Manager",
+  "type": "single",
+  "choose": 1,
+  "stem": "Se necesita crear snapshots diarios de volúmenes EBS etiquetados como 'prod', retenerlos 30 días y copiarlos a otra Region, con el mínimo mantenimiento. ¿Qué solución es la adecuada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un script con cron en cada instancia que llame a la API"
+   },
+   {
+    "id": "B",
+    "text": "Una política de Amazon Data Lifecycle Manager con copia entre Regions"
+   },
+   {
+    "id": "C",
+    "text": "Configurar RAID 1 entre volúmenes EBS"
+   },
+   {
+    "id": "D",
+    "text": "Habilitar EBS Multi-Attach"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "DLM automatiza creación, retención y copia de snapshots por etiquetas, incluso hacia otra Region.",
+  "distractors": {
+   "A": "Es mantenimiento propio, frágil y dependiente de la instancia.",
+   "C": "Protege contra fallo de volumen, no genera snapshots ni protege contra pérdida de la Region.",
+   "D": "Es para acceso concurrente, no para respaldo."
+  },
+  "difficulty": 1
+ },
+ {
+  "id": "res-45",
+  "domain": "resilient",
+  "topic": "RDS cross-Region read replica",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación usa Amazon RDS for MySQL en una Region. Se quiere una estrategia de DR en otra Region con RPO de minutos, promoviendo una copia en caso de desastre regional y sin reconstruir desde backups. ¿Qué solución cumple?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Habilitar Multi-AZ en la instancia"
+   },
+   {
+    "id": "B",
+    "text": "Copiar manualmente un snapshot cada semana a la otra Region"
+   },
+   {
+    "id": "C",
+    "text": "Crear una cross-Region read replica y promoverla durante el desastre"
+   },
+   {
+    "id": "D",
+    "text": "Aumentar el periodo de retención de backups automáticos"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "Una read replica en otra Region replica de forma asíncrona y puede promoverse a instancia independiente.",
+  "distractors": {
+   "A": "Multi-AZ replica entre AZs dentro de la misma Region, no protege contra un desastre regional.",
+   "B": "El RPO sería de días.",
+   "D": "Los backups viven en la misma Region y restaurarlos tarda más."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-46",
+  "domain": "resilient",
+  "topic": "Aurora Backtrack",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un administrador ejecutó por error una sentencia que alteró datos en un clúster Amazon Aurora MySQL. Se necesita volver el clúster a un momento de hace 20 minutos en pocos minutos, sin crear un clúster nuevo. ¿Qué característica debe usarse?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Aurora Backtrack"
+   },
+   {
+    "id": "B",
+    "text": "Crear una read replica y promoverla"
+   },
+   {
+    "id": "C",
+    "text": "Hacer failover a otra instancia del clúster"
+   },
+   {
+    "id": "D",
+    "text": "Restaurar un snapshot en un clúster nuevo y cambiar la aplicación"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "Backtrack rebobina el clúster en el mismo volumen a un momento anterior sin restaurar desde backup (disponible en Aurora MySQL, si se habilitó al crearlo).",
+  "distractors": {
+   "B": "La réplica ya contiene el cambio erróneo replicado.",
+   "C": "El failover no revierte los datos, que son compartidos por el clúster.",
+   "D": "Funciona, pero crea un clúster nuevo y tarda más, lo cual se quería evitar."
+  },
+  "difficulty": 3
+ },
+ {
+  "id": "res-47",
+  "domain": "resilient",
+  "topic": "S3 Standard-IA y durabilidad por AZ",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa guarda archivos críticos que se consultan rara vez pero requieren acceso en milisegundos y debe soportar la pérdida de una Availability Zone completa. ¿Qué clase de almacenamiento de S3 es la más adecuada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "S3 One Zone-IA"
+   },
+   {
+    "id": "B",
+    "text": "S3 Glacier Deep Archive"
+   },
+   {
+    "id": "C",
+    "text": "S3 Standard con replicación a una instancia EC2"
+   },
+   {
+    "id": "D",
+    "text": "S3 Standard-IA"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "Standard-IA guarda los datos de forma redundante en múltiples AZ, con acceso inmediato y menor costo de almacenamiento para acceso infrecuente.",
+  "distractors": {
+   "A": "Almacena los datos en una sola AZ; se perderían si esa AZ falla.",
+   "B": "La recuperación tarda horas, no milisegundos.",
+   "C": "Complica el diseño y no es una clase de almacenamiento orientada a acceso poco frecuente."
+  },
+  "difficulty": 1
+ },
+ {
+  "id": "res-48",
+  "domain": "resilient",
+  "topic": "VPN con dispositivo redundante",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa conecta su oficina a una VPC con AWS Site-to-Site VPN. AWS ya ofrece dos túneles, pero la oficina tiene un único router de borde (customer gateway device) y su falla dejaría la conexión caída. ¿Cómo se elimina ese punto único de falla?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Instalar un segundo customer gateway device y crear una segunda VPN connection"
+   },
+   {
+    "id": "B",
+    "text": "Habilitar el segundo túnel en el mismo customer gateway device"
+   },
+   {
+    "id": "C",
+    "text": "Aumentar el ancho de banda del túnel"
+   },
+   {
+    "id": "D",
+    "text": "Agregar un NAT gateway en la VPC"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "La redundancia completa requiere dos dispositivos del lado del cliente, cada uno con su VPN connection.",
+  "distractors": {
+   "B": "Ambos túneles terminan en el mismo dispositivo, que sigue siendo un punto único de falla.",
+   "C": "No aporta redundancia.",
+   "D": "No tiene relación con la redundancia del lado on-premises."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-49",
+  "domain": "resilient",
+  "topic": "ElastiCache Redis Multi-AZ",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación usa Amazon ElastiCache for Redis para almacenar sesiones. Si falla el nodo primario, la caché debe recuperarse automáticamente con interrupción mínima. ¿Qué configuración se requiere?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un único nodo de mayor tamaño"
+   },
+   {
+    "id": "B",
+    "text": "Un clúster de Memcached con varios nodos"
+   },
+   {
+    "id": "C",
+    "text": "Un replication group con réplicas en otra AZ y Multi-AZ con automatic failover habilitado"
+   },
+   {
+    "id": "D",
+    "text": "Un replication group sin réplicas"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "Redis con réplicas y automatic failover promueve una réplica cuando falla el primario.",
+  "distractors": {
+   "A": "Sigue siendo un punto único de falla.",
+   "B": "Memcached no replica datos; al fallar un nodo se pierde su contenido.",
+   "D": "No hay nodo al que hacer failover."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-50",
+  "domain": "resilient",
+  "topic": "S3 Multi-Region Access Points",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación lee y escribe objetos en buckets de S3 de dos Regions que ya se replican entre sí. Se quiere un único endpoint global que enrute a la copia más cercana y permita conmutar el tráfico si una Region falla. ¿Qué característica debe usarse?",
+  "options": [
+   {
+    "id": "A",
+    "text": "S3 Transfer Acceleration"
+   },
+   {
+    "id": "B",
+    "text": "S3 Multi-Region Access Points"
+   },
+   {
+    "id": "C",
+    "text": "Un bucket policy con acceso entre Regions"
+   },
+   {
+    "id": "D",
+    "text": "S3 Intelligent-Tiering"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "Un Multi-Region Access Point ofrece un endpoint global que enruta a la Region disponible más cercana y admite controles de failover.",
+  "distractors": {
+   "A": "Acelera transferencias hacia un bucket, no ofrece endpoint global con failover entre buckets.",
+   "C": "Solo define permisos, no el enrutamiento.",
+   "D": "Optimiza costo por patrón de acceso, no la disponibilidad entre Regions."
+  },
+  "difficulty": 3
+ },
+ {
+  "id": "res-51",
+  "domain": "resilient",
+  "topic": "RDS Multi-AZ failover forzado",
+  "type": "single",
+  "choose": 1,
+  "stem": "Antes de salir a producción, un equipo quiere comprobar de forma controlada que su aplicación se reconecta correctamente cuando la instancia primaria de Amazon RDS Multi-AZ falla, sin esperar a un fallo real. ¿Qué acción debe realizar?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Reiniciar la instancia de base de datos con la opción Reboot with failover"
+   },
+   {
+    "id": "B",
+    "text": "Crear una read replica y promoverla a instancia independiente"
+   },
+   {
+    "id": "C",
+    "text": "Restaurar un snapshot en una nueva instancia"
+   },
+   {
+    "id": "D",
+    "text": "Modificar el tipo de instancia en la ventana de mantenimiento"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "Reboot with failover fuerza la conmutación a la instancia standby de Multi-AZ, lo que permite validar de forma controlada que la aplicación se reconecta al mismo endpoint DNS.",
+  "distractors": {
+   "B": "La promoción separa la réplica de forma permanente y no prueba el failover de Multi-AZ.",
+   "C": "Crea una instancia nueva con otro endpoint y no ejercita el failover de la instancia existente.",
+   "D": "Cambia el tamaño, no simula un fallo, y puede causar una interrupción innecesaria."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-52",
+  "domain": "resilient",
+  "topic": "Active-active multi-Region",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una aplicación de reservas debe operar activa en dos Regions y aceptar ESCRITURAS en ambas, con RPO cercano a cero y enrutamiento a la Region más cercana. ¿Qué DOS componentes se combinan? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Aurora Global Database con el clúster primario en una Region"
+   },
+   {
+    "id": "B",
+    "text": "RDS read replica en la segunda Region"
+   },
+   {
+    "id": "C",
+    "text": "RDS Multi-AZ en cada Region"
+   },
+   {
+    "id": "D",
+    "text": "DynamoDB global tables para replicar datos con escritura en ambas Regions"
+   },
+   {
+    "id": "E",
+    "text": "Route 53 latency routing con health checks"
+   }
+  ],
+  "answer": [
+   "D",
+   "E"
+  ],
+  "explanation": "Global tables permiten escritura multi-Region y Route 53 dirige a la Region saludable más cercana.",
+  "distractors": {
+   "A": "Solo admite un writer principal; las otras Regions son de lectura.",
+   "B": "Es de solo lectura hasta que se promueve.",
+   "C": "Cada una sería una base independiente sin replicación entre Regions."
+  },
+  "difficulty": 3
+ },
+ {
+  "id": "res-53",
+  "domain": "resilient",
+  "topic": "S3 protección contra borrado o ransomware",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una empresa guarda registros de auditoría en S3 y debe protegerlos contra borrados accidentales y contra la sobrescritura maliciosa durante 7 años. ¿Qué DOS configuraciones aplican? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Habilitar S3 Transfer Acceleration"
+   },
+   {
+    "id": "B",
+    "text": "Habilitar S3 Versioning"
+   },
+   {
+    "id": "C",
+    "text": "Usar S3 Intelligent-Tiering"
+   },
+   {
+    "id": "D",
+    "text": "Usar S3 Object Lock en modo compliance con un periodo de retención de 7 años"
+   },
+   {
+    "id": "E",
+    "text": "Una lifecycle rule que expire versiones anteriores a los 2 días"
+   }
+  ],
+  "answer": [
+   "B",
+   "D"
+  ],
+  "explanation": "Versioning conserva versiones y Object Lock (WORM) impide eliminar o modificar durante el periodo de retención.",
+  "distractors": {
+   "A": "Acelera transferencias y no protege los datos.",
+   "C": "Optimiza costos, no evita eliminaciones.",
+   "E": "Eliminaría las versiones previas que justamente protegen contra sobrescritura."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-54",
+  "domain": "resilient",
+  "topic": "NAT gateway por AZ",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una VPC con subredes privadas en tres AZs sale a Internet por un único NAT gateway en la AZ-a. Cuando la AZ-a falla, las cargas de las otras AZs pierden salida a Internet. ¿Qué DOS cambios corrigen el diseño? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Crear un segundo NAT gateway en la misma AZ-a"
+   },
+   {
+    "id": "B",
+    "text": "Asignar más Elastic IPs al NAT gateway existente"
+   },
+   {
+    "id": "C",
+    "text": "Crear un NAT gateway en una subred pública de cada AZ"
+   },
+   {
+    "id": "D",
+    "text": "Aumentar el ancho de banda del NAT gateway"
+   },
+   {
+    "id": "E",
+    "text": "Configurar la route table de cada subred privada para usar el NAT gateway de su propia AZ"
+   }
+  ],
+  "answer": [
+   "C",
+   "E"
+  ],
+  "explanation": "Un NAT gateway por AZ, con rutas locales, evita que el fallo de una AZ afecte a las demás.",
+  "distractors": {
+   "A": "Sigue dependiendo de la AZ-a.",
+   "B": "No agrega redundancia por AZ.",
+   "D": "No resuelve el fallo de la AZ."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-55",
+  "domain": "resilient",
+  "topic": "Route 53 health check para recursos privados",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una aplicación expone un Application Load Balancer interno y los health checkers públicos de Route 53 no pueden alcanzarlo. Se quiere un failover DNS al sitio secundario si el backend se degrada. ¿Qué DOS acciones se necesitan? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Crear un health check de Route 53 basado en una alarma de CloudWatch (por ejemplo, UnHealthyHostCount)"
+   },
+   {
+    "id": "B",
+    "text": "Crear un health check HTTP apuntando a la IP privada del ALB"
+   },
+   {
+    "id": "C",
+    "text": "Usar weighted routing con peso 0 en el primario"
+   },
+   {
+    "id": "D",
+    "text": "Subir el TTL a 24 horas"
+   },
+   {
+    "id": "E",
+    "text": "Crear registros failover primario y secundario asociando el health check al primario"
+   }
+  ],
+  "answer": [
+   "A",
+   "E"
+  ],
+  "explanation": "Para endpoints privados, el health check puede apoyarse en una alarma de CloudWatch y el registro failover reacciona a él.",
+  "distractors": {
+   "B": "Los health checkers están en Internet público y no alcanzan IPs privadas.",
+   "C": "Desvía todo el tráfico siempre, sin reaccionar a la salud.",
+   "D": "Retrasaría la propagación del failover."
+  },
+  "difficulty": 3
+ },
+ {
+  "id": "res-56",
+  "domain": "resilient",
+  "topic": "AWS Backup inmutable",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una empresa debe garantizar que los backups de sus bases de datos no puedan eliminarse ni acortarse su retención, ni siquiera por usuarios administradores, y que los recursos se protejan automáticamente según etiquetas. ¿Qué DOS configuraciones aplican? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "AWS Backup Vault Lock en modo compliance"
+   },
+   {
+    "id": "B",
+    "text": "Un backup plan con asignación de recursos por etiquetas"
+   },
+   {
+    "id": "C",
+    "text": "Una política IAM que deniegue borrar backups a los administradores"
+   },
+   {
+    "id": "D",
+    "text": "Snapshots manuales ocasionales"
+   },
+   {
+    "id": "E",
+    "text": "Una lifecycle rule de S3 sobre los backups"
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "explanation": "Vault Lock hace inmutable la retención y la asignación por etiquetas automatiza la cobertura de nuevos recursos.",
+  "distractors": {
+   "C": "Un administrador con permisos suficientes podría modificar la política.",
+   "D": "No son automáticos ni están protegidos contra eliminación.",
+   "E": "AWS Backup administra su propia retención y la regla no protege contra borrado."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "res-57",
+  "domain": "resilient",
+  "topic": "EFS: protección ante borrado y fallo regional",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Un sistema de archivos Amazon EFS (Regional) contiene datos críticos. La empresa necesita recuperarse ante borrados accidentales y ante la pérdida total de la Region. ¿Qué DOS acciones aplicarías? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Cambiar a EFS One Zone"
+   },
+   {
+    "id": "B",
+    "text": "Copiar los archivos con rsync a un instance store"
+   },
+   {
+    "id": "C",
+    "text": "Habilitar EFS Replication hacia otra Region"
+   },
+   {
+    "id": "D",
+    "text": "Proteger el sistema de archivos con AWS Backup"
+   },
+   {
+    "id": "E",
+    "text": "Aumentar el modo de rendimiento aprovisionado"
+   }
+  ],
+  "answer": [
+   "C",
+   "D"
+  ],
+  "explanation": "EFS Replication cubre el desastre regional y AWS Backup permite restaurar tras borrados o corrupción.",
+  "distractors": {
+   "A": "Concentra los datos en una sola AZ, reduciendo la resiliencia.",
+   "B": "El instance store es efímero y no resiste fallos.",
+   "E": "Afecta el desempeño, no la recuperación."
+  },
+  "difficulty": 2
+ }
+]

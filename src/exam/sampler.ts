@@ -12,6 +12,13 @@ export function mulberry32(seed: number): () => number {
   };
 }
 
+/** Stable per-attempt display order: the same attempt and question always give the same order. */
+export function orderOptions<T>(options: T[], seedKey: string): T[] {
+  let h = 2166136261;
+  for (let i = 0; i < seedKey.length; i++) h = Math.imul(h ^ seedKey.charCodeAt(i), 16777619);
+  return shuffle(options, mulberry32(h >>> 0));
+}
+
 export function shuffle<T>(arr: T[], rnd: () => number): T[] {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
