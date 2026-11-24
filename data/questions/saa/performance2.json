@@ -1,0 +1,1353 @@
+[
+  {
+    "id": "perf-17",
+    "domain": "performance",
+    "topic": "Graviton para web stateless",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una empresa ejecuta una flota de servidores web en Linux sobre instancias EC2 m5 detrás de un Application Load Balancer. El código es Python y Node.js, sin binarios x86 propietarios, y el equipo quiere mejorar la relación precio-rendimiento con el mínimo cambio de código. ¿Qué debe hacer?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Migrar a instancias basadas en AWS Graviton (por ejemplo m7g) y recompilar o reinstalar las dependencias para arm64"
+      },
+      {
+        "id": "B",
+        "text": "Migrar a instancias t3 con créditos ilimitados"
+      },
+      {
+        "id": "C",
+        "text": "Migrar a instancias de la familia p4 (GPU)"
+      },
+      {
+        "id": "D",
+        "text": "Cambiar a instancias m5 dedicadas (Dedicated Hosts)"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "Graviton ofrece mejor precio-rendimiento que x86 comparable. Lenguajes interpretados como Python y Node.js suelen correr en arm64 con cambios mínimos, ya que solo hay que usar dependencias compatibles con arm64.",
+    "distractors": {
+      "B": "Las instancias burstable solo convienen a cargas con CPU baja y picos ocasionales; con carga sostenida el modo unlimited encarece y no mejora precio-rendimiento.",
+      "C": "Las instancias con GPU son para ML o gráficos y cuestan mucho más; una app web no usa GPU.",
+      "D": "Los Dedicated Hosts resuelven licenciamiento o cumplimiento, no rendimiento por dólar."
+    },
+    "difficulty": 1
+  },
+  {
+    "id": "perf-18",
+    "domain": "performance",
+    "topic": "Inferentia para inferencia",
+    "type": "single",
+    "choose": 1,
+    "stem": "Un equipo de ML despliega un modelo de lenguaje de tamaño medio para inferencia en tiempo real sobre instancias EC2 con GPU. El costo por inferencia es alto y se necesita baja latencia sostenida a gran escala. ¿Qué opción reduce el costo por inferencia manteniendo el rendimiento?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Instancias c7g (Graviton) con el modelo en CPU"
+      },
+      {
+        "id": "B",
+        "text": "Instancias Inf2 con AWS Inferentia2 compilando el modelo con AWS Neuron SDK"
+      },
+      {
+        "id": "C",
+        "text": "Instancias r6i con más memoria RAM"
+      },
+      {
+        "id": "D",
+        "text": "Instancias t3.2xlarge con créditos ilimitados"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Las instancias Inf2 usan chips AWS Inferentia2 diseñados para inferencia de deep learning y ofrecen mejor costo por inferencia que GPU de propósito general, con el modelo compilado mediante Neuron SDK.",
+    "distractors": {
+      "A": "Las CPU Graviton sirven para inferencia ligera, pero un modelo de lenguaje con baja latencia sostenida necesita aceleradores.",
+      "C": "Más RAM no acelera el cómputo de las multiplicaciones de matrices del modelo.",
+      "D": "Una carga de inferencia sostenida agota los créditos y el modo unlimited encarece sin dar aceleración."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-19",
+    "domain": "performance",
+    "topic": "Familia memory optimized",
+    "type": "single",
+    "choose": 1,
+    "stem": "Un equipo ejecuta análisis en memoria con un motor que carga un dataset de 900 GB completamente en RAM; el uso de CPU es bajo pero la memoria es el cuello de botella. Se quiere la familia de instancias más adecuada por costo. ¿Qué debe elegir?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Instancias compute optimized de la familia C"
+      },
+      {
+        "id": "B",
+        "text": "Instancias storage optimized de la familia I"
+      },
+      {
+        "id": "C",
+        "text": "Instancias memory optimized de la familia R o X, según el tamaño de memoria"
+      },
+      {
+        "id": "D",
+        "text": "Instancias general purpose t3 con EBS gp3 grande"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Cuando el recurso limitante es la memoria, se eligen las familias R (alta relación memoria/vCPU) o X (memoria extrema). Elegir por el recurso crítico evita pagar cómputo o almacenamiento que no se usa.",
+    "distractors": {
+      "A": "La familia C tiene poca memoria por vCPU; para 900 GB habría que pagar muchos vCPU que no se usan.",
+      "B": "La familia I da NVMe local de alto IOPS, pero el cuello de botella aquí es RAM.",
+      "D": "t3 no llega a esa memoria y el disco no sustituye a la RAM."
+    },
+    "difficulty": 1
+  },
+  {
+    "id": "perf-20",
+    "domain": "performance",
+    "topic": "AWS Batch con Spot",
+    "type": "single",
+    "choose": 1,
+    "stem": "Un estudio de renderizado recibe miles de trabajos de procesamiento por lotes cada noche, cada uno de 10 a 40 minutos y tolerante a reintentos. El equipo no quiere administrar el scheduler ni los servidores y busca el menor costo. ¿Qué arquitectura es la mejor?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Una flota fija de instancias On-Demand con un cron que lance los trabajos"
+      },
+      {
+        "id": "B",
+        "text": "AWS Lambda para cada trabajo"
+      },
+      {
+        "id": "C",
+        "text": "Un solo Dedicated Host con una cola propia en la instancia"
+      },
+      {
+        "id": "D",
+        "text": "AWS Batch con un compute environment gestionado que use instancias Spot"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "AWS Batch aprovisiona y escala el cómputo según la cola de trabajos y puede usar Spot, que aporta descuentos grandes para cargas tolerantes a interrupciones. Los reintentos cubren las interrupciones.",
+    "distractors": {
+      "A": "Obliga a administrar el scheduler y paga capacidad ociosa fuera de la ventana nocturna.",
+      "B": "Lambda tiene un límite de 15 minutos por invocación y los trabajos pueden llegar a 40.",
+      "C": "No escala, introduce un punto único de falla y es la opción más cara."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-21",
+    "domain": "performance",
+    "topic": "Fargate para contenedores",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una startup despliega 12 microservicios en contenedores con tráfico muy variable. El equipo es pequeño y no quiere parchear ni dimensionar instancias EC2, pero sí necesita que cada servicio escale por separado. ¿Qué debe usar?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Amazon ECS con AWS Fargate y Service Auto Scaling por servicio"
+      },
+      {
+        "id": "B",
+        "text": "Amazon ECS con instancias EC2 y un Auto Scaling group propio"
+      },
+      {
+        "id": "C",
+        "text": "Un contenedor Docker por instancia EC2 lanzado con user data"
+      },
+      {
+        "id": "D",
+        "text": "Amazon EKS con nodos autoadministrados"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "Fargate es cómputo serverless para contenedores: AWS administra el servidor subyacente y cada tarea recibe su propio CPU y memoria. Con Service Auto Scaling cada servicio escala de forma independiente.",
+    "distractors": {
+      "B": "Exige administrar, parchear y dimensionar las instancias del cluster, lo que el equipo quiere evitar.",
+      "C": "Pierde orquestación, autoescalado por servicio y carga operativa de gestionar cada host.",
+      "D": "Es más complejo de operar y requiere gestionar nodos; no cumple con el requisito de simplicidad."
+    },
+    "difficulty": 1
+  },
+  {
+    "id": "perf-22",
+    "domain": "performance",
+    "topic": "Lambda SnapStart",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una función Lambda en Java 17 atiende peticiones de una API y sufre arranques en frío de varios segundos por la inicialización del framework. El equipo quiere reducir esa latencia sin reescribir el código y sin pagar por concurrencia ociosa permanente. ¿Qué debe hacer?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Reescribir la función en un binario nativo con un contenedor de 10 GB"
+      },
+      {
+        "id": "B",
+        "text": "Habilitar Lambda SnapStart en la versión publicada de la función"
+      },
+      {
+        "id": "C",
+        "text": "Reducir la memoria de la función a 128 MB"
+      },
+      {
+        "id": "D",
+        "text": "Mover la función dentro de una VPC con subredes privadas"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "SnapStart toma una instantánea de la función ya inicializada y la reanuda en los arranques en frío, reduciendo la latencia sin cambiar el código y sin el costo de mantener concurrencia aprovisionada.",
+    "distractors": {
+      "A": "Es una reescritura grande y no cumple con la restricción de no tocar el código.",
+      "C": "Menos memoria significa menos CPU y arranques más lentos.",
+      "D": "Ubicar la función en una VPC no acelera la inicialización de Java."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-23",
+    "domain": "performance",
+    "topic": "Partition placement group",
+    "type": "single",
+    "choose": 1,
+    "stem": "Un cluster de Apache Cassandra con cientos de nodos EC2 en una sola AZ debe reducir el riesgo de que una falla de hardware afecte a muchas réplicas a la vez, y escalar horizontalmente sin límite estricto de siete instancias por AZ. ¿Qué estrategia de placement group conviene?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Cluster placement group"
+      },
+      {
+        "id": "B",
+        "text": "Spread placement group"
+      },
+      {
+        "id": "C",
+        "text": "Partition placement group, con cada partición en racks distintos"
+      },
+      {
+        "id": "D",
+        "text": "Sin placement group y con instancias burstable"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Los partition placement groups reparten las instancias en particiones lógicas que no comparten racks entre sí, pensados para sistemas distribuidos y replicados grandes como Cassandra, HDFS o Kafka.",
+    "distractors": {
+      "A": "Agrupa las instancias en el mismo hardware para baja latencia, lo contrario de aislar fallas.",
+      "B": "Aísla cada instancia, pero admite como máximo siete instancias por AZ y no sirve para cientos de nodos.",
+      "D": "No da control sobre el aislamiento de fallas por rack."
+    },
+    "difficulty": 3
+  },
+  {
+    "id": "perf-24",
+    "domain": "performance",
+    "topic": "Lambda memoria y RDS Proxy",
+    "type": "multi",
+    "choose": 2,
+    "stem": "Una función Lambda procesa archivos y consulta una base de datos Amazon RDS for PostgreSQL. Con picos de eventos, la función tarda demasiado en la parte de CPU y la base de datos agota sus conexiones. El equipo quiere corregir ambos problemas. ¿Qué acciones debe tomar? (Elija DOS)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Aumentar la memoria configurada de la función, porque la CPU asignada crece proporcionalmente"
+      },
+      {
+        "id": "B",
+        "text": "Poner Amazon RDS Proxy entre Lambda y la base de datos para agrupar conexiones"
+      },
+      {
+        "id": "C",
+        "text": "Aumentar el timeout de la función a 15 minutos"
+      },
+      {
+        "id": "D",
+        "text": "Abrir una conexión nueva a la base de datos en cada invocación"
+      },
+      {
+        "id": "E",
+        "text": "Cambiar la arquitectura de la función a x86 y reducir la memoria"
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "explanation": "En Lambda la CPU se asigna en proporción a la memoria, así que subirla acelera funciones limitadas por CPU. RDS Proxy mantiene un pool de conexiones y las reutiliza, protegiendo a la base de datos de picos de invocaciones.",
+    "distractors": {
+      "C": "Un timeout mayor no acelera el cómputo ni reduce las conexiones abiertas.",
+      "D": "Es justo lo que agota las conexiones durante los picos.",
+      "E": "No resuelve la falta de CPU ni las conexiones, y menos memoria reduce la CPU."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-25",
+    "domain": "performance",
+    "topic": "HPC con EFA y cluster PG",
+    "type": "multi",
+    "choose": 2,
+    "stem": "Una empresa ejecuta simulaciones de dinámica de fluidos con MPI en EC2. Los nodos intercambian mensajes pequeños constantemente y el tiempo total está dominado por la latencia de red entre ellos. ¿Qué DOS configuraciones mejoran más el rendimiento? (Elija DOS)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Lanzar los nodos en un cluster placement group dentro de una sola AZ"
+      },
+      {
+        "id": "B",
+        "text": "Distribuir los nodos en tres AZ con un spread placement group"
+      },
+      {
+        "id": "C",
+        "text": "Usar instancias compatibles con Elastic Fabric Adapter (EFA) con la librería MPI habilitada"
+      },
+      {
+        "id": "D",
+        "text": "Asignar una Elastic IP a cada nodo"
+      },
+      {
+        "id": "E",
+        "text": "Usar instancias t3 con créditos ilimitados"
+      }
+    ],
+    "answer": [
+      "A",
+      "C"
+    ],
+    "explanation": "El cluster placement group coloca las instancias cerca para obtener baja latencia y alto throughput entre nodos. EFA añade comunicación entre instancias con bypass del kernel, ideal para MPI y HPC.",
+    "distractors": {
+      "B": "La separación aumenta la latencia entre nodos, justo lo que hay que reducir.",
+      "D": "Las Elastic IP dan direcciones públicas fijas pero no reducen la latencia entre nodos.",
+      "E": "Las t3 son de uso general con red de menor rendimiento y no tienen soporte de EFA."
+    },
+    "difficulty": 3
+  },
+  {
+    "id": "perf-26",
+    "domain": "performance",
+    "topic": "Auto Scaling con warm pool",
+    "type": "multi",
+    "choose": 2,
+    "stem": "Un portal de ventas sufre picos impredecibles de tráfico y las instancias tardan varios minutos en estar listas por una inicialización pesada. Se necesita que la capacidad responda rápido sin dejar una flota grande permanentemente encendida. ¿Qué DOS acciones aplica? (Elija DOS)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Configurar una política de target tracking sobre una métrica como el uso de CPU o las solicitudes por destino"
+      },
+      {
+        "id": "B",
+        "text": "Usar solo escalado programado a las horas de mayor tráfico"
+      },
+      {
+        "id": "C",
+        "text": "Dimensionar manualmente la flota al máximo histórico"
+      },
+      {
+        "id": "D",
+        "text": "Habilitar un warm pool de instancias preinicializadas en el Auto Scaling group"
+      },
+      {
+        "id": "E",
+        "text": "Subir el periodo de enfriamiento (cooldown) a 30 minutos"
+      }
+    ],
+    "answer": [
+      "A",
+      "D"
+    ],
+    "explanation": "Target tracking ajusta la capacidad de forma continua alrededor de una métrica objetivo. El warm pool mantiene instancias ya inicializadas y detenidas o en hibernación, y acorta el tiempo hasta que sirven tráfico.",
+    "distractors": {
+      "B": "Los picos son impredecibles, así que no se anticipan con un horario fijo.",
+      "C": "Paga capacidad ociosa permanente, lo contrario de lo pedido.",
+      "E": "Un cooldown largo retrasa aún más los escalamientos."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-27",
+    "domain": "performance",
+    "topic": "S3 multipart upload",
+    "type": "single",
+    "choose": 1,
+    "stem": "Un equipo sube cada hora archivos de 20 GB desde un servidor local a Amazon S3 usando una sola solicitud PUT. Las subidas son lentas y fallan por cortes de red, obligando a reiniciar desde cero. ¿Qué cambio mejora velocidad y fiabilidad?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Cambiar la clase de almacenamiento a S3 Glacier Deep Archive"
+      },
+      {
+        "id": "B",
+        "text": "Comprimir el archivo con gzip y mantener una sola solicitud PUT"
+      },
+      {
+        "id": "C",
+        "text": "Subir los archivos a un bucket distinto para cada hora"
+      },
+      {
+        "id": "D",
+        "text": "Usar multipart upload con partes en paralelo y reintentar solo las partes fallidas"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Multipart upload divide el objeto en partes que se suben en paralelo, aprovechan mejor el ancho de banda y permiten reintentar solo las partes fallidas. AWS lo recomienda para objetos de más de 100 MB.",
+    "distractors": {
+      "A": "La clase de almacenamiento no cambia la velocidad de subida y añade latencia de recuperación.",
+      "B": "Sigue siendo una sola solicitud grande que debe reiniciarse ante un corte.",
+      "C": "Dividir buckets no mejora el rendimiento de una subida individual."
+    },
+    "difficulty": 1
+  },
+  {
+    "id": "perf-28",
+    "domain": "performance",
+    "topic": "EFS Elastic Throughput",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una aplicación de procesamiento de medios en 40 instancias EC2 comparte un sistema de archivos Amazon EFS. La demanda de throughput es muy irregular: pasa horas casi inactiva y luego necesita gigabytes por segundo. Se quiere evitar el sobreaprovisionamiento. ¿Qué modo de throughput debe usar?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Elastic Throughput, que escala automáticamente según la carga"
+      },
+      {
+        "id": "B",
+        "text": "Provisioned Throughput al máximo esperado"
+      },
+      {
+        "id": "C",
+        "text": "Bursting Throughput con un sistema de archivos pequeño"
+      },
+      {
+        "id": "D",
+        "text": "Max I/O con almacenamiento en la clase One Zone"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "Elastic Throughput de EFS ajusta el rendimiento automáticamente según la actividad y cobra por lo transferido, lo cual es ideal para cargas impredecibles sin necesidad de aprovisionar.",
+    "distractors": {
+      "B": "Paga el throughput provisionado también en las horas inactivas.",
+      "C": "El throughput de ráfaga depende del tamaño y se agota con cargas sostenidas altas.",
+      "D": "Max I/O es un modo de rendimiento para alta concurrencia, no resuelve el sobreaprovisionamiento ni el throughput variable."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-29",
+    "domain": "performance",
+    "topic": "FSx for Windows File Server",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una empresa migra a EC2 una aplicación de Windows que usa recursos compartidos SMB, permisos NTFS y autenticación con Active Directory. Se necesita un sistema de archivos administrado con alto rendimiento y baja latencia. ¿Qué servicio debe usar?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Amazon EFS montado con NFS en las instancias Windows"
+      },
+      {
+        "id": "B",
+        "text": "Amazon FSx for Windows File Server integrado con AWS Managed Microsoft AD"
+      },
+      {
+        "id": "C",
+        "text": "Amazon S3 montado como unidad de disco en cada instancia"
+      },
+      {
+        "id": "D",
+        "text": "Amazon FSx for Lustre"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "FSx for Windows File Server provee SMB nativo, ACL de NTFS, integración con Active Directory y almacenamiento SSD de baja latencia, totalmente administrado.",
+    "distractors": {
+      "A": "EFS usa NFS y no es compatible con clientes Windows ni ACL de NTFS.",
+      "C": "S3 es almacenamiento de objetos, no ofrece semántica SMB ni baja latencia de sistema de archivos.",
+      "D": "Lustre está orientado a HPC en Linux y no soporta SMB nativo ni integración con Active Directory."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-30",
+    "domain": "performance",
+    "topic": "File Gateway con caché",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una productora tiene editores en una oficina con 100 Mbps de enlace que acceden constantemente a los mismos archivos recientes, mientras que el archivo histórico completo debe vivir en Amazon S3. Los editores usan recursos compartidos SMB y exigen baja latencia en los archivos activos. ¿Qué solución cumple esto?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Montar el bucket de S3 directamente en las estaciones con un cliente de terceros"
+      },
+      {
+        "id": "B",
+        "text": "AWS Storage Gateway tipo Tape Gateway"
+      },
+      {
+        "id": "C",
+        "text": "AWS Storage Gateway tipo S3 File Gateway local con caché de los datos recientes"
+      },
+      {
+        "id": "D",
+        "text": "Amazon FSx for Lustre en la Region más cercana"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "S3 File Gateway expone SMB o NFS localmente, guarda en caché los datos usados con más frecuencia para baja latencia y almacena los objetos en S3, de modo que el archivo completo queda en la nube.",
+    "distractors": {
+      "A": "No ofrece caché local de baja latencia y cada lectura cruzaría el enlace de 100 Mbps.",
+      "B": "Tape Gateway emula una biblioteca de cintas para respaldos, no recursos compartidos SMB.",
+      "D": "Se accedería por el enlace WAN y no hay caché local; además no habla SMB."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-31",
+    "domain": "performance",
+    "topic": "EBS optimizado y gp3",
+    "type": "multi",
+    "choose": 2,
+    "stem": "Una base de datos MySQL autoadministrada en EC2 con un volumen gp3 de 1 TB no alcanza las 30.000 IOPS ni los 900 MB/s que necesita la carga. El equipo debe mantener EBS como almacenamiento. ¿Qué DOS cambios corrigen el problema? (Elija DOS)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Cambiar el volumen a sc1 para bajar el costo"
+      },
+      {
+        "id": "B",
+        "text": "Aprovisionar en el volumen gp3 las IOPS y el throughput requeridos, por encima de la línea base"
+      },
+      {
+        "id": "C",
+        "text": "Reducir el tamaño del volumen gp3 a 100 GB"
+      },
+      {
+        "id": "D",
+        "text": "Aumentar la frecuencia de snapshots"
+      },
+      {
+        "id": "E",
+        "text": "Usar un tipo de instancia con suficiente ancho de banda EBS dedicado, no limitado por el máximo de la instancia"
+      }
+    ],
+    "answer": [
+      "B",
+      "E"
+    ],
+    "explanation": "En gp3 las IOPS y el throughput se aprovisionan por separado del tamaño (hasta 80.000 IOPS y 2.000 MiB/s). Además, la instancia debe tener ancho de banda EBS suficiente, porque su propio límite puede ser el cuello de botella.",
+    "distractors": {
+      "A": "sc1 es HDD frío, con rendimiento muy inferior.",
+      "C": "Un tamaño menor no sube las IOPS; en gp3 son independientes, pero esto no aporta nada y limita la capacidad.",
+      "D": "Los snapshots protegen datos, no aumentan el rendimiento del volumen."
+    },
+    "difficulty": 3
+  },
+  {
+    "id": "perf-32",
+    "domain": "performance",
+    "topic": "S3 Express One Zone",
+    "type": "multi",
+    "choose": 2,
+    "stem": "Un pipeline de entrenamiento de ML en EC2 lee millones de objetos pequeños y necesita latencias de una cifra de milisegundos. Los datos de entrada se pueden regenerar, por lo que no hace falta replicarlos en varias AZ. ¿Qué DOS acciones consiguen la menor latencia? (Elija DOS)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Almacenar los datos en S3 Glacier Instant Retrieval"
+      },
+      {
+        "id": "B",
+        "text": "Activar S3 Transfer Acceleration en el bucket"
+      },
+      {
+        "id": "C",
+        "text": "Almacenar los datos en un directory bucket de la clase S3 Express One Zone"
+      },
+      {
+        "id": "D",
+        "text": "Ejecutar las instancias de entrenamiento en la misma AZ del directory bucket"
+      },
+      {
+        "id": "E",
+        "text": "Replicar el bucket a una Region lejana y leer desde allí"
+      }
+    ],
+    "answer": [
+      "C",
+      "D"
+    ],
+    "explanation": "S3 Express One Zone ofrece latencia de una cifra de milisegundos con directory buckets en una sola AZ. Para aprovecharla al máximo, el cómputo debe estar en esa misma AZ y evitar el tráfico entre AZ.",
+    "distractors": {
+      "A": "Está pensada para archivo de acceso poco frecuente, no para latencia mínima en lecturas intensivas.",
+      "B": "Acelera transferencias de larga distancia por Internet, no las lecturas desde EC2 en la misma Region.",
+      "E": "Añade distancia y latencia, no la reduce."
+    },
+    "difficulty": 3
+  },
+  {
+    "id": "perf-33",
+    "domain": "performance",
+    "topic": "Aurora Serverless v2",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una aplicación SaaS interna tiene una base de datos MySQL que pasa la mayor parte del día casi inactiva pero recibe ráfagas impredecibles de carga que requieren decenas de veces más capacidad en segundos. El equipo no quiere reaprovisionar instancias ni gestionar el escalado. ¿Qué opción es la más adecuada?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Una instancia de RDS for MySQL dimensionada para el pico máximo"
+      },
+      {
+        "id": "B",
+        "text": "Amazon Redshift con un cluster de un solo nodo"
+      },
+      {
+        "id": "C",
+        "text": "Una instancia Aurora provisionada y escalado manual vía script"
+      },
+      {
+        "id": "D",
+        "text": "Amazon Aurora Serverless v2, que ajusta la capacidad en incrementos finos en segundos"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Aurora Serverless v2 escala la capacidad (ACU) de manera continua y granular según la carga, sin interrumpir las conexiones, y es ideal para cargas con picos impredecibles.",
+    "distractors": {
+      "A": "Paga capacidad de pico todo el día y no escala sola.",
+      "B": "Redshift es un data warehouse analítico, no una base transaccional.",
+      "C": "Cambiar de clase de instancia provoca interrupciones y no responde en segundos."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-34",
+    "domain": "performance",
+    "topic": "Aurora Global Database",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una aplicación de comercio con la base de datos principal en Aurora PostgreSQL en us-east-1 tiene usuarios en Europa que sufren lecturas lentas por la distancia. Se necesitan lecturas locales de baja latencia en eu-west-1 y una replicación entre Regions con retraso típico inferior a un segundo. ¿Qué debe hacer?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Convertir la base en una Aurora Global Database con un cluster secundario en eu-west-1"
+      },
+      {
+        "id": "B",
+        "text": "Crear un snapshot manual diario y restaurarlo en eu-west-1"
+      },
+      {
+        "id": "C",
+        "text": "Poner un Application Load Balancer en eu-west-1 que apunte a la base en us-east-1"
+      },
+      {
+        "id": "D",
+        "text": "Usar AWS DMS con una carga completa semanal hacia una instancia en eu-west-1"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "Aurora Global Database replica a nivel de almacenamiento a otras Regions con latencia típica de menos de un segundo, y permite lecturas locales en los clusters secundarios.",
+    "distractors": {
+      "B": "Los datos europeos tendrían hasta un día de retraso.",
+      "C": "El ALB no acelera consultas SQL a una base remota.",
+      "D": "Una carga semanal no cumple con una replicación de menos de un segundo."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-35",
+    "domain": "performance",
+    "topic": "Redshift Concurrency Scaling",
+    "type": "single",
+    "choose": 1,
+    "stem": "Un data warehouse en Amazon Redshift atiende dashboards de BI que a las 9 a. m. generan cientos de consultas concurrentes. Las consultas se encolan y se vuelven lentas por unos minutos, y el resto del día la capacidad sobra. ¿Qué característica mitiga esto con el menor costo?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Duplicar de forma permanente el número de nodos del cluster"
+      },
+      {
+        "id": "B",
+        "text": "Habilitar Concurrency Scaling para añadir capacidad de cómputo temporal durante los picos"
+      },
+      {
+        "id": "C",
+        "text": "Mover los dashboards a consultas directas contra Amazon S3 con S3 Select"
+      },
+      {
+        "id": "D",
+        "text": "Reducir el tamaño de cola de WLM a 1"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Concurrency Scaling crea de forma elástica clusters adicionales cuando se encolan consultas y se paga solo por el tiempo que se usan, por lo que absorbe los picos de concurrencia sin sobredimensionar.",
+    "distractors": {
+      "A": "Resuelve el pico, pero paga capacidad extra todo el día.",
+      "C": "S3 Select filtra objetos individuales y no sustituye a un warehouse con cientos de consultas.",
+      "D": "Una cola de tamaño 1 serializa las consultas y empeora la latencia."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-36",
+    "domain": "performance",
+    "topic": "ElastiCache write-through",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una aplicación usa Amazon ElastiCache para almacenar en caché perfiles de usuario leídos desde RDS. Cuando un perfil cambia, los usuarios ven datos desactualizados hasta que expira el TTL. Se quiere que la caché refleje de inmediato las escrituras y que las lecturas casi siempre acierten. ¿Qué estrategia aplica?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Lazy loading con TTL más largo"
+      },
+      {
+        "id": "B",
+        "text": "Eliminar la caché y leer siempre de RDS"
+      },
+      {
+        "id": "C",
+        "text": "Write-through: escribir en la caché cada vez que se escribe en la base de datos"
+      },
+      {
+        "id": "D",
+        "text": "Reiniciar el cluster de caché cada hora"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Write-through actualiza la caché al mismo tiempo que la base, manteniendo los datos frescos. Se suele combinar con lazy loading para cubrir fallos de caché y con TTL para limitar el tamaño.",
+    "distractors": {
+      "A": "Un TTL más largo prolonga los datos desactualizados.",
+      "B": "Pierde los beneficios de latencia y descarga de la base de datos.",
+      "D": "Provoca pérdida de aciertos, picos de carga en RDS y sigue sin dar consistencia inmediata."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-37",
+    "domain": "performance",
+    "topic": "RDS con Performance Insights",
+    "type": "multi",
+    "choose": 2,
+    "stem": "Una base de datos Amazon RDS for PostgreSQL con volumen gp2 muestra alta latencia de disco y esperas de I/O en horas pico. El equipo no sabe qué consultas son las más costosas. ¿Qué DOS acciones deben tomar? (Elija DOS)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Cambiar a una instancia con menos vCPU para ahorrar"
+      },
+      {
+        "id": "B",
+        "text": "Deshabilitar los backups automáticos"
+      },
+      {
+        "id": "C",
+        "text": "Activar Performance Insights para identificar las consultas SQL y las esperas que más carga generan"
+      },
+      {
+        "id": "D",
+        "text": "Agregar un volumen sc1 como segundo almacenamiento"
+      },
+      {
+        "id": "E",
+        "text": "Migrar el almacenamiento a gp3 o io2 con IOPS aprovisionadas acordes a la carga"
+      }
+    ],
+    "answer": [
+      "C",
+      "E"
+    ],
+    "explanation": "Performance Insights muestra qué consultas y esperas limitan la base, y el almacenamiento con IOPS aprovisionadas (gp3 o io2) elimina el cuello de botella de I/O cuando el disco es el factor limitante.",
+    "distractors": {
+      "A": "No reduce las esperas de I/O y puede empeorar el rendimiento.",
+      "B": "No mejora las consultas lentas y pone en riesgo la recuperación.",
+      "D": "RDS no admite volúmenes HDD fríos para el motor en uso y no aceleraría nada."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-38",
+    "domain": "performance",
+    "topic": "DynamoDB Query y GSI",
+    "type": "multi",
+    "choose": 2,
+    "stem": "Una tabla de Amazon DynamoDB con pedidos usa como clave de partición el customerId. Un panel de soporte busca pedidos por estado y fecha mediante Scan con filtros, lo que consume mucha capacidad de lectura y tarda. ¿Qué DOS cambios mejoran el rendimiento? (Elija DOS)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Cambiar a lecturas fuertemente consistentes en el Scan"
+      },
+      {
+        "id": "B",
+        "text": "Aumentar el tamaño de página del Scan"
+      },
+      {
+        "id": "C",
+        "text": "Agregar un LSI con otra clave de ordenamiento a la tabla existente"
+      },
+      {
+        "id": "D",
+        "text": "Crear un índice secundario global (GSI) con las claves que el panel usa para buscar"
+      },
+      {
+        "id": "E",
+        "text": "Reemplazar el Scan por operaciones Query sobre ese índice"
+      }
+    ],
+    "answer": [
+      "D",
+      "E"
+    ],
+    "explanation": "Scan lee toda la tabla y luego filtra. Un GSI con las claves adecuadas permite usar Query, que accede solo a los elementos relevantes con mucho menos capacidad de lectura y latencia.",
+    "distractors": {
+      "A": "Las lecturas fuertemente consistentes consumen el doble de capacidad y no evitan recorrer toda la tabla.",
+      "B": "Sigue leyendo todos los elementos, solo cambia cómo se pagina.",
+      "C": "Los LSI solo se pueden definir al crear la tabla y comparten la misma clave de partición."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-39",
+    "domain": "performance",
+    "topic": "DynamoDB hot partition",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una tabla de DynamoDB para eventos de IoT usa como clave de partición la fecha (por ejemplo 2026-11-23). Todas las escrituras del día caen en la misma partición y aparecen errores de throttling aunque la capacidad total está muy por debajo del límite. ¿Qué debe hacer?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Duplicar las unidades de capacidad de escritura de la tabla"
+      },
+      {
+        "id": "B",
+        "text": "Cambiar a lecturas eventualmente consistentes"
+      },
+      {
+        "id": "C",
+        "text": "Agregar DAX delante de la tabla"
+      },
+      {
+        "id": "D",
+        "text": "Rediseñar la clave de partición con un atributo de alta cardinalidad, como el deviceId, que reparta la carga"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "DynamoDB reparte los datos y el throughput por partición según la clave de partición. Una clave de baja cardinalidad crea una partición caliente, así que se debe elegir una de alta cardinalidad con acceso uniforme.",
+    "distractors": {
+      "A": "La capacidad se reparte por partición; el problema es la distribución, no el total.",
+      "B": "No cambia cómo se distribuyen las escrituras.",
+      "C": "DAX acelera lecturas cacheadas, pero no mitiga el throttling de escrituras en una partición caliente."
+    },
+    "difficulty": 3
+  },
+  {
+    "id": "perf-40",
+    "domain": "performance",
+    "topic": "CloudFront Origin Shield",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una plataforma de vídeo bajo demanda usa Amazon CloudFront con un origen en una sola Region. Aunque la tasa de aciertos es buena por Edge Location, el origen recibe muchas solicitudes duplicadas desde distintas ubicaciones por el mismo contenido nuevo. ¿Qué característica reduce la carga del origen?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Habilitar CloudFront Origin Shield en la Region más cercana al origen"
+      },
+      {
+        "id": "B",
+        "text": "Reducir el TTL de caché a 1 segundo"
+      },
+      {
+        "id": "C",
+        "text": "Desactivar la compresión de CloudFront"
+      },
+      {
+        "id": "D",
+        "text": "Reemplazar CloudFront por AWS Global Accelerator"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "Origin Shield añade una capa de caché centralizada entre las Edge Locations y el origen, consolidando las solicitudes de distintas ubicaciones y mejorando la tasa de aciertos para proteger al origen.",
+    "distractors": {
+      "B": "Más fallos de caché implican más solicitudes al origen.",
+      "C": "La compresión reduce bytes transferidos, no las solicitudes duplicadas al origen.",
+      "D": "Global Accelerator no almacena contenido en caché, así que el origen recibiría todas las solicitudes."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-41",
+    "domain": "performance",
+    "topic": "TGW ECMP con VPN",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una empresa conecta su centro de datos a AWS con una VPN Site-to-Site, pero cada túnel está limitado a unos 1,25 Gbps y la aplicación necesita más ancho de banda agregado mientras llega el Direct Connect. ¿Cómo obtiene más rendimiento sin cambiar de tecnología?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Terminar la VPN en un Virtual Private Gateway y agregar más túneles"
+      },
+      {
+        "id": "B",
+        "text": "Terminar varias conexiones VPN en un AWS Transit Gateway con BGP y ECMP"
+      },
+      {
+        "id": "C",
+        "text": "Subir el MTU del túnel a 9001 bytes"
+      },
+      {
+        "id": "D",
+        "text": "Reemplazar la VPN por VPC peering con el centro de datos"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Un Transit Gateway admite ECMP sobre varios túneles VPN con BGP, lo que permite superar el límite por túnel de 1,25 Gbps y repartir el tráfico entre conexiones.",
+    "distractors": {
+      "A": "Un Virtual Private Gateway no soporta ECMP para repartir tráfico entre túneles.",
+      "C": "El MTU de VPN es menor y no aumenta el límite de ancho de banda por túnel.",
+      "D": "El VPC peering conecta VPCs entre sí, no centros de datos on-premises."
+    },
+    "difficulty": 3
+  },
+  {
+    "id": "perf-42",
+    "domain": "performance",
+    "topic": "Gateway endpoint para S3",
+    "type": "single",
+    "choose": 1,
+    "stem": "Cientos de instancias EC2 en subredes privadas descargan terabytes diarios desde Amazon S3 a través de un NAT gateway. La factura de procesamiento de datos es alta y el NAT gateway es un cuello de botella. ¿Qué cambio resuelve ambos problemas?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Agregar más NAT gateways en cada AZ"
+      },
+      {
+        "id": "B",
+        "text": "Poner un Network Load Balancer delante del NAT gateway"
+      },
+      {
+        "id": "C",
+        "text": "Crear un gateway endpoint de S3 y agregarlo a las tablas de rutas de las subredes privadas"
+      },
+      {
+        "id": "D",
+        "text": "Mover las instancias a subredes públicas con Elastic IP"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "El gateway endpoint de S3 enruta el tráfico por la red privada de AWS sin pasar por NAT, sin costo adicional por procesamiento de datos y sin límite de ancho de banda artificial.",
+    "distractors": {
+      "A": "Reduce el cuello de botella pero no el costo, y el tráfico sigue saliendo por NAT.",
+      "B": "El NAT gateway ya es administrado y escalable, y el tráfico seguiría pasando por él.",
+      "D": "Expone las instancias a Internet y el tráfico saldría por el internet gateway sin resolver el diseño."
+    },
+    "difficulty": 1
+  },
+  {
+    "id": "perf-43",
+    "domain": "performance",
+    "topic": "CloudFront Functions",
+    "type": "single",
+    "choose": 1,
+    "stem": "Un sitio de e-commerce reescribe encabezados y normaliza URLs en cada solicitud a CloudFront. Procesa millones de solicitudes por segundo y la lógica es simple y muy corta. Se necesita la mínima latencia y el menor costo. ¿Qué debe usar?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Lambda@Edge en el evento de solicitud del origen"
+      },
+      {
+        "id": "B",
+        "text": "Una función Lambda detrás de API Gateway en la Region de origen"
+      },
+      {
+        "id": "C",
+        "text": "Reglas en una instancia EC2 con NGINX en cada Region"
+      },
+      {
+        "id": "D",
+        "text": "CloudFront Functions en el evento de solicitud del viewer"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "CloudFront Functions está pensado para lógica ligera en el borde (reescrituras, encabezados, redirecciones), con latencia de submilisegundo y costo menor que Lambda@Edge.",
+    "distractors": {
+      "A": "Es más potente pero con más latencia y costo, y el evento de origen solo corre en los fallos de caché.",
+      "B": "Añade viajes a la Region y más latencia para cada solicitud.",
+      "C": "Exige administrar servidores y no se ejecuta en las Edge Locations."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-44",
+    "domain": "performance",
+    "topic": "Transit Gateway hub",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una organización tiene 60 VPC en una Region y una conexión Direct Connect a su centro de datos. Las VPC deben comunicarse entre sí y con on-premises, y mantener una malla de peering es insostenible. ¿Qué solución simplifica la conectividad con alto rendimiento?",
+    "options": [
+      {
+        "id": "A",
+        "text": "AWS Transit Gateway como hub, con las VPC y la conexión on-premises asociadas"
+      },
+      {
+        "id": "B",
+        "text": "VPC peering entre todas las VPC en malla completa"
+      },
+      {
+        "id": "C",
+        "text": "Una VPN Site-to-Site individual de cada VPC al centro de datos"
+      },
+      {
+        "id": "D",
+        "text": "Un Internet Gateway compartido entre todas las VPC"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "Transit Gateway actúa como router regional central: cada VPC y la conexión on-premises se asocian una sola vez y obtienen conectividad transitiva con un ancho de banda alto.",
+    "distractors": {
+      "B": "Requiere cientos de conexiones y el peering no es transitivo.",
+      "C": "Multiplica las conexiones, la administración y limita el ancho de banda por túnel.",
+      "D": "Un Internet Gateway se asocia a una sola VPC y tampoco da conectividad privada entre ellas."
+    },
+    "difficulty": 1
+  },
+  {
+    "id": "perf-45",
+    "domain": "performance",
+    "topic": "CloudFront contenido estático",
+    "type": "multi",
+    "choose": 2,
+    "stem": "Una empresa sirve imágenes estáticas desde Amazon S3 a usuarios en cuatro continentes con tiempos de carga altos. Las URL incluyen parámetros de seguimiento que cambian en cada visita. ¿Qué DOS acciones mejoran más la latencia? (Elija DOS)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Activar Transfer Acceleration y mantener acceso directo a S3"
+      },
+      {
+        "id": "B",
+        "text": "Poner una distribución de CloudFront delante de S3"
+      },
+      {
+        "id": "C",
+        "text": "Incluir todos los query strings en la clave de caché"
+      },
+      {
+        "id": "D",
+        "text": "Usar una cache policy con TTL largo que ignore los parámetros de seguimiento en la clave de caché"
+      },
+      {
+        "id": "E",
+        "text": "Copiar el bucket manualmente a 4 Regions sin enrutamiento"
+      }
+    ],
+    "answer": [
+      "B",
+      "D"
+    ],
+    "explanation": "CloudFront guarda copias en las Edge Locations. Ignorar parámetros irrelevantes en la clave de caché y usar TTL largos maximiza los aciertos, lo que reduce la latencia y la carga del origen.",
+    "distractors": {
+      "A": "Está pensada para subidas; no almacena contenido en caché cerca de los usuarios.",
+      "C": "Cada parámetro distinto crearía un objeto distinto en caché y bajaría los aciertos.",
+      "E": "Sin enrutamiento por latencia los usuarios seguirían yendo al mismo bucket, y se añade carga operativa."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-46",
+    "domain": "performance",
+    "topic": "Direct Connect gateway y TGW",
+    "type": "multi",
+    "choose": 2,
+    "stem": "Una empresa necesita conectividad privada de 10 Gbps con latencia consistente desde su centro de datos hacia 20 VPC distribuidas en tres Regions de AWS. Quiere una topología administrable y sin pasar por Internet. ¿Qué DOS elementos debe incluir? (Elija DOS)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Una conexión Direct Connect con una transit virtual interface hacia un Direct Connect gateway"
+      },
+      {
+        "id": "B",
+        "text": "Una VPN Site-to-Site sobre Internet pública para cada VPC"
+      },
+      {
+        "id": "C",
+        "text": "Una public virtual interface hacia las direcciones privadas de las VPC"
+      },
+      {
+        "id": "D",
+        "text": "VPC peering enrutando el tráfico on-premises a través de una VPC intermedia"
+      },
+      {
+        "id": "E",
+        "text": "Transit Gateways en cada Region asociados al Direct Connect gateway"
+      }
+    ],
+    "answer": [
+      "A",
+      "E"
+    ],
+    "explanation": "Un Direct Connect gateway con transit VIF permite conectar una sola conexión física a varios Transit Gateways en distintas Regions, y estos a las VPC, con rendimiento consistente.",
+    "distractors": {
+      "B": "Viaja por Internet, sin latencia consistente ni los 10 Gbps, y multiplica la administración.",
+      "C": "Una public VIF llega a servicios públicos de AWS, no a las IP privadas de las VPC.",
+      "D": "El peering no permite enrutamiento transitivo hacia redes remotas (edge-to-edge)."
+    },
+    "difficulty": 3
+  },
+  {
+    "id": "perf-47",
+    "domain": "performance",
+    "topic": "Kinesis enhanced fan-out",
+    "type": "single",
+    "choose": 1,
+    "stem": "Un stream de Amazon Kinesis Data Streams tiene cinco aplicaciones consumidoras que leen el mismo stream. Con GetRecords compiten por el límite compartido de 2 MB/s por shard y aparece latencia de propagación de cientos de milisegundos o más. Se necesita que cada consumidor lea con baja latencia. ¿Qué debe hacer?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Aumentar el periodo de retención del stream a 7 días"
+      },
+      {
+        "id": "B",
+        "text": "Registrar los consumidores con enhanced fan-out para dar a cada uno su propio throughput dedicado por shard"
+      },
+      {
+        "id": "C",
+        "text": "Cambiar el stream a Amazon Data Firehose"
+      },
+      {
+        "id": "D",
+        "text": "Hacer que los consumidores usen polling cada 5 segundos"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Con enhanced fan-out cada consumidor registrado obtiene 2 MB/s por shard dedicados con entrega push sobre HTTP/2, con latencia típica de unos 70 ms, sin competir con los demás.",
+    "distractors": {
+      "A": "La retención no cambia el throughput de lectura por shard.",
+      "C": "Firehose entrega datos a destinos y no admite múltiples consumidores personalizados con baja latencia.",
+      "D": "Reducir la frecuencia aumenta la latencia y no elimina la competencia por el límite."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-48",
+    "domain": "performance",
+    "topic": "Glue ETL a Parquet",
+    "type": "single",
+    "choose": 1,
+    "stem": "Un equipo de datos consulta con Amazon Athena logs en formato JSON de varios terabytes en S3, y las consultas son lentas y costosas porque escanean todos los datos. El filtro habitual es por fecha y por unas pocas columnas. ¿Qué transformación mejora más el rendimiento y el costo?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Cambiar los logs a CSV sin compresión"
+      },
+      {
+        "id": "B",
+        "text": "Subir el tamaño de la instancia donde corre el cliente de Athena"
+      },
+      {
+        "id": "C",
+        "text": "Un job de AWS Glue que convierta los datos a Parquet comprimido y los particione por fecha"
+      },
+      {
+        "id": "D",
+        "text": "Guardar cada log como un objeto separado de pocos KB"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Los formatos columnares como Parquet permiten leer solo las columnas necesarias, y la partición por fecha evita escanear datos irrelevantes. Esto reduce tiempo y costo, ya que Athena cobra por datos escaneados.",
+    "distractors": {
+      "A": "CSV sigue siendo orientado a filas y sin compresión escanea más bytes.",
+      "B": "Athena es serverless; el cliente no influye en el escaneo de datos.",
+      "D": "Muchos objetos pequeños degradan el rendimiento de las consultas."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-49",
+    "domain": "performance",
+    "topic": "MSK para Kafka",
+    "type": "single",
+    "choose": 1,
+    "stem": "Una empresa tiene aplicaciones que usan la API de Apache Kafka con clientes y conectores existentes. Quiere migrar a AWS sin reescribir los productores y consumidores y sin administrar brokers ni ZooKeeper. ¿Qué servicio debe usar?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Amazon Kinesis Data Streams"
+      },
+      {
+        "id": "B",
+        "text": "Amazon SQS FIFO"
+      },
+      {
+        "id": "C",
+        "text": "Amazon SNS con suscripciones por tópico"
+      },
+      {
+        "id": "D",
+        "text": "Amazon MSK (Managed Streaming for Apache Kafka)"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Amazon MSK es un servicio administrado que ejecuta Apache Kafka y mantiene la compatibilidad con clientes, herramientas y conectores existentes, evitando reescribir las aplicaciones.",
+    "distractors": {
+      "A": "Tiene una API propia, así que habría que reescribir productores y consumidores.",
+      "B": "Es una cola de mensajes, no un log distribuido compatible con la API de Kafka.",
+      "C": "SNS es pub/sub sin retención ni replay y sin compatibilidad con la API de Kafka."
+    },
+    "difficulty": 1
+  },
+  {
+    "id": "perf-50",
+    "domain": "performance",
+    "topic": "Amazon Quick con SPICE",
+    "type": "single",
+    "choose": 1,
+    "stem": "Un equipo de negocio construye dashboards en Amazon Quick sobre un dataset de 50 GB. Cada vez que cien usuarios abren el panel, las consultas directas a la base de origen son lentas y le generan carga. ¿Qué característica mejora la velocidad de los dashboards?",
+    "options": [
+      {
+        "id": "A",
+        "text": "Importar el dataset al motor en memoria SPICE y programar su refresco"
+      },
+      {
+        "id": "B",
+        "text": "Usar consultas directas con un timeout más alto"
+      },
+      {
+        "id": "C",
+        "text": "Exportar los datos a archivos CSV y compartirlos por correo"
+      },
+      {
+        "id": "D",
+        "text": "Reducir la cantidad de usuarios simultáneos del panel"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "SPICE es el motor en memoria de Amazon Quick: calcula rápido las consultas de los paneles, escala a muchos usuarios concurrentes y descarga la base de datos de origen, que solo se consulta en los refrescos.",
+    "distractors": {
+      "B": "Mantiene la carga contra la base de origen y no acelera los paneles.",
+      "C": "Elimina la interactividad y la gobernanza, y no escala.",
+      "D": "No es una solución de arquitectura; limita el acceso en vez de mejorar el rendimiento."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-51",
+    "domain": "performance",
+    "topic": "Kinesis shards y partition key",
+    "type": "multi",
+    "choose": 2,
+    "stem": "Una aplicación escribe en un stream de Kinesis Data Streams (modo aprovisionado) con 2 shards. Aparecen errores ProvisionedThroughputExceeded, aunque el tráfico total está muy por debajo de la capacidad del stream completo, y casi todos los registros comparten la misma partition key. ¿Qué DOS acciones corrigen el problema? (Elija DOS)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Usar una única partition key constante para preservar el orden global"
+      },
+      {
+        "id": "B",
+        "text": "Elegir partition keys de alta cardinalidad para que los registros se distribuyan entre los shards"
+      },
+      {
+        "id": "C",
+        "text": "Aumentar el número de shards con un reshard (o usar el modo on-demand) para sumar capacidad"
+      },
+      {
+        "id": "D",
+        "text": "Aumentar la retención del stream a 365 días"
+      },
+      {
+        "id": "E",
+        "text": "Reducir el tamaño de cada registro a menos de 1 byte"
+      }
+    ],
+    "answer": [
+      "B",
+      "C"
+    ],
+    "explanation": "Cada shard admite hasta 1 MB/s de escritura. Si una clave concentra el tráfico, esa shard se satura. Distribuir con claves variadas y añadir capacidad (reshard u on-demand) elimina el throttling.",
+    "distractors": {
+      "A": "Concentra todos los registros en un solo shard, lo que causa los errores.",
+      "D": "La retención no afecta a la capacidad de escritura.",
+      "E": "No es posible ni suficiente; el límite es de 1 MB/s por shard."
+    },
+    "difficulty": 2
+  },
+  {
+    "id": "perf-52",
+    "domain": "performance",
+    "topic": "EMR con Spot y escalado",
+    "type": "multi",
+    "choose": 3,
+    "stem": "Un job de Apache Spark en Amazon EMR procesa varios TB cada noche. Se quiere reducir el costo y el tiempo de ejecución sin comprometer los datos ya procesados, que se leen y escriben en Amazon S3. ¿Qué TRES configuraciones son adecuadas? (Elija TRES)",
+    "options": [
+      {
+        "id": "A",
+        "text": "Usar instancias Spot en los nodos task para aportar capacidad barata"
+      },
+      {
+        "id": "B",
+        "text": "Ejecutar todos los nodos, incluido el primary, como Spot"
+      },
+      {
+        "id": "C",
+        "text": "Habilitar EMR managed scaling para ajustar el cluster a la carga"
+      },
+      {
+        "id": "D",
+        "text": "Dejar fijo el cluster al tamaño máximo las 24 horas"
+      },
+      {
+        "id": "E",
+        "text": "Leer y escribir los datos en S3 mediante EMRFS para desacoplar almacenamiento y cómputo"
+      }
+    ],
+    "answer": [
+      "A",
+      "C",
+      "E"
+    ],
+    "explanation": "Los nodos task no almacenan datos de HDFS, así que son ideales para Spot. El managed scaling ajusta nodos a la carga, y con S3 como almacenamiento el cluster puede ser efímero. Los nodos primary y core deben ser On-Demand.",
+    "distractors": {
+      "B": "Si el primary se interrumpe, se pierde el cluster entero.",
+      "D": "Paga capacidad ociosa mientras no hay jobs."
+    },
+    "difficulty": 3
+  }
+]

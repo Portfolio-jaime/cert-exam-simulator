@@ -1,0 +1,1651 @@
+[
+ {
+  "id": "sec-21",
+  "domain": "secure",
+  "topic": "IAM Identity Center",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa con 40 cuentas en AWS Organizations quiere que sus empleados accedan a la consola y a la AWS CLI con las credenciales de su directorio corporativo, con permisos distintos por cuenta y sin crear usuarios IAM en cada cuenta. ¿Qué solución tiene el MENOR esfuerzo operativo?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Habilitar AWS IAM Identity Center, conectarlo al proveedor de identidad corporativo y asignar permission sets a grupos por cuenta"
+   },
+   {
+    "id": "B",
+    "text": "Crear un usuario IAM por empleado en cada cuenta y sincronizarlos con un script"
+   },
+   {
+    "id": "C",
+    "text": "Crear un solo usuario IAM compartido por equipo en la cuenta de administración y compartir su contraseña"
+   },
+   {
+    "id": "D",
+    "text": "Crear un Amazon Cognito user pool y federar a los empleados a cada cuenta"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "IAM Identity Center centraliza el acceso de la fuerza laboral a múltiples cuentas de Organizations, se integra con IdPs externos y entrega credenciales temporales mediante permission sets.",
+  "distractors": {
+   "B": "Es el modelo que se quiere evitar: 40 cuentas multiplican el trabajo y las credenciales de larga duración.",
+   "C": "Compartir credenciales elimina la trazabilidad y no da permisos distintos por cuenta.",
+   "D": "Cognito está pensado para usuarios de aplicaciones de clientes, no para acceso de la fuerza laboral a la consola de AWS."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-22",
+  "domain": "secure",
+  "topic": "Security group referenciado",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación de tres capas usa un Application Load Balancer, instancias EC2 de aplicación y una base de datos en Amazon RDS. Se quiere que la base solo reciba tráfico de las instancias de aplicación aunque estas escalen y cambien de IP. ¿Qué regla es la MÁS adecuada?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Permitir el puerto en el security group de la base desde el CIDR de la VPC completa"
+   },
+   {
+    "id": "B",
+    "text": "Mantener una lista de IPs de instancias en una NACL y actualizarla en cada escalado"
+   },
+   {
+    "id": "C",
+    "text": "Asignar IPs públicas a las instancias y permitir esas IPs"
+   },
+   {
+    "id": "D",
+    "text": "En el security group de la base, permitir el puerto de la base de datos con origen el security group de las instancias de aplicación"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "Referenciar un security group como origen se adapta automáticamente a las instancias que escalan, sin depender de IPs.",
+  "distractors": {
+   "A": "Cualquier recurso de la VPC alcanzaría la base.",
+   "B": "Es frágil y manual, y las NACL no siguen a las instancias.",
+   "C": "Innecesario; el tráfico interno debe ir por IPs privadas y las IPv4 públicas se cobran."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-23",
+  "domain": "secure",
+  "topic": "Cifrado en tránsito S3",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una política de seguridad exige que todo acceso a un bucket sea cifrado en tránsito y que los objetos se cifren con una clave de AWS KMS administrada por la empresa. ¿Qué DOS controles aplican? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Habilitar solo Block Public Access"
+   },
+   {
+    "id": "B",
+    "text": "Activar el versionado del bucket"
+   },
+   {
+    "id": "C",
+    "text": "Una bucket policy que niegue solicitudes con aws:SecureTransport igual a false"
+   },
+   {
+    "id": "D",
+    "text": "Usar una ACL de bucket para exigir HTTPS"
+   },
+   {
+    "id": "E",
+    "text": "Cifrado por defecto del bucket con SSE-KMS usando una customer managed key"
+   }
+  ],
+  "answer": [
+   "C",
+   "E"
+  ],
+  "explanation": "aws:SecureTransport fuerza HTTPS y SSE-KMS con CMK da control sobre la clave y su auditoría.",
+  "distractors": {
+   "A": "Evita exposición pública, pero no fuerza TLS ni cifrado con KMS.",
+   "B": "Protege contra sobrescrituras, no cifra.",
+   "D": "Las ACL no pueden exigir TLS."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-24",
+  "domain": "secure",
+  "topic": "EC2 instance profile",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación en Amazon EC2 escribe objetos en un bucket de Amazon S3. Hoy usa access keys de un usuario IAM guardadas en un archivo de configuración y el equipo de seguridad exige eliminarlas. ¿Qué cambio es el MÁS seguro con el menor cambio en la aplicación?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Cifrar el archivo de configuración con una clave de AWS KMS y mantener las access keys"
+   },
+   {
+    "id": "B",
+    "text": "Mover las access keys a variables de entorno del sistema operativo"
+   },
+   {
+    "id": "C",
+    "text": "Asociar un rol IAM con los permisos mínimos a la instancia mediante un instance profile y quitar las access keys"
+   },
+   {
+    "id": "D",
+    "text": "Rotar manualmente las access keys cada 30 días"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "Un instance profile entrega credenciales temporales por el servicio de metadatos de la instancia, y los SDK las toman automáticamente sin tocar el código.",
+  "distractors": {
+   "A": "Las claves siguen siendo de larga duración y la aplicación necesitaría descifrarlas, así que el riesgo persiste.",
+   "B": "Cambia el lugar donde se guardan, pero siguen siendo credenciales estáticas expuestas en la instancia.",
+   "D": "Reduce la ventana de riesgo pero no elimina las credenciales de larga duración ni la carga operativa."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-25",
+  "domain": "secure",
+  "topic": "Network Firewall egress",
+  "type": "single",
+  "choose": 1,
+  "stem": "Instancias en private subnets deben salir a internet solo hacia una lista de dominios aprobados, y todo lo demás debe bloquearse. ¿Qué servicio gestionado cumple esto?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Security groups con reglas de salida por nombre de dominio"
+   },
+   {
+    "id": "B",
+    "text": "AWS Network Firewall con una regla stateful de lista de dominios permitidos"
+   },
+   {
+    "id": "C",
+    "text": "Network ACLs con una regla por dominio"
+   },
+   {
+    "id": "D",
+    "text": "AWS Shield Standard en el NAT gateway"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "Network Firewall permite inspección stateful y filtrado por dominios (HTTP Host/SNI) sobre el tráfico de la VPC.",
+  "distractors": {
+   "A": "Los security groups filtran por IP, puerto y protocolo, no por nombre de dominio.",
+   "C": "Las NACL trabajan con CIDR y no entienden dominios.",
+   "D": "Shield protege contra DDoS; no filtra el destino de salida."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-26",
+  "domain": "secure",
+  "topic": "KMS entre cuentas",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una cuenta A tiene un bucket cifrado con SSE-KMS y una cuenta B debe leerlo. Los usuarios de B reciben AccessDenied al descifrar. ¿Qué DOS cambios resuelven el problema? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Usar una clave administrada por AWS (aws/s3) en la cuenta A"
+   },
+   {
+    "id": "B",
+    "text": "Deshabilitar la rotación de la clave"
+   },
+   {
+    "id": "C",
+    "text": "Mover el bucket a otra Region"
+   },
+   {
+    "id": "D",
+    "text": "Permitir en la key policy de la cuenta A el uso de la clave (kms:Decrypt) por el rol de la cuenta B"
+   },
+   {
+    "id": "E",
+    "text": "Permitir kms:Decrypt sobre esa clave en la identity policy del rol de la cuenta B"
+   }
+  ],
+  "answer": [
+   "D",
+   "E"
+  ],
+  "explanation": "El uso entre cuentas de una CMK exige permiso en la key policy y en la política de identidad del principal.",
+  "distractors": {
+   "A": "Las claves administradas por AWS no pueden compartirse entre cuentas.",
+   "B": "La rotación no afecta el acceso.",
+   "C": "No resuelve permisos de KMS."
+  },
+  "difficulty": 3
+ },
+ {
+  "id": "sec-27",
+  "domain": "secure",
+  "topic": "Condición aws:PrincipalOrgID",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa tiene un bucket de Amazon S3 que debe ser legible por cualquier cuenta de su organización en AWS Organizations, incluidas las cuentas que se creen en el futuro, y por nadie más. ¿Cuál es la forma MÁS sencilla de mantener la política?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Listar el ID de cada cuenta de la organización como Principal en la bucket policy y actualizarla con cada cuenta nueva"
+   },
+   {
+    "id": "B",
+    "text": "Agregar a la bucket policy un Allow con la condición aws:PrincipalOrgID igual al ID de la organización"
+   },
+   {
+    "id": "C",
+    "text": "Usar Principal \"*\" y confiar en que los usuarios externos no conocen el nombre del bucket"
+   },
+   {
+    "id": "D",
+    "text": "Crear un access point por cuenta y compartir su alias por correo"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "La clave global aws:PrincipalOrgID limita el acceso a principals de la organización sin enumerar cuentas, y cubre automáticamente las nuevas.",
+  "distractors": {
+   "A": "Funciona, pero requiere editar la política cada vez que se crea una cuenta.",
+   "C": "Cualquier persona que conozca el nombre podría acceder; la oscuridad no es un control.",
+   "D": "Agrega objetos que administrar por cuenta y no controla qué identidades pertenecen a la organización."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-28",
+  "domain": "secure",
+  "topic": "Shield y WAF para DDoS",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una tienda en línea detrás de Amazon CloudFront y un Application Load Balancer ha sufrido ataques DDoS volumétricos y de capa de aplicación. Necesita acceso al equipo de respuesta de AWS durante ataques y protección de costos. ¿Qué DOS acciones aplican? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Suscribirse a AWS Shield Advanced y proteger la distribución de CloudFront y el ALB"
+   },
+   {
+    "id": "B",
+    "text": "Depender solo de AWS Shield Standard"
+   },
+   {
+    "id": "C",
+    "text": "Mover la aplicación a un security group más estricto"
+   },
+   {
+    "id": "D",
+    "text": "Habilitar Amazon Macie sobre el bucket de logs"
+   },
+   {
+    "id": "E",
+    "text": "Asociar un AWS WAF web ACL con reglas de rate-based y managed rules"
+   }
+  ],
+  "answer": [
+   "A",
+   "E"
+  ],
+  "explanation": "Shield Advanced añade respuesta especializada y protección de costos; WAF mitiga ataques de capa 7 con reglas basadas en tasa y managed rules.",
+  "distractors": {
+   "B": "Es automático y gratuito, pero no incluye el equipo de respuesta ni la protección de costos.",
+   "C": "Los security groups no mitigan DDoS de gran volumen.",
+   "D": "Macie descubre datos sensibles, no frena ataques."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-29",
+  "domain": "secure",
+  "topic": "Rotación de KMS",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una política exige rotar anualmente las claves de cifrado sin cambiar las aplicaciones ni volver a cifrar datos existentes. ¿Qué opción cumple con el MENOR esfuerzo?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Habilitar la rotación automática en la customer managed key de KMS"
+   },
+   {
+    "id": "B",
+    "text": "Crear una clave nueva cada año y actualizar el alias manualmente"
+   },
+   {
+    "id": "C",
+    "text": "Exportar la clave y rotarla con un script propio"
+   },
+   {
+    "id": "D",
+    "text": "Eliminar la clave y recrearla"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "La rotación automática de KMS genera nuevo material de clave y conserva el anterior para descifrar datos viejos.",
+  "distractors": {
+   "B": "Más trabajo y puede requerir re-cifrado o cambios.",
+   "C": "Las CMK de KMS no se exportan.",
+   "D": "Los datos cifrados quedarían ilegibles."
+  },
+  "difficulty": 1
+ },
+ {
+  "id": "sec-30",
+  "domain": "secure",
+  "topic": "IAM Access Analyzer",
+  "type": "single",
+  "choose": 1,
+  "stem": "El equipo de seguridad quiere identificar de forma continua los buckets de S3, roles IAM y claves de KMS de la organización que están compartidos con entidades fuera de la zona de confianza. ¿Qué debe habilitar?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Amazon Inspector en todas las cuentas"
+   },
+   {
+    "id": "B",
+    "text": "AWS Trusted Advisor con comprobaciones de rendimiento"
+   },
+   {
+    "id": "C",
+    "text": "Amazon Detective sobre los registros de VPC Flow Logs"
+   },
+   {
+    "id": "D",
+    "text": "IAM Access Analyzer con la organización como zona de confianza"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "Access Analyzer usa razonamiento automatizado sobre las políticas de recursos y reporta findings de acceso externo; con la organización como zona de confianza solo marca lo que sale de ella.",
+  "distractors": {
+   "A": "Inspector busca vulnerabilidades de software y exposición de red, no analiza políticas de recursos compartidos.",
+   "B": "No analiza políticas de recursos para detectar acceso externo.",
+   "C": "Detective ayuda a investigar hallazgos, pero no genera findings de acceso externo en políticas."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-31",
+  "domain": "secure",
+  "topic": "CloudFront OAC",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Un sitio estático se sirve desde un bucket de Amazon S3 mediante Amazon CloudFront. Se debe impedir que alguien acceda a los objetos directamente por la URL de S3. ¿Qué DOS configuraciones aplica? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Dejar el bucket público y ocultar su nombre"
+   },
+   {
+    "id": "B",
+    "text": "Poner un header secreto en la distribución y comprobarlo desde S3"
+   },
+   {
+    "id": "C",
+    "text": "Usar origin access control (OAC) en la distribución y una bucket policy que permita solo al servicio CloudFront de esa distribución"
+   },
+   {
+    "id": "D",
+    "text": "Mantener S3 Block Public Access habilitado en el bucket"
+   },
+   {
+    "id": "E",
+    "text": "Cambiar a un website endpoint de S3 con política pública"
+   }
+  ],
+  "answer": [
+   "C",
+   "D"
+  ],
+  "explanation": "OAC firma las solicitudes de CloudFront hacia S3 y la bucket policy limita el acceso a esa distribución.",
+  "distractors": {
+   "A": "Cualquiera con la URL accedería directamente.",
+   "B": "S3 no valida headers personalizados de esta forma.",
+   "E": "El website endpoint público contradice el requisito."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-32",
+  "domain": "secure",
+  "topic": "Backup Vault Lock",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una empresa quiere que sus copias de seguridad no puedan borrarse ni siquiera por un administrador comprometido, y que además estén aisladas de la cuenta de origen. ¿Qué DOS acciones aplica con AWS Backup? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Configurar AWS Backup Vault Lock en modo compliance en el vault"
+   },
+   {
+    "id": "B",
+    "text": "Copiar los recovery points a un vault en otra cuenta"
+   },
+   {
+    "id": "C",
+    "text": "Un vault sin lock y un rol que solo el equipo conoce"
+   },
+   {
+    "id": "D",
+    "text": "Instantáneas EBS manuales etiquetadas"
+   },
+   {
+    "id": "E",
+    "text": "Versionado de S3 en el bucket de scripts"
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "explanation": "Vault Lock en modo compliance hace inmutables las copias durante el periodo de retención y la copia entre cuentas aísla de compromisos.",
+  "distractors": {
+   "C": "Un administrador con permisos aún podría borrar.",
+   "D": "No ofrece inmutabilidad ni aislamiento por cuenta.",
+   "E": "No protege las copias de otros recursos."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-33",
+  "domain": "secure",
+  "topic": "Cognito authorizer en API Gateway",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una API REST en Amazon API Gateway debe aceptar solo solicitudes de usuarios que ya iniciaron sesión en un Amazon Cognito user pool. El equipo no quiere escribir código de validación de tokens. ¿Qué configuración recomiendas?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Crear un Lambda authorizer que valide manualmente la firma del JWT"
+   },
+   {
+    "id": "B",
+    "text": "Configurar un Cognito user pool authorizer en los métodos de la API"
+   },
+   {
+    "id": "C",
+    "text": "Exigir una API key en cada método"
+   },
+   {
+    "id": "D",
+    "text": "Restringir el stage con una resource policy por rango de IP"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "El Cognito authorizer valida el token del user pool directamente en API Gateway, sin código adicional.",
+  "distractors": {
+   "A": "Funciona, pero implica código y mantenimiento que el authorizer nativo de Cognito evita.",
+   "C": "Las API keys sirven para plan de uso y cuotas, no para autenticar usuarios.",
+   "D": "No identifica usuarios y es frágil con clientes móviles que cambian de red."
+  },
+  "difficulty": 1
+ },
+ {
+  "id": "sec-34",
+  "domain": "secure",
+  "topic": "PrivateLink",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un proveedor ofrece un servicio detrás de un Network Load Balancer y quiere que sus clientes, en otras cuentas y VPCs con CIDR solapados, lo consuman de forma privada sin exponerlo a internet. ¿Qué debe usar?",
+  "options": [
+   {
+    "id": "A",
+    "text": "VPC peering con cada cliente"
+   },
+   {
+    "id": "B",
+    "text": "Un internet gateway y listas de IPs permitidas"
+   },
+   {
+    "id": "C",
+    "text": "Un gateway endpoint para el servicio"
+   },
+   {
+    "id": "D",
+    "text": "AWS PrivateLink: un endpoint service sobre el NLB y VPC interface endpoints en las VPCs de los clientes"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "PrivateLink publica un servicio como interfaces privadas en la VPC del consumidor y funciona con CIDR solapados.",
+  "distractors": {
+   "A": "El peering no admite CIDR solapados y expone redes completas.",
+   "B": "Expone el servicio a internet, contrario al requisito.",
+   "C": "Los gateway endpoints existen solo para S3 y DynamoDB."
+  },
+  "difficulty": 3
+ },
+ {
+  "id": "sec-35",
+  "domain": "secure",
+  "topic": "Parameter Store vs Secrets Manager",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación necesita leer un token de API que casi nunca cambia y no requiere rotación automática. El equipo quiere almacenarlo cifrado al menor costo. ¿Qué elige?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un secreto en AWS Secrets Manager con rotación activada"
+   },
+   {
+    "id": "B",
+    "text": "Un parámetro SecureString en AWS Systems Manager Parameter Store"
+   },
+   {
+    "id": "C",
+    "text": "Una variable de entorno en texto plano en el código"
+   },
+   {
+    "id": "D",
+    "text": "Un archivo en un bucket público"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "SecureString cifra con KMS y es adecuado cuando no se requiere rotación nativa; Secrets Manager aporta valor con rotación.",
+  "distractors": {
+   "A": "Es útil si se necesita rotación, pero agrega costo por secreto.",
+   "C": "No está cifrada.",
+   "D": "Expone el token."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-36",
+  "domain": "secure",
+  "topic": "Alcance de las SCP",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un administrador adjunta una SCP que solo permite los servicios Amazon EC2 y Amazon S3 a una OU con tres cuentas. Un usuario con la política administrativa de IAM en una de esas cuentas intenta lanzar una función de AWS Lambda. ¿Qué ocurre?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Se permite, porque la política administrativa de IAM concede acceso a todo"
+   },
+   {
+    "id": "B",
+    "text": "Se deniega, porque las SCP definen el máximo de permisos y Lambda no está permitido en la OU"
+   },
+   {
+    "id": "C",
+    "text": "Se permite, porque las SCP solo se aplican al root user de la cuenta"
+   },
+   {
+    "id": "D",
+    "text": "Se permite si el usuario habilita MFA primero"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "Los permisos efectivos son la intersección entre la SCP y las políticas IAM; las SCP no otorgan permisos, solo limitan.",
+  "distractors": {
+   "A": "Una SCP actúa como filtro: los permisos de IAM no pueden exceder lo que la SCP permite.",
+   "C": "Las SCP afectan a todos los usuarios y roles de las cuentas miembro, no solo a root.",
+   "D": "La SCP no depende de MFA; el servicio simplemente no está dentro del conjunto permitido."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-37",
+  "domain": "secure",
+  "topic": "Endpoint policy",
+  "type": "single",
+  "choose": 1,
+  "stem": "Instancias en una private subnet acceden a S3 mediante un gateway endpoint. Seguridad quiere que solo puedan leer de un bucket concreto de la empresa y no copiar datos a buckets de otras cuentas. ¿Qué control aplicas?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un security group en el gateway endpoint"
+   },
+   {
+    "id": "B",
+    "text": "Una NACL que bloquee el prefijo de S3"
+   },
+   {
+    "id": "C",
+    "text": "Habilitar versionado en el bucket"
+   },
+   {
+    "id": "D",
+    "text": "Una endpoint policy en el gateway endpoint que permita acciones solo sobre el bucket de la empresa"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "La endpoint policy es una política de recursos del endpoint que restringe qué buckets y acciones son accesibles a través de él.",
+  "distractors": {
+   "A": "Los gateway endpoints no usan security groups.",
+   "B": "Bloquearía todo S3 y no distingue buckets.",
+   "C": "Protege contra borrados, no limita a qué buckets se accede desde la VPC."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-38",
+  "domain": "secure",
+  "topic": "CloudHSM",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un requisito regulatorio exige que la empresa controle exclusivamente las claves criptográficas en hardware dedicado de un solo cliente (single-tenant). ¿Qué servicio cumple?",
+  "options": [
+   {
+    "id": "A",
+    "text": "AWS CloudHSM"
+   },
+   {
+    "id": "B",
+    "text": "AWS KMS con clave administrada por AWS"
+   },
+   {
+    "id": "C",
+    "text": "AWS Certificate Manager"
+   },
+   {
+    "id": "D",
+    "text": "AWS Secrets Manager"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "CloudHSM da HSMs dedicados bajo control exclusivo del cliente.",
+  "distractors": {
+   "B": "La administra AWS en HSMs multi-tenant.",
+   "C": "Gestiona certificados TLS, no el control exclusivo de claves.",
+   "D": "Guarda secretos, no ofrece HSMs dedicados."
+  },
+  "difficulty": 3
+ },
+ {
+  "id": "sec-39",
+  "domain": "secure",
+  "topic": "RAM compartir subnets",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa quiere que varias cuentas de aplicaciones lancen recursos en subnets de una VPC central que administra el equipo de red, sin crear peering ni duplicar la VPC. ¿Qué servicio habilita esto con el MENOR esfuerzo?",
+  "options": [
+   {
+    "id": "A",
+    "text": "VPC peering entre la VPC central y cada VPC de aplicación"
+   },
+   {
+    "id": "B",
+    "text": "Replicar las subnets con una plantilla de AWS CloudFormation StackSets"
+   },
+   {
+    "id": "C",
+    "text": "AWS Resource Access Manager (AWS RAM) para compartir las subnets con las cuentas de la organización"
+   },
+   {
+    "id": "D",
+    "text": "Crear roles IAM en la cuenta central y lanzar instancias con ellos"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "RAM comparte subnets con cuentas de una organización (VPC sharing), de modo que los participantes crean recursos en ellas mientras la red sigue centralizada.",
+  "distractors": {
+   "A": "El peering conecta VPCs separadas; no permite lanzar recursos dentro de subnets de otra cuenta.",
+   "B": "Crea subnets independientes en cada cuenta, lo contrario de compartir una VPC central.",
+   "D": "Un rol da permisos de API, pero las instancias quedan en la VPC de la cuenta donde se lanzan."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-40",
+  "domain": "secure",
+  "topic": "Session Manager",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Un equipo accede por SSH a instancias EC2 en private subnets mediante un bastion host con IP pública. Auditoría pide eliminar puertos de entrada abiertos y registrar quién ejecutó cada sesión, con el MENOR esfuerzo. ¿Qué DOS acciones aplica? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Mantener el bastion y añadir un segundo bastion en otra AZ"
+   },
+   {
+    "id": "B",
+    "text": "Usar AWS Systems Manager Session Manager con el SSM Agent en las instancias"
+   },
+   {
+    "id": "C",
+    "text": "Abrir el puerto 22 a 0.0.0.0/0 con claves rotadas"
+   },
+   {
+    "id": "D",
+    "text": "Instalar un servidor VPN propio en una instancia EC2"
+   },
+   {
+    "id": "E",
+    "text": "Asociar a las instancias un rol con la política administrada de SSM y activar el registro de sesiones en CloudWatch Logs o S3"
+   }
+  ],
+  "answer": [
+   "B",
+   "E"
+  ],
+  "explanation": "Session Manager da acceso sin puertos de entrada ni claves SSH, con permisos IAM y registro de sesiones.",
+  "distractors": {
+   "A": "Mantiene puertos abiertos y no mejora la auditoría.",
+   "C": "Amplía la exposición.",
+   "D": "Más infraestructura que operar y sin registro por comando."
+  },
+  "difficulty": 1
+ },
+ {
+  "id": "sec-41",
+  "domain": "secure",
+  "topic": "S3 Access Points",
+  "type": "single",
+  "choose": 1,
+  "stem": "Cientos de aplicaciones acceden a un bucket compartido y la bucket policy se volvió inmanejable. Se quiere delegar permisos por equipo y limitar cada acceso a una VPC. ¿Qué característica ayuda?",
+  "options": [
+   {
+    "id": "A",
+    "text": "S3 Access Points, uno por equipo, con política propia y restricción de red a la VPC"
+   },
+   {
+    "id": "B",
+    "text": "Una ACL por objeto"
+   },
+   {
+    "id": "C",
+    "text": "Hacer un bucket por aplicación sin políticas"
+   },
+   {
+    "id": "D",
+    "text": "Compartir las credenciales de un usuario IAM"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "Los access points permiten políticas separadas por caso de uso y orígenes de red restringidos.",
+  "distractors": {
+   "B": "No escala y es obsoleta.",
+   "C": "Multiplica recursos y no resuelve el control.",
+   "D": "Elimina trazabilidad."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-42",
+  "domain": "secure",
+  "topic": "MFA con condiciones",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una política debe permitir a los administradores terminar instancias EC2 solo si iniciaron sesión con autenticación multifactor. ¿Qué elemento de la política lo logra?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un Principal con el ARN del dispositivo MFA"
+   },
+   {
+    "id": "B",
+    "text": "Una condición aws:SourceIp con el rango de la oficina"
+   },
+   {
+    "id": "C",
+    "text": "Una condición con la clave aws:MultiFactorAuthPresent igual a true"
+   },
+   {
+    "id": "D",
+    "text": "Un bloque NotAction con ec2:TerminateInstances"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "aws:MultiFactorAuthPresent refleja si las credenciales temporales de la sesión se autenticaron con MFA y se usa en el bloque Condition.",
+  "distractors": {
+   "A": "Los dispositivos MFA no son principals de políticas de identidad.",
+   "B": "Restringe el origen de red, no verifica que se haya usado MFA.",
+   "D": "NotAction invierte las acciones pero no valida el segundo factor."
+  },
+  "difficulty": 1
+ },
+ {
+  "id": "sec-43",
+  "domain": "secure",
+  "topic": "Route 53 Resolver DNS Firewall",
+  "type": "single",
+  "choose": 1,
+  "stem": "Se sospecha que instancias en una VPC consultan dominios maliciosos. Se quiere bloquear esas consultas DNS en la VPC con listas administradas. ¿Qué servicio usas?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Amazon Route 53 Resolver DNS Firewall con listas de dominios administradas"
+   },
+   {
+    "id": "B",
+    "text": "Una NACL con los dominios maliciosos"
+   },
+   {
+    "id": "C",
+    "text": "AWS WAF en el Application Load Balancer"
+   },
+   {
+    "id": "D",
+    "text": "Una política de bucket en S3"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "DNS Firewall filtra consultas DNS salientes de la VPC mediante listas de dominios permitidos o bloqueados.",
+  "distractors": {
+   "B": "Las NACL no evalúan nombres de dominio.",
+   "C": "WAF protege tráfico HTTP entrante, no las consultas DNS salientes.",
+   "D": "No tiene relación con las consultas DNS."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-44",
+  "domain": "secure",
+  "topic": "Macie con automatización",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una empresa quiere detectar datos personales en nuevos objetos de S3 y alertar al equipo de seguridad sin trabajo manual. ¿Qué DOS elementos configura? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Amazon Inspector sobre el bucket"
+   },
+   {
+    "id": "B",
+    "text": "Amazon Macie con descubrimiento automático de datos sensibles (o jobs de descubrimiento) sobre los buckets"
+   },
+   {
+    "id": "C",
+    "text": "AWS Shield Advanced"
+   },
+   {
+    "id": "D",
+    "text": "Una regla de EventBridge sobre los findings de Macie que notifique mediante SNS"
+   },
+   {
+    "id": "E",
+    "text": "Un NAT gateway"
+   }
+  ],
+  "answer": [
+   "B",
+   "D"
+  ],
+  "explanation": "Macie clasifica datos sensibles y emite eventos hacia EventBridge para notificar.",
+  "distractors": {
+   "A": "Inspector no clasifica datos.",
+   "C": "Protege contra DDoS.",
+   "E": "No tiene relación."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-45",
+  "domain": "secure",
+  "topic": "IAM Roles Anywhere",
+  "type": "single",
+  "choose": 1,
+  "stem": "Servidores on-premises deben llamar a la API de Amazon S3. La empresa tiene su propia autoridad certificadora (CA) y no quiere access keys de larga duración en esos servidores. ¿Qué solución cumple el requisito?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Crear un usuario IAM por servidor y rotar sus claves cada 90 días"
+   },
+   {
+    "id": "B",
+    "text": "Asociar un instance profile de EC2 a los servidores físicos"
+   },
+   {
+    "id": "C",
+    "text": "Usar IAM Roles Anywhere con un trust anchor basado en la CA corporativa para obtener credenciales temporales"
+   },
+   {
+    "id": "D",
+    "text": "Instalar el agente de Amazon Inspector en los servidores"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "IAM Roles Anywhere intercambia un certificado X.509 firmado por una CA confiable por credenciales temporales de un rol IAM para cargas fuera de AWS.",
+  "distractors": {
+   "A": "Sigue usando credenciales de larga duración, lo que se quiere evitar.",
+   "B": "Los instance profile solo funcionan para instancias EC2.",
+   "D": "Inspector evalúa vulnerabilidades, no entrega credenciales."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-46",
+  "domain": "secure",
+  "topic": "WAF managed rules",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una aplicación web en un ALB recibe intentos de inyección SQL y debe además bloquear solicitudes provenientes de ciertos países. Se prefiere no escribir firmas propias. ¿Qué DOS configuraciones aplica el equipo? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Asociar al ALB un web ACL con el grupo de reglas administrado de AWS para SQL database"
+   },
+   {
+    "id": "B",
+    "text": "Abrir el puerto 3306 en el security group del ALB para inspeccionar tráfico"
+   },
+   {
+    "id": "C",
+    "text": "Habilitar AWS Shield Standard únicamente"
+   },
+   {
+    "id": "D",
+    "text": "Agregar al web ACL una regla de coincidencia geográfica que bloquee los países indicados"
+   },
+   {
+    "id": "E",
+    "text": "Reemplazar el ALB por un NAT gateway"
+   }
+  ],
+  "answer": [
+   "A",
+   "D"
+  ],
+  "explanation": "WAF ofrece managed rule groups para SQLi y reglas geo match para bloquear por país.",
+  "distractors": {
+   "B": "No inspecciona nada y expone un puerto de base de datos.",
+   "C": "Protege contra DDoS de capas 3 y 4, no contra inyección SQL.",
+   "E": "No es un componente de inspección web."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-47",
+  "domain": "secure",
+  "topic": "IAM database authentication",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación se conecta a una base de datos Amazon RDS for MySQL con usuario y contraseña. Se quiere eliminar contraseñas estáticas y usar credenciales temporales de IAM. ¿Qué debe habilitar?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Cifrado at rest con una nueva clave KMS"
+   },
+   {
+    "id": "B",
+    "text": "IAM database authentication en la instancia y conectar con un token de autenticación"
+   },
+   {
+    "id": "C",
+    "text": "Una read replica en otra AZ"
+   },
+   {
+    "id": "D",
+    "text": "Un security group con 0.0.0.0/0"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "El token de IAM dura 15 minutos y evita contraseñas estáticas.",
+  "distractors": {
+   "A": "Protege datos almacenados, no sustituye la contraseña.",
+   "C": "Disponibilidad, no autenticación.",
+   "D": "Amplía la exposición."
+  },
+  "difficulty": 3
+ },
+ {
+  "id": "sec-48",
+  "domain": "secure",
+  "topic": "Confused deputy",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una empresa de monitoreo SaaS necesita asumir un rol en las cuentas de sus clientes para leer métricas. Un cliente teme que otro cliente pueda engañar al proveedor para acceder a su cuenta. ¿Qué control específico mitiga este riesgo?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Usar la cuenta root del cliente como Principal de la trust policy"
+   },
+   {
+    "id": "B",
+    "text": "Exigir un ExternalId único por cliente en la trust policy del rol y en la llamada a sts:AssumeRole"
+   },
+   {
+    "id": "C",
+    "text": "Compartir un único rol con una duración de sesión de 15 minutos"
+   },
+   {
+    "id": "D",
+    "text": "Pedir a cada cliente que cree un usuario IAM para el proveedor"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "El ExternalId es un secreto compartido entre proveedor y cliente que evita que un tercero use al proveedor para asumir roles de otro cliente.",
+  "distractors": {
+   "A": "Concede confianza amplia sin resolver la suplantación entre clientes.",
+   "C": "La sesión corta reduce la exposición, pero no impide que el proveedor sea engañado.",
+   "D": "Introduce claves de larga duración sin resolver el problema del confused deputy."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-49",
+  "domain": "secure",
+  "topic": "API Gateway resource policy",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una API privada en Amazon API Gateway debe ser invocada solo desde una VPC específica. ¿Qué combinación logra esto?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un endpoint regional con una API key obligatoria"
+   },
+   {
+    "id": "B",
+    "text": "Un endpoint de tipo private, un interface VPC endpoint para execute-api y una resource policy que permita solo ese endpoint"
+   },
+   {
+    "id": "C",
+    "text": "Un endpoint edge-optimized con WAF"
+   },
+   {
+    "id": "D",
+    "text": "Un security group asociado a la API"
+   }
+  ],
+  "answer": [
+   "B"
+  ],
+  "explanation": "Las APIs privadas solo son accesibles mediante interface VPC endpoints; la resource policy refuerza el origen permitido.",
+  "distractors": {
+   "A": "Es público en internet y la API key no sirve como control de red.",
+   "C": "Sigue siendo público y pasa por CloudFront.",
+   "D": "API Gateway no usa security groups directamente."
+  },
+  "difficulty": 3
+ },
+ {
+  "id": "sec-50",
+  "domain": "secure",
+  "topic": "Backup policy Organizations",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una organización necesita que todas las cuentas respalden sus bases de datos con la misma frecuencia y retención, y copiar los backups a otra Region. ¿Cómo lo hace con MENOR esfuerzo?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Una backup policy de AWS Organizations aplicada a la OU con reglas de copia entre Regions"
+   },
+   {
+    "id": "B",
+    "text": "Configurar planes de AWS Backup a mano en cada cuenta"
+   },
+   {
+    "id": "C",
+    "text": "Pedir a cada equipo que cree snapshots"
+   },
+   {
+    "id": "D",
+    "text": "Copiar bases con scripts cron"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "Las backup policies despliegan planes de Backup de forma central en la organización.",
+  "distractors": {
+   "B": "No garantiza consistencia.",
+   "C": "Depende de cumplimiento manual.",
+   "D": "Más operación y fallos silenciosos."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-51",
+  "domain": "secure",
+  "topic": "Root user",
+  "type": "multi",
+  "choose": 2,
+  "stem": "El equipo de seguridad quiere endurecer el acceso de root en las cuentas de una organización. ¿Qué DOS acciones aplican las mejores prácticas de AWS? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Habilitar MFA en el root user de cada cuenta y no crear access keys para root"
+   },
+   {
+    "id": "B",
+    "text": "Usar el root user para las tareas diarias de despliegue"
+   },
+   {
+    "id": "C",
+    "text": "Usar la administración centralizada del acceso root en Organizations para quitar credenciales de root de las cuentas miembro"
+   },
+   {
+    "id": "D",
+    "text": "Compartir la contraseña de root en un gestor de contraseñas accesible a todo el equipo de TI"
+   },
+   {
+    "id": "E",
+    "text": "Crear access keys de root para automatizar la facturación"
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "explanation": "Se protege root con MFA y sin access keys, y Organizations permite administrar de forma centralizada el acceso root y eliminar sus credenciales en las cuentas miembro.",
+  "distractors": {
+   "B": "Root debe reservarse para las pocas tareas que lo exigen.",
+   "D": "Aumenta la superficie de exposición y elimina la trazabilidad individual.",
+   "E": "Las claves de root son de alto riesgo; la facturación se delega con IAM."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-52",
+  "domain": "secure",
+  "topic": "AWS Config remediación",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una organización necesita detectar volúmenes EBS sin cifrar o buckets públicos y corregirlos automáticamente. ¿Qué DOS elementos combina? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Amazon Macie sobre las instancias"
+   },
+   {
+    "id": "B",
+    "text": "Reglas administradas de AWS Config que evalúen cifrado de EBS y acceso público de S3"
+   },
+   {
+    "id": "C",
+    "text": "Acciones de remediación de Config que ejecuten documentos de Systems Manager Automation"
+   },
+   {
+    "id": "D",
+    "text": "Instance Scheduler para apagar recursos no conformes"
+   },
+   {
+    "id": "E",
+    "text": "Registros de VPC Flow Logs analizados semanalmente"
+   }
+  ],
+  "answer": [
+   "B",
+   "C"
+  ],
+  "explanation": "Config evalúa la configuración continuamente y puede remediar con SSM Automation.",
+  "distractors": {
+   "A": "Macie opera sobre datos en S3, no sobre configuración de EBS.",
+   "D": "No corrige la configuración.",
+   "E": "Describen tráfico de red, no evalúan configuración."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-53",
+  "domain": "secure",
+  "topic": "Glacier Vault Lock",
+  "type": "single",
+  "choose": 1,
+  "stem": "Un banco debe almacenar documentos 10 años en S3 Glacier de forma inmutable, y la política no debe poder cambiarse tras bloquearla. ¿Qué usa?",
+  "options": [
+   {
+    "id": "A",
+    "text": "S3 Glacier Vault Lock con una política de bloqueo de WORM"
+   },
+   {
+    "id": "B",
+    "text": "Una bucket policy normal que niegue DeleteObject"
+   },
+   {
+    "id": "C",
+    "text": "Versionado desactivado"
+   },
+   {
+    "id": "D",
+    "text": "Un lifecycle con expiración a 10 años"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "Vault Lock aplica una política WORM que, una vez confirmada, no puede modificarse.",
+  "distractors": {
+   "B": "Un administrador puede modificarla.",
+   "C": "No da inmutabilidad.",
+   "D": "Elimina, no protege."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-54",
+  "domain": "secure",
+  "topic": "Lambda resource-based policy",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una función AWS Lambda en la cuenta A debe ser invocada por una aplicación en la cuenta B. El equipo quiere permitirlo sin que la cuenta B asuma un rol en la cuenta A. ¿Qué debe hacer?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Adjuntar solo una identity policy en la cuenta B con lambda:InvokeFunction"
+   },
+   {
+    "id": "B",
+    "text": "Hacer pública la función con Principal \"*\" y proteger con un authorizer"
+   },
+   {
+    "id": "C",
+    "text": "Agregar una resource-based policy a la función de la cuenta A que permita lambda:InvokeFunction al rol de la cuenta B, y permitirlo también en la identity policy de B"
+   },
+   {
+    "id": "D",
+    "text": "Copiar el código de la función a la cuenta B"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "En acceso cross-account se necesita permiso en ambos lados: la resource-based policy del recurso y la identity policy del principal.",
+  "distractors": {
+   "A": "En acceso entre cuentas, el recurso también debe confiar en el principal mediante su resource-based policy.",
+   "B": "Expone la función de forma innecesaria y no se ajusta al requisito de acceso entre cuentas.",
+   "D": "Elude el problema duplicando código y no resuelve la invocación entre cuentas."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-55",
+  "domain": "secure",
+  "topic": "Egress-only internet gateway",
+  "type": "single",
+  "choose": 1,
+  "stem": "Instancias en una private subnet con direcciones IPv6 deben iniciar conexiones hacia internet, pero internet no debe poder iniciar conexiones hacia ellas. ¿Qué componente usas?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un NAT gateway"
+   },
+   {
+    "id": "B",
+    "text": "Un internet gateway estándar con ruta ::/0"
+   },
+   {
+    "id": "C",
+    "text": "Un egress-only internet gateway"
+   },
+   {
+    "id": "D",
+    "text": "Un virtual private gateway"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "El egress-only internet gateway permite salida IPv6 con estado sin aceptar conexiones entrantes iniciadas desde fuera.",
+  "distractors": {
+   "A": "El NAT gateway sirve para IPv4; para IPv6 se usa el egress-only internet gateway.",
+   "B": "Permitiría también conexiones iniciadas desde internet si los security groups lo admiten.",
+   "D": "Conecta con redes on-premises, no con internet."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-56",
+  "domain": "secure",
+  "topic": "EFS cifrado",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una empresa va a montar un sistema de archivos Amazon EFS desde instancias EC2 y requiere cifrado at rest y en tránsito. ¿Qué DOS acciones aplica? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Habilitar el cifrado al crear el sistema de archivos EFS"
+   },
+   {
+    "id": "B",
+    "text": "Activar el cifrado después de crear el sistema, editándolo"
+   },
+   {
+    "id": "C",
+    "text": "Montar con la opción de TLS (EFS mount helper con tls)"
+   },
+   {
+    "id": "D",
+    "text": "Abrir el puerto 80 en el security group"
+   },
+   {
+    "id": "E",
+    "text": "Usar solo un NAT gateway"
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "explanation": "El cifrado at rest se define al crear EFS y el cifrado en tránsito se logra montando con TLS.",
+  "distractors": {
+   "B": "EFS no permite activar el cifrado at rest en un sistema existente.",
+   "D": "Es tráfico sin cifrar.",
+   "E": "No cifra datos."
+  },
+  "difficulty": 3
+ },
+ {
+  "id": "sec-57",
+  "domain": "secure",
+  "topic": "EKS acceso a AWS",
+  "type": "single",
+  "choose": 1,
+  "stem": "Los pods de un clúster de Amazon EKS necesitan permisos distintos hacia Amazon S3 y Amazon DynamoDB según la aplicación. Hoy todos comparten el rol IAM del nodo. ¿Qué enfoque aplica el MENOR privilegio?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Agregar todos los permisos al rol del nodo para que cualquier pod funcione"
+   },
+   {
+    "id": "B",
+    "text": "Crear un usuario IAM compartido y montar sus claves como Secret de Kubernetes"
+   },
+   {
+    "id": "C",
+    "text": "Asignar a cada service account su propio rol IAM con IRSA o EKS Pod Identity"
+   },
+   {
+    "id": "D",
+    "text": "Poner cada aplicación en su propio clúster"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "IRSA y EKS Pod Identity asocian roles IAM a service accounts, entregando credenciales temporales y permisos por carga de trabajo.",
+  "distractors": {
+   "A": "Concede permisos excesivos a todos los pods del nodo.",
+   "B": "Credenciales estáticas reutilizadas por muchos pods.",
+   "D": "Aísla, pero es una solución costosa y compleja para un problema de permisos."
+  },
+  "difficulty": 3
+ },
+ {
+  "id": "sec-58",
+  "domain": "secure",
+  "topic": "Detección en múltiples cuentas",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una organización con 120 cuentas quiere activar Amazon GuardDuty en todas, incluidas las futuras, y ver los findings en una cuenta central, con el MENOR esfuerzo. ¿Qué hace?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Habilitar GuardDuty manualmente en cada cuenta e invitar a la central por correo"
+   },
+   {
+    "id": "B",
+    "text": "Habilitar GuardDuty solo en la cuenta de administración"
+   },
+   {
+    "id": "C",
+    "text": "Crear un script que revise cada cuenta mensualmente"
+   },
+   {
+    "id": "D",
+    "text": "Designar una cuenta de administrador delegado de GuardDuty en Organizations y habilitar la inscripción automática de cuentas miembro"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "Con administrador delegado y auto-enable, GuardDuty cubre cuentas actuales y futuras con findings centralizados.",
+  "distractors": {
+   "A": "No escala y las cuentas nuevas quedarían sin protección.",
+   "B": "Solo protege esa cuenta.",
+   "C": "Es manual y deja ventanas sin cobertura."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-59",
+  "domain": "secure",
+  "topic": "CloudTrail organización",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Auditoría necesita un registro único e inmutable de todas las llamadas de API y de los accesos a objetos de S3 de todas las cuentas. ¿Qué DOS configuraciones aplica? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un trail por cuenta con un bucket local"
+   },
+   {
+    "id": "B",
+    "text": "Solo eventos de administración"
+   },
+   {
+    "id": "C",
+    "text": "Un organization trail que envíe los logs a un bucket central en una cuenta de seguridad"
+   },
+   {
+    "id": "D",
+    "text": "Dejar el bucket de logs abierto al equipo de desarrollo"
+   },
+   {
+    "id": "E",
+    "text": "Habilitar los eventos de datos de S3 en el trail con validación de integridad"
+   }
+  ],
+  "answer": [
+   "C",
+   "E"
+  ],
+  "explanation": "Un organization trail centraliza, y los eventos de datos registran lecturas y escrituras de objetos.",
+  "distractors": {
+   "A": "Dificulta la centralización.",
+   "B": "No cubren accesos a objetos.",
+   "D": "Compromete la integridad."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-60",
+  "domain": "secure",
+  "topic": "Permisos de IdP externo",
+  "type": "multi",
+  "choose": 2,
+  "stem": "Una startup usa un proveedor de identidad externo compatible con SAML 2.0 y quiere que sus usuarios accedan a la consola de una sola cuenta de AWS con roles distintos. ¿Qué DOS elementos debe configurar? Elige DOS.",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un usuario IAM con contraseña para cada persona"
+   },
+   {
+    "id": "B",
+    "text": "Un identity provider SAML en IAM que represente al IdP externo"
+   },
+   {
+    "id": "C",
+    "text": "Un bucket de S3 que almacene el archivo de metadatos del IdP con acceso público"
+   },
+   {
+    "id": "D",
+    "text": "Roles IAM cuya trust policy confíe en ese proveedor con la acción sts:AssumeRoleWithSAML"
+   },
+   {
+    "id": "E",
+    "text": "Un user pool de Cognito con un grupo por rol"
+   }
+  ],
+  "answer": [
+   "B",
+   "D"
+  ],
+  "explanation": "La federación SAML a la consola requiere registrar el IdP en IAM y crear roles que lo confíen mediante AssumeRoleWithSAML.",
+  "distractors": {
+   "A": "Duplica la gestión de identidades que el IdP ya mantiene.",
+   "C": "El metadata se carga al crear el IdP en IAM; no requiere un bucket público.",
+   "E": "Cognito atiende a usuarios de aplicaciones; no es la ruta estándar para federar consola en una sola cuenta."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-61",
+  "domain": "secure",
+  "topic": "Security Hub y respuesta",
+  "type": "single",
+  "choose": 1,
+  "stem": "Se quiere que cuando AWS Security Hub reciba un finding de severidad crítica, se notifique al equipo y se ejecute una acción de contención sin intervención manual. ¿Cómo lo diseñas con servicios administrados?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Revisar la consola de Security Hub cada mañana"
+   },
+   {
+    "id": "B",
+    "text": "Habilitar versionado en un bucket con los findings"
+   },
+   {
+    "id": "C",
+    "text": "Una regla de Amazon EventBridge sobre los findings de Security Hub que invoque AWS Lambda y publique en Amazon SNS"
+   },
+   {
+    "id": "D",
+    "text": "Crear una NACL que bloquee todo el tráfico"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "explanation": "Security Hub emite eventos a EventBridge, que enruta a Lambda, SNS u otros destinos para respuesta automática.",
+  "distractors": {
+   "A": "No es automático ni inmediato.",
+   "B": "No dispara acciones.",
+   "D": "Una acción genérica que interrumpe el servicio sin contexto."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-62",
+  "domain": "secure",
+  "topic": "Cifrado de snapshot RDS",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una base de datos RDS sin cifrar debe pasar a estar cifrada con una CMK. ¿Qué procedimiento es correcto?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Habilitar el cifrado desde la consola en la instancia existente"
+   },
+   {
+    "id": "B",
+    "text": "Cifrar solo la read replica"
+   },
+   {
+    "id": "C",
+    "text": "Activar TLS"
+   },
+   {
+    "id": "D",
+    "text": "Crear un snapshot, copiarlo habilitando el cifrado con la CMK y restaurar desde la copia cifrada"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "El cifrado at rest se logra copiando el snapshot con cifrado y restaurando.",
+  "distractors": {
+   "A": "No se puede cifrar una instancia existente en el sitio.",
+   "B": "Una replica de una instancia sin cifrar no se cifra por separado.",
+   "C": "Cifra en tránsito, no at rest."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-63",
+  "domain": "secure",
+  "topic": "Control Tower",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una organización crece rápido y quiere crear cuentas nuevas ya configuradas con registro centralizado, aislamiento por OU y guardrails preventivos. Prefiere una solución administrada. ¿Qué servicio utilizas?",
+  "options": [
+   {
+    "id": "A",
+    "text": "AWS Control Tower con una landing zone y Account Factory"
+   },
+   {
+    "id": "B",
+    "text": "Scripts propios con la AWS CLI que creen cuentas y adjunten políticas"
+   },
+   {
+    "id": "C",
+    "text": "AWS Config en una sola cuenta con reglas personalizadas"
+   },
+   {
+    "id": "D",
+    "text": "AWS Service Catalog sin Organizations"
+   }
+  ],
+  "answer": [
+   "A"
+  ],
+  "explanation": "Control Tower orquesta Organizations, IAM Identity Center, CloudTrail y Config para crear una landing zone con guardrails y cuentas estandarizadas.",
+  "distractors": {
+   "B": "Reimplementa lo que el servicio ya ofrece y aumenta el esfuerzo de mantenimiento.",
+   "C": "Evalúa configuración, pero no crea cuentas ni aplica guardrails de organización.",
+   "D": "No gobierna cuentas ni logging centralizado por sí solo."
+  },
+  "difficulty": 2
+ },
+ {
+  "id": "sec-64",
+  "domain": "secure",
+  "topic": "ALB con autenticación",
+  "type": "single",
+  "choose": 1,
+  "stem": "Una aplicación interna detrás de un Application Load Balancer debe exigir inicio de sesión con el proveedor OIDC corporativo sin modificar el código. ¿Qué configuración aplica?",
+  "options": [
+   {
+    "id": "A",
+    "text": "Un listener HTTP en el puerto 80 con redirección a la aplicación"
+   },
+   {
+    "id": "B",
+    "text": "Un network ACL con la IP de cada usuario"
+   },
+   {
+    "id": "C",
+    "text": "Un target group de tipo Lambda"
+   },
+   {
+    "id": "D",
+    "text": "Una acción de autenticación OIDC en la regla del listener HTTPS del ALB"
+   }
+  ],
+  "answer": [
+   "D"
+  ],
+  "explanation": "El ALB puede autenticar con Cognito u OIDC en el listener HTTPS y pasar la identidad a la aplicación.",
+  "distractors": {
+   "A": "No autentica usuarios y usa tráfico sin cifrar.",
+   "B": "No es escalable ni identifica usuarios.",
+   "C": "No resuelve la autenticación."
+  },
+  "difficulty": 3
+ }
+]
